@@ -99,46 +99,64 @@
       justify-content:center;
       padding: 48px 18px 24px;
     }
-    .card{
-      width: min(980px, 100%);
-      border: 1px solid var(--border);
-      background: rgba(15,26,46,0.55);
-      border-radius: 18px;
-      padding: 28px;
-      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
-      display:grid;
-      grid-template-columns: 160px 1fr;
-      gap: 22px;
-      align-items:center;
-    }
 
-    .avatar{
-      width: 160px;
-      height: 160px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.04);
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .avatar img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      object-position: 50% 25%; /* move image up (crop more bottom). tweak 25% -> 10%/20%/30% */
-      transform: scale(1.06);   /* slight zoom for nicer crop, tweak 1.02 - 1.12 */
-      display:block;
-    }
+    /* Hero */
+.hero{
+  width: min(980px, 100%);
+  border: 1px solid var(--border);
+  background: rgba(15,26,46,0.55);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.35);
 
-    .avatar .placeholder{
-      color: var(--muted);
-      font-size: 0.95rem;
-      text-align:center;
-      padding: 10px;
-      line-height:1.3;
-    }
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  min-height: 420px;
+}
+
+.heroLeft{
+  padding: 34px 30px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.heroRight{
+  border-left: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  display:flex;
+  align-items:stretch;
+  justify-content:stretch;
+}
+
+.heroRight img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Crop control: higher = crops more bottom */
+  object-position: 50% 22%;
+  transform: scale(1.03);
+  display:block;
+}
+
+/* Little pills under the blurb */
+.heroMeta{
+  margin-top: 16px;
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill{
+  display:inline-flex;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
 
     h1{
       margin: 0 0 8px 0;
@@ -225,6 +243,17 @@
       .footerInner .socials{
         justify-self: center;
       }
+      .hero{
+        grid-template-columns: 1fr;
+      }
+      .heroRight{
+        border-left: none;
+        border-top: 1px solid var(--border);
+        height: 320px;
+      }
+      .heroLeft{
+        text-align: left;
+      }
     }
   </style>
 </head>
@@ -243,24 +272,28 @@
   </header>
 
 <main>
-  <section class="card" aria-label="Intro card">
-    <div class="avatar">
-      <img src="me.jpeg" alt="Photo ain't loading bruh" />
-    </div>
-
-    <div>
+  <section class="hero" aria-label="Hero">
+    <div class="heroLeft">
       <h1>David Arthurian</h1>
-      <p class="tagline">Engineering | Travel | Games | Cats</p>
+      <p class="tagline">Engineer • Builder • Explorer</p>
 
       <p class="blurb">
-        Welcome to my corner of the internet. Make yourself at home, enjoy your stay!
+        I build things, solve problems, and chase interesting ideas.
+        This site is my digital home — projects, travel, experiments, and more.
       </p>
 
+      <div class="heroMeta">
+        <span class="pill">Sterling, VA</span>
+        <span class="pill">Open to cool collaborations</span>
+      </div>
+    </div>
 
-      
+    <div class="heroRight" aria-label="Photo">
+      <img src="me.jpg" alt="Photo of David Arthurian" />
     </div>
   </section>
 </main>
+
 
   <footer>
   <div class="footerInner">
