@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spain | Travel</title>
+  <meta name="description" content="Spain travel gallery." />
+  <link rel="icon" type="image/png" href="../favicon-192.png">
 
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a2e;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+      --link:#7dd3fc;
+      --linkHover:#a5f3fc;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{ color:var(--link); text-decoration:none; }
+    a:hover{ color:var(--linkHover); }
+
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.75);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:700; color:var(--text); }
+    .brandLogo{ height:26px; width:auto; display:block; }
+    nav{ display:flex; gap:14px; flex-wrap:wrap; justify-content:flex-end; }
+    .nav a{ color: var(--muted); padding: 8px 10px; border-radius: 10px; border: 1px solid transparent; }
+    .nav a:hover{ color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.03); }
+
+    main{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+    h1{ margin:0 0 6px 0; font-size: clamp(1.6rem, 3vw, 2.1rem); }
+    .sub{ margin:0 0 18px 0; color: var(--muted); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+    }
+    .thumb{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow:hidden;
+      background: rgba(255,255,255,0.03);
+      cursor:pointer;
+      aspect-ratio: 1 / 1;
+      display:flex;
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      transition: transform .15s ease;
+    }
+    .thumb:hover img{ transform: scale(1.03); }
+
+    /* Lightbox */
+    .lightbox{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 999;
+    }
+    .lightbox.open{ display:flex; }
+    .lightboxInner{
+      width: min(1100px, 96vw);
+      height: min(80vh, 740px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow:hidden;
+      background: rgba(15,26,46,0.85);
+      position: relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .lightboxInner img{
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      display:block;
+    }
+    .closeBtn{
+      position:absolute;
+      top:10px;
+      right:10px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor:pointer;
+    }
+    .closeBtn:hover{ background: rgba(255,255,255,0.10); }
+
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="../logo.png" class="brandLogo" alt="Logo">
+        <span>David Arthurian</span>
+      </div>
+      <nav aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="../travel.html" style="color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.03);">Travel</a>
+        <a href="../about.html">About</a>
+        <a href="../game.html">Fun</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>Spain </h1>
+    <p class="sub">Click a photo to view it larger.</p>
+
+    <div class="grid" id="grid">
+      <!-- Put your photos in /trips/spain/ (recommended) or keep them in /trips/ and list here -->
+      <!-- Example filenames: spain-01.jpg, spain-02.jpg -->
+      <button class="thumb" type="button" data-src="spain-01.jpg"><img src="spain-01.jpg" alt="spain photo 1"></button>
+      <button class="thumb" type="button" data-src="spain-02.jpg"><img src="spain-02.jpg" alt="spain photo 2"></button>
+      <button class="thumb" type="button" data-src="spain-03.jpg"><img src="spain-03.jpg" alt="spain photo 3"></button>
+    </div>
+  </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightboxInner">
+      <button class="closeBtn" id="closeBtn" type="button">Close ✕</button>
+      <img id="lightboxImg" alt="Expanded travel photo">
+    </div>
+  </div>
+
+  <script>
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const closeBtn = document.getElementById("closeBtn");
+
+    document.getElementById("grid").addEventListener("click", (e) => {
+      const btn = e.target.closest(".thumb");
+      if (!btn) return;
+      const src = btn.getAttribute("data-src");
+      lightboxImg.src = src;
+      lightbox.classList.add("open");
+      lightbox.setAttribute("aria-hidden", "false");
+    });
+
+    function close(){
+      lightbox.classList.remove("open");
+      lightbox.setAttribute("aria-hidden", "true");
+      lightboxImg.src = "";
+    }
+
+    closeBtn.addEventListener("click", close);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+  </script>
+</body>
+</html>
