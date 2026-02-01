@@ -4,10 +4,138 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | David Arthurian</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a2e;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+      --link:#7dd3fc;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header{
+      position: sticky;
+      top: 0;
+      background: rgba(11,18,32,0.8);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    nav a{
+      color: var(--muted);
+      margin-left: 12px;
+      text-decoration:none;
+    }
+
+    nav a:hover{ color: var(--text); }
+
+    main{
+      max-width: 980px;
+      margin: 40px auto;
+      padding: 0 18px;
+    }
+
+    h1{
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+
+    .subtitle{
+      color: var(--muted);
+      margin-bottom: 26px;
+    }
+
+    .projectList{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .projectRow{
+      display:block;
+      padding: 18px 20px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      text-decoration:none;
+      transition: 0.2s;
+    }
+
+    .projectRow:hover{
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-2px);
+    }
+
+    .projectTitle{
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .projectDesc{
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
-<body style="background:#0b1220;color:#e6edf7;font-family:Arial,sans-serif;padding:40px;">
-  <h1>About Me</h1>
-  <p>Coming soon.</p>
-  <p><a href="index.html" style="color:#7dd3fc;">← Back home</a></p>
-</body>
-</html>
+
+<body>
+<header>
+  <div class="nav">
+    <div><strong>David Arthurian</strong></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="travel.html">Travel</a>
+      <a href="about.html">About</a>
+      <a href="projects.html" style="color: var(--text)">Projects</a>
+      <a href="game.html">Fun</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>Projects</h1>
+  <div class="subtitle">Hands-on engineering projects — from where it started to where it's going.</div>
+
+  <div class="projectList">
+
+    <a class="projectRow" href="#">
+      <div class="projectTitle">🔋 Power Storage/Transfer — DIY Altoids Battery Pack</div>
+      <div class="projectDesc">The project that started it all. A homemade portable power system built from scratch.</div>
+    </a>
+
+    <a class="projectRow" href="#">
+      <div class="projectTitle">🏎 PID Tuning — Line Following Micro Car</div>
+      <div class="projectDesc">Implemented closed-loop control and tuning algorithms for precision autonomous movement.</div>
+    </a>
+
+    <a class="projectRow" href="#">
+      <div class="projectTitle">☁️ Cloud Computing — Homemade NAS</div>
+      <div class="projectDesc">Designed and deployed a personal network-attached storage server for distributed access.</div>
+    </a>
+
+    <a class="projectRow" href="#">
+      <div class="projectTitle">🎮 Embedded Systems — Interactive Multiplayer Video Game</div>
+      <div class="projectDesc">Embedded + networking project combining hardware interaction and multiplayer logic.</div>
+    </a>
+
+    <a class="projectRow" href="#">
+      <div class="projectTitle">🚁 Unmanned Aircraft Systems — DIY Hom
