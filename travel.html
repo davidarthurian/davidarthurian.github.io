@@ -4,6 +4,269 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Travel | David Arthurian</title>
+  <meta name="description" content="Trips and memories from around the world." />
+  <link rel="icon" type="image/png" href="favicon-192.png">
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a2e;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+      --link:#7dd3fc;
+      --linkHover:#a5f3fc;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    a{ color:var(--link); text-decoration:none; }
+    a:hover{ color:var(--linkHover); }
+
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      color:var(--text);
+    }
+    .brandLogo{ height:28px; width:auto; display:block; }
+    nav{ display:flex; gap:14px; flex-wrap:wrap; justify-content:flex-end; }
+    .nav a{
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    .nav a:hover{
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+
+    main{
+      flex:1;
+      max-width: 980px;
+      margin: 0 auto;
+      width:100%;
+      padding: 34px 18px 28px;
+    }
+
+    .pageTitle{
+      margin: 0 0 8px 0;
+      font-size: clamp(1.8rem, 3vw, 2.2rem);
+      letter-spacing:-0.4px;
+    }
+    .subtitle{
+      margin: 0 0 18px 0;
+      color: var(--muted);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .trip{
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.55);
+      border-radius: 16px;
+      padding: 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .trip:hover{
+      transform: translateY(-2px);
+      background: rgba(15,26,46,0.7);
+    }
+    .tripLeft{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width:0;
+    }
+    .tripName{
+      font-weight:700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    .tripMeta{
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .pill{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      white-space:nowrap;
+    }
+
+    footer{
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      background: rgba(11,18,32,0.55);
+    }
+    .footerInner{
+      max-width: 980px;
+      margin:0 auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .small{ color: var(--muted); font-size: 0.95rem; }
+
+    @media (max-width: 760px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="logo.png" class="brandLogo" alt="Logo">
+        <span>David Arthurian</span>
+      </div>
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="travel.html" style="color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.03);">Travel</a>
+        <a href="about.html">About</a>
+        <a href="game.html">Fun</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="pageTitle">Travel</h1>
+    <p class="subtitle">Trips & memories — click a trip to view the gallery.</p>
+
+    <div class="grid">
+      <!-- Add/edit trips here -->
+      <a class="trip" href="trips/uk-2018.html">
+        <div class="tripLeft">
+          <div class="tripName">United Kingdom</div>
+          <div class="tripMeta">2018</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
+
+      <a class="trip" href="trips/russia-2019.html">
+        <div class="tripLeft">
+          <div class="tripName">Russia</div>
+          <div class="tripMeta">2019</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
+
+      <a class="trip" href="trips/mexico-2021.html">
+        <div class="tripLeft">
+          <div class="tripName">Mexico</div>
+          <div class="tripMeta">2021</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
+
+      <a class="trip" href="trips/armenia-2022.html">
+        <div class="tripLeft">
+          <div class="tripName">Armenia</div>
+          <div class="tripMeta">2022</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
+
+      <!-- UK variants you mentioned -->
+      <a class="trip" href="trips/uk-2020.html">
+        <div class="tripLeft">
+          <div class="tripName">United Kingdom</div>
+          <div class="tripMeta">2020</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
+
+      <a class="trip" href="trips/uk-2022-summer.html">
+        <div class="tripLeft">
+          <div class="tripName">United Kingdom</div>
+          <div class="tripMeta">2022 (Summer)</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
+
+      <a class="trip" href="trips/uk-2022-winter.html">
+        <div class="tripLeft">
+          <div class="tripName">United Kingdom</div>
+          <div class="tripMeta">2022 (Winter)</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
+
+      <a class="trip" href="trips/uk-2025-winter.html">
+        <div class="tripLeft">
+          <div class="tripName">United Kingdom</div>
+          <div class="tripMeta">2025 (Winter)</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footerInner">
+      <div class="small">© <span id="year"></span> David Arthurian</div>
+      <div class="small" id="lastUpdated"></div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    const lastUpdated = "01/31/2026";
+    document.getElementById("lastUpdated").textContent = `Site last updated on ${lastUpdated}`;
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel | David Arthurian</title>
 </head>
 <body style="background:#0b1220;color:#e6edf7;font-family:Arial,sans-serif;padding:40px;">
   <h1>Travel / Memories</h1>
