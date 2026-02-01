@@ -1,1 +1,1 @@
-
+Folder for Spain images
