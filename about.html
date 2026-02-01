@@ -4,10 +4,324 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About | David Arthurian</title>
+  <meta name="description" content="About David Arthurian — background, skills, and experience." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon-192.png">
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a2e;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+      --link:#7dd3fc;
+      --linkHover:#a5f3fc;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    a{ color:var(--link); text-decoration:none; }
+    a:hover{ color:var(--linkHover); }
+
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+    }
+    .brandLogo{ height:28px; width:auto; display:block; }
+    nav{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .nav a{
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    .nav a:hover{
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+
+    main{
+      flex:1;
+      max-width: 980px;
+      width:100%;
+      margin:0 auto;
+      padding: 34px 18px 30px;
+    }
+
+    .hero{
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.55);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+    }
+    h1{
+      margin: 0 0 8px 0;
+      font-size: clamp(1.8rem, 3vw, 2.3rem);
+      letter-spacing: -0.4px;
+    }
+    .subtitle{
+      margin: 0 0 14px 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 70ch;
+      line-height: 1.5;
+    }
+
+    .pillRow{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .pill{
+      display:inline-flex;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .section{
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.45);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .sectionTitle{
+      margin: 0 0 10px 0;
+      font-size: 1.05rem;
+      letter-spacing: 0.2px;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .card{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .cardTop{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .cardTitle{ font-weight: 800; }
+    .cardMeta{ color: var(--muted); font-size: 0.95rem; }
+    .cardBody{ color: var(--muted); line-height: 1.5; }
+
+    .tagGrid{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-weight: 700;
+    }
+    .btn:hover{ background: rgba(255,255,255,0.06); }
+
+    footer{
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      background: rgba(11,18,32,0.55);
+    }
+    .footerInner{
+      max-width: 980px;
+      margin:0 auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .small{ color: var(--muted); font-size: 0.95rem; }
+
+    @media (max-width: 860px){
+      .cards{ grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body style="background:#0b1220;color:#e6edf7;font-family:Arial,sans-serif;padding:40px;">
-  <h1>About Me</h1>
-  <p>Coming soon.</p>
-  <p><a href="index.html" style="color:#7dd3fc;">← Back home</a></p>
+
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="logo.png" class="brandLogo" alt="Logo">
+        <span>David Arthurian</span>
+      </div>
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="travel.html">Travel</a>
+        <a href="about.html" style="color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.03);">About</a>
+        <a href="game.html">Fun</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>About</h1>
+      <p class="subtitle">
+        <!-- Replace this with your real summary -->
+        Engineer who likes building practical systems, learning fast, and shipping projects.
+        This page is the quick overview — experience, skills, and ways to reach me.
+      </p>
+
+      <div class="pillRow">
+        <span class="pill">📍 Based in: <!-- e.g., Virginia / LA --> </span>
+        <span class="pill">⚙️ Focus: Hardware / Systems</span>
+        <span class="pill">🚀 Interests: Aerospace • Embedded • DSP</span>
+      </div>
+
+      <div class="btnRow">
+        <!-- Upload a PDF to your repo, then set href -->
+        <a class="btn" href="resume.pdf" target="_blank" rel="noopener">Download Resume</a>
+        <a class="btn" href="mailto:YOUR_EMAIL">Email Me</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="sectionTitle">Experience</h2>
+      <div class="cards">
+        <div class="card">
+          <div class="cardTop">
+            <div class="cardTitle">Your Current Role</div>
+            <div class="cardMeta">YYYY–Present</div>
+          </div>
+          <div class="cardBody">
+            1–2 lines about what you do + impact. (Keep it readable, not a resume dump.)
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardTop">
+            <div class="cardTitle">Previous Role</div>
+            <div class="cardMeta">YYYY–YYYY</div>
+          </div>
+          <div class="cardBody">
+            1–2 lines, ideally including something measurable or specific.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="sectionTitle">Skills</h2>
+      <div class="tagGrid">
+        <span class="pill">C/C++</span>
+        <span class="pill">Python</span>
+        <span class="pill">Git</span>
+        <span class="pill">PCB / CAD</span>
+        <span class="pill">FPGA (learning)</span>
+        <span class="pill">Embedded</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="sectionTitle">Projects</h2>
+      <div class="cards">
+        <div class="card">
+          <div class="cardTop">
+            <div class="cardTitle">Project Name</div>
+            <div class="cardMeta">1–2 keywords</div>
+          </div>
+          <div class="cardBody">
+            One sentence: what it is + why it’s cool.
+            <div style="margin-top:8px;">
+              <a href="#" target="_blank" rel="noopener">View →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardTop">
+            <div class="cardTitle">Project Name</div>
+            <div class="cardMeta">1–2 keywords</div>
+          </div>
+          <div class="cardBody">
+            One sentence description.
+            <div style="margin-top:8px;">
+              <a href="#" target="_blank" rel="noopener">View →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footerInner">
+      <div class="small">© <span id="year"></span> David Arthurian</div>
+      <div class="small" id="lastUpdated">Site last updated on 01/31/2026</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
