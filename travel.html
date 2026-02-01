@@ -87,7 +87,12 @@
       margin: 0 0 18px 0;
       color: var(--muted);
     }
-
+    
+    #countryCount{
+      color: var(--text);
+      font-weight: 800;
+    }
+    
     .grid{
       display: grid;
       grid-template-columns: 1fr;
@@ -176,9 +181,8 @@
 
   <main>
     <h1 class="pageTitle">Travel</h1>
-    <p class="subtitle">Trips & memories — click a trip to view the gallery.</p>
-
-    <div class="grid">
+    <p class="subtitle"><span id="countryCount"></span> Countries visited and counting, feel free to browse memory lane...</p>
+    <div class="grid" id="countries">
   <a class="trip" href="trips/russia.html">
     <div class="tripLeft">
       <div class="tripName">Russia</div>
@@ -309,6 +313,12 @@
   </footer>
 
   <script>
+
+    // Country counter (counts your rows)
+    const countryCount = document.querySelectorAll("#countries a.trip").length;
+    document.getElementById("countryCount").textContent = countryCount;
+    // (keep your existing year/lastUpdated code below if you have it)
+    
     document.getElementById("year").textContent = new Date().getFullYear();
     const lastUpdated = "01/31/2026";
     document.getElementById("lastUpdated").textContent = `Site last updated on ${lastUpdated}`;
