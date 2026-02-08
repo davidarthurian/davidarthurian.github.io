@@ -1,1 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cats | David Arthurian</title>
+  <meta name="description" content="Cat gallery — photos and videos." />
 
+  <link rel="icon" type="image/png" href="favicon-192.png" />
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a2e;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+      --link:#7dd3fc;
+      --linkHover:#a5f3fc;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    a{ color:var(--link); text-decoration:none; }
+    a:hover{ color:var(--linkHover); }
+
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+    }
+    .brandLogo{ height:28px; width:auto; display:block; }
+    nav{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .nav a{
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    .nav a:hover{
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+    .active{
+      color: var(--text) !important;
+      border-color: var(--border) !important;
+      background: rgba(255,255,255,0.03) !important;
+    }
+
+    main{
+      flex:1;
+      max-width: 980px;
+      width:100%;
+      margin:0 auto;
+      padding: 34px 18px 30px;
+    }
+
+    .hero{
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.55);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+      margin-bottom: 16px;
+    }
+    h1{ margin:0 0 6px 0; font-size: clamp(1.6rem, 3vw, 2.1rem); }
+    .subtitle{ margin:0; color: var(--muted); line-height:1.5; }
+
+    /* Gallery */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .tile{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      border-radius: 16px;
+      overflow:hidden;
+      cursor: zoom-in;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .tile:hover{
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.06);
+    }
+    .tile img, .tile video{
+      width:100%;
+      height: 220px;
+      display:block;
+      object-fit: cover;
+    }
+
+    /* Lightbox */
+    .lightbox{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+      z-index: 999;
+    }
+    .lightbox.open{ display:flex; }
+    .lightboxInner{
+      max-width: min(1100px, 96vw);
+      max-height: 90vh;
+    }
+    .lightboxInner img, .lightboxInner video{
+      width:100%;
+      height:100%;
+      max-height: 90vh;
+      object-fit: contain;
+      display:block;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.6);
+    }
+    .hint{
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.7);
+      font-size: 0.95rem;
+      user-select:none;
+    }
+
+    footer{
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      background: rgba(11,18,32,0.55);
+    }
+    .footerInner{
+      max-width: 980px;
+      margin:0 auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .small{ color: var(--muted); font-size: 0.95rem; }
+
+    @media (max-width: 820px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+      .tile img, .tile video{ height: 200px; }
+    }
+    @media (max-width: 520px){
+      .grid{ grid-template-columns: 1fr; }
+      .tile img, .tile video{ height: 240px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="logo.png" class="brandLogo" alt="Logo" />
+        <span>David Arthurian</span>
+      </div>
+
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="travel.html">Travel</a>
+        <a href="about.html">About</a>
+        <a class="active" href="cats.html">Cats</a>
+        <a href="game.html">Fun</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Cats</h1>
+      <p class="subtitle">Photo + video dump. Click anything to view it larger.</p>
+    </section>
+
+    <section class="grid" aria-label="Cat gallery">
+      <!-- Photos (update filenames to match what you upload in /cats/) -->
+      <div class="tile" data-type="img" data-src="cats/cat-01.jpg"><img src="cats/cat-01.jpg" alt="Cat photo 01"></div>
+      <div class="tile" data-type="img" data-src="cats/cat-02.jpg"><img src="cats/cat-02.jpg" alt="Cat photo 02"></div>
+      <div class="tile" data-type="img" data-src="cats/cat-03.jpg"><img src="cats/cat-03.jpg" alt="Cat photo 03"></div>
+
+      <!-- Videos (optional) -->
+      <div class="tile" data-type="video" data-src="cats/cat-vid-01.mp4">
+        <video src="cats/cat-vid-01.mp4" muted playsinline preload="metadata"></video>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footerInner">
+      <div class="small">© <span id="year"></span> David Arthurian</div>
+      <div class="small" id="lastUpdated">Site last updated on 02/01/2026</div>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-label="Media viewer">
+    <div class="lightboxInner" id="lightboxInner"></div>
+    <div class="hint">Click outside (or press Esc) to close</div>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const lightbox = document.getElementById("lightbox");
+    const inner = document.getElementById("lightboxInner");
+
+    document.querySelectorAll(".tile").forEach(tile => {
+      tile.addEventListener("click", () => {
+        const type = tile.dataset.type;
+        const src = tile.dataset.src;
+
+        inner.innerHTML = ""; // clear previous
+
+        if (type === "video") {
+          const v = document.createElement("video");
+          v.src = src;
+          v.controls = true;
+          v.autoplay = true;
+          v.playsInline = true;
+          inner.appendChild(v);
+        } else {
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = "Cat media";
+          inner.appendChild(img);
+        }
+
+        lightbox.classList.add("open");
+      });
+    });
+
+    function closeLightbox(){
+      lightbox.classList.remove("open");
+      inner.innerHTML = "";
+    }
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
+  </script>
+</body>
+</html>
