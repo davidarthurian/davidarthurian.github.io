@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake | David Arthurian</title>
+  <meta name="description" content="Snake game." />
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a2e;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+      --accent:#7dd3fc;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+
+    .wrap{
+      width: min(980px, 100%);
+      padding: 26px 18px 34px;
+    }
+
+    .topRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom: 14px;
+    }
+
+    h1{ margin:0; font-size: 1.8rem; }
+    .sub{ color: var(--muted); margin: 6px 0 0 0; }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-weight: 700;
+      cursor:pointer;
+      gap:8px;
+      user-select:none;
+      text-decoration:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,0.06); }
+
+    .panel{
+      position: relative;
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.55);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+    }
+
+    canvas{
+      display:block;
+      width: 100%;
+      max-width: 520px;
+      aspect-ratio: 1 / 1;
+      background:#020617;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    /* overlay for "Start" state */
+    .overlay{
+      position:absolute;
+      inset: 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none;
+    }
+    .overlayCard{
+      pointer-events:auto;
+      text-align:center;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(2,6,23,0.78);
+      backdrop-filter: blur(6px);
+      max-width: 420px;
+    }
+    .overlayTitle{ font-weight: 900; margin: 0 0 6px 0; }
+    .overlayText{ color: var(--muted); margin: 0 0 12px 0; line-height:1.45; }
+
+    .hud{
+      margin-top: 12px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .hud b{ color: var(--text); }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topRow">
+      <div>
+        <h1>🐍 Snake</h1>
+        <p class="sub">Arrow keys or WASD · Eat food · Don’t crash</p>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn" href="game.html">← Back</a>
+        <button class="btn" id="startBtn">Start</button>
+        <button class="btn" id="restartBtn">Restart</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <canvas id="game" width="520" height="520"></canvas>
+
+      <div class="overlay" id="overlay">
+        <div class="overlayCard">
+          <div class="overlayTitle">Press Start</div>
+          <p class="overlayText">Use <b>WASD</b> or <b>arrow keys</b> to move. High score is saved on this device.</p>
+          <button class="btn" id="overlayStartBtn">Start</button>
+        </div>
+      </div>
+
+      <div class="hud">
+        <div>Score: <b id="score">0</b></div>
+        <div>High Score: <b id="highScore">0</b></div>
+        <div>Status: <b id="status">Ready</b></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const gridSize = 20;
+const tileCount = canvas.width / gridSize;
+
+let snake, food, dx, dy, score;
+let running = false;
+let loopId = null;
+let speedMs = 110;
+
+const scoreEl = document.getElementById("score");
+const highScoreEl = document.getElementById("highScore");
+const statusEl = document.getElementById("status");
+const overlay = document.getElementById("overlay");
+
+let highScore = Number(localStorage.getItem("snakeHighScore") || 0);
+highScoreEl.textContent = highScore;
+
+function initState(){
+  snake = [{x:10,y:10}];
+  dx = 1; dy = 0;
+  score = 0;
+  scoreEl.textContent = score;
+  placeFood();
+  draw(); // show initial board
+}
+
+function startGame(){
+  if(running) return;
+  running = true;
+  overlay.style.display = "none";
+  statusEl.textContent = "Playing";
+  loopId = setInterval(update, speedMs);
+}
+
+function stopGame(statusText){
+  running = false;
+  if(loopId) clearInterval(loopId);
+  loopId = null;
+  statusEl.textContent = statusText || "Stopped";
+}
+
+function resetGame(){
+  stopGame("Ready");
+  overlay.style.display = "flex";
+  initState();
+}
+
+function placeFood(){
+  // avoid placing on snake
+  while(true){
+    const candidate = {
+      x: Math.floor(Math.random()*tileCount),
+      y: Math.floor(Math.random()*tileCount),
+    };
+    const onSnake = snake.some(s => s.x === candidate.x && s.y === candidate.y);
+    if(!onSnake){
+      food = candidate;
+      return;
+    }
+  }
+}
+
+function drawGrid(){
+  // subtle grid
+  ctx.strokeStyle = "rgba(255,255,255,0.06)";
+  ctx.lineWidth = 1;
+
+  for(let x=0; x<=canvas.width; x+=gridSize){
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+
+  for(let y=0; y<=canvas.height; y+=gridSize){
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  drawGrid();
+
+  // food
+  ctx.fillStyle = "#7dd3fc";
+  ctx.fillRect(food.x*gridSize, food.y*gridSize, gridSize, gridSize);
+
+  // snake
+  ctx.fillStyle = "#e6edf7";
+  snake.forEach((s,i)=>{
+    ctx.fillRect(s.x*gridSize, s.y*gridSize, gridSize-1, gridSize-1);
+  });
+}
+
+function update(){
+  const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+
+  // wall collision
+  if(head.x < 0 || head.y < 0 || head.x >= tileCount || head.y >= tileCount){
+    return gameOver();
+  }
+
+  // self collision
+  for(const s of snake){
+    if(s.x === head.x && s.y === head.y){
+      return gameOver();
+    }
+  }
+
+  snake.unshift(head);
+
+  if(head.x === food.x && head.y === food.y){
+    score++;
+    scoreEl.textContent = score;
+    placeFood();
+  } else {
+    snake.pop();
+  }
+
+  draw();
+}
+
+function gameOver(){
+  stopGame("Game Over");
+  if(score > highScore){
+    highScore = score;
+    localStorage.setItem("snakeHighScore", String(highScore));
+    highScoreEl.textContent = highScore;
+  }
+  overlay.style.display = "flex";
+  overlay.querySelector(".overlayTitle").textContent = "Game Over";
+  overlay.querySelector(".overlayText").textContent = "Hit Start to play again.";
+}
+
+document.addEventListener("keydown", e=>{
+  const key = e.key.toLowerCase();
+
+  // prevent scrolling with arrow keys on some browsers
+  if(["arrowup","arrowdown","arrowleft","arrowright"].includes(key)) e.preventDefault();
+
+  // don’t allow reversing into itself
+  if((key==="arrowup"||key==="w") && dy===0){ dx=0; dy=-1; }
+  if((key==="arrowdown"||key==="s") && dy===0){ dx=0; dy=1; }
+  if((key==="arrowleft"||key==="a") && dx===0){ dx=-1; dy=0; }
+  if((key==="arrowright"||key==="d") && dx===0){ dx=1; dy=0; }
+});
+
+document.getElementById("startBtn").addEventListener("click", startGame);
+document.getElementById("overlayStartBtn").addEventListener("click", () => {
+  // reset overlay text back to normal start state when replaying
+  overlay.querySelector(".overlayTitle").textContent = "Press Start";
+  overlay.querySelector(".overlayText").innerHTML = "Use <b>WASD</b> or <b>arrow keys</b> to move. High score is saved on this device.";
+  startGame();
+});
+document.getElementById("restartBtn").addEventListener("click", resetGame);
+
+// init (NO auto-start)
+initState();
+overlay.style.display = "flex";
+statusEl.textContent = "Ready";
+</script>
+
+</body>
+</html>
