@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fun | Snake Game</title>
+  <title>Fun | David Arthurian</title>
+  <meta name="description" content="Fun stuff — little games and experiments." />
 
   <style>
     :root{
@@ -11,187 +12,155 @@
       --panel:#0f1a2e;
       --text:#e6edf7;
       --muted:#9fb0c6;
-      --accent:#7dd3fc;
-      --border:rgba(255,255,255,0.1);
+      --border:rgba(255,255,255,0.10);
+      --link:#7dd3fc;
     }
 
     *{ box-sizing:border-box; }
-
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui;
-      background: var(--bg);
-      color: var(--text);
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
       display:flex;
       flex-direction:column;
-      min-height:100vh;
+    }
+
+    a{ color:var(--link); text-decoration:none; }
+
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
       align-items:center;
-      justify-content:center;
+      justify-content:space-between;
+      gap:12px;
     }
-
-    h1{
-      margin-bottom: 6px;
-      font-size: 2rem;
+    .brand{
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: var(--text);
+      display:flex;
+      align-items:center;
+      gap:10px;
     }
-
-    .subtitle{
+    .brandLogo{ height: 16px; width:auto; display:block; }
+    nav{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .nav a{
       color: var(--muted);
-      margin-bottom: 18px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    .nav a:hover{
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255,255,255,0.03);
     }
 
-    .panel{
-      background: rgba(15,26,46,0.6);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+    main{
+      flex:1;
+      max-width: 980px;
+      width:100%;
+      margin:0 auto;
+      padding: 34px 18px 30px;
     }
 
-    canvas{
-      display:block;
-      background:#020617;
-      border-radius: 12px;
-      border:1px solid var(--border);
+    h1{ margin:0 0 8px 0; font-size: clamp(1.8rem, 3vw, 2.2rem); }
+    .subtitle{ color: var(--muted); margin: 0 0 18px 0; }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
     }
 
-    .hud{
+    .row{
       display:flex;
       justify-content:space-between;
-      margin-top: 12px;
-      font-size:0.95rem;
-      color: var(--muted);
+      align-items:center;
+      gap:14px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.55);
+      border-radius: 16px;
+      transition: transform .12s ease, background .12s ease;
     }
+    .row:hover{ transform: translateY(-2px); background: rgba(15,26,46,0.7); }
 
-    .btn{
-      margin-top: 14px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border:1px solid var(--border);
+    .left{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .title{ font-weight:800; color: var(--text); }
+    .desc{ color: var(--muted); font-size: 0.95rem; }
+
+    .pill{
+      border: 1px solid var(--border);
       background: rgba(255,255,255,0.03);
-      color: var(--text);
-      font-weight:600;
-      cursor:pointer;
-    }
-
-    .btn:hover{
-      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      white-space:nowrap;
     }
   </style>
 </head>
 
 <body>
-
-  <h1>🐍 Snake</h1>
-  <div class="subtitle">Arrow keys or WASD · Eat food · Don’t crash</div>
-
-  <div class="panel">
-    <canvas id="game" width="400" height="400"></canvas>
-
-    <div class="hud">
-      <div>Score: <span id="score">0</span></div>
-      <div>High Score: <span id="highScore">0</span></div>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="logo.png" alt="DWA Logo" class="brandLogo">
+        <span>David Arthurian</span>
+      </div>
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="projects.html">Projects</a>
+        <a href="travel.html">Travel</a>
+        <a href="cats.html">Cats</a>
+        <a href="game.html" style="color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.03);">Fun</a>
+      </nav>
     </div>
+  </header>
 
-    <button class="btn" onclick="resetGame()">Restart</button>
-  </div>
+  <main>
+    <h1>Fun</h1>
+    <p class="subtitle">Little games + experiments. More coming soon.</p>
 
-<script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+    <div class="list">
+      <a class="row" href="snake.html">
+        <div class="left">
+          <div class="title">🐍 Snake</div>
+          <div class="desc">Classic snake with score + high score.</div>
+        </div>
+        <div class="pill">Play →</div>
+      </a>
 
-const gridSize = 20;
-const tileCount = canvas.width / gridSize;
-
-let snake, food, dx, dy, score;
-let speed = 120;
-let gameLoop;
-
-const scoreEl = document.getElementById("score");
-const highScoreEl = document.getElementById("highScore");
-
-let highScore = localStorage.getItem("snakeHighScore") || 0;
-highScoreEl.textContent = highScore;
-
-function resetGame(){
-  clearInterval(gameLoop);
-  snake = [{x:10,y:10}];
-  dx = 1;
-  dy = 0;
-  score = 0;
-  scoreEl.textContent = score;
-  placeFood();
-  gameLoop = setInterval(update, speed);
-}
-
-function placeFood(){
-  food = {
-    x: Math.floor(Math.random()*tileCount),
-    y: Math.floor(Math.random()*tileCount)
-  };
-}
-
-function update(){
-  const head = {x: snake[0].x + dx, y: snake[0].y + dy};
-
-  // wall collision
-  if(head.x < 0 || head.y < 0 || head.x >= tileCount || head.y >= tileCount){
-    return gameOver();
-  }
-
-  // self collision
-  for(let s of snake){
-    if(s.x === head.x && s.y === head.y){
-      return gameOver();
-    }
-  }
-
-  snake.unshift(head);
-
-  if(head.x === food.x && head.y === food.y){
-    score++;
-    scoreEl.textContent = score;
-    placeFood();
-  } else {
-    snake.pop();
-  }
-
-  draw();
-}
-
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // food
-  ctx.fillStyle = "#7dd3fc";
-  ctx.fillRect(food.x*gridSize, food.y*gridSize, gridSize, gridSize);
-
-  // snake
-  ctx.fillStyle = "#e6edf7";
-  snake.forEach((s,i)=>{
-    ctx.fillRect(s.x*gridSize, s.y*gridSize, gridSize-1, gridSize-1);
-  });
-}
-
-function gameOver(){
-  clearInterval(gameLoop);
-  if(score > highScore){
-    highScore = score;
-    localStorage.setItem("snakeHighScore", highScore);
-    highScoreEl.textContent = highScore;
-  }
-  alert("Game Over 🐍");
-}
-
-document.addEventListener("keydown", e=>{
-  const key = e.key.toLowerCase();
-  if((key==="arrowup"||key==="w") && dy===0){ dx=0; dy=-1; }
-  if((key==="arrowdown"||key==="s") && dy===0){ dx=0; dy=1; }
-  if((key==="arrowleft"||key==="a") && dx===0){ dx=-1; dy=0; }
-  if((key==="arrowright"||key==="d") && dx===0){ dx=1; dy=0; }
-});
-
-resetGame();
-</script>
-
+      <!-- Add more games later -->
+      <div class="row" style="opacity:.7;">
+        <div class="left">
+          <div class="title">🎯 Coming soon</div>
+          <div class="desc">More games will show up here.</div>
+        </div>
+        <div class="pill">Soon</div>
+      </div>
+    </div>
+  </main>
 </body>
 </html>
