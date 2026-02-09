@@ -2,9 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Snake | David Arthurian</title>
-  <meta name="description" content="Snake game." />
+  <meta name="description" content="Snake game — play on desktop or mobile." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="logo-favicon-192.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="logo-favicon-192.png">
+  <link rel="icon" sizes="192x192" href="logo-favicon-192.png">
+  <link rel="icon" sizes="512x512" href="logo-favicon-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo-favicon-512.png">
 
   <style>
     :root{
@@ -19,306 +25,546 @@
     *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui;
-      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
-                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.10), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.08), transparent 60%),
                   var(--bg);
       color: var(--text);
       min-height:100vh;
       display:flex;
       flex-direction:column;
-      align-items:center;
     }
 
-    .wrap{
-      width: min(980px, 100%);
-      padding: 26px 18px 34px;
+    /* Header (matches your index style) */
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: var(--text);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .brandLogo{
+      height: 16px;
+      width: auto;
+      display:block;
+    }
+    nav{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .nav a{
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      text-decoration:none;
+    }
+    .nav a:hover{
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+
+    main{
+      flex:1;
+      display:flex;
+      justify-content:center;
+      padding: 28px 18px 36px;
+    }
+
+    .panel{
+      width:min(980px, 100%);
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.55);
+      border-radius: 22px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+      overflow:hidden;
+      padding: 18px;
     }
 
     .topRow{
       display:flex;
+      align-items:flex-start;
       justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom: 14px;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
     }
 
-    h1{ margin:0; font-size: 1.8rem; }
-    .sub{ color: var(--muted); margin: 6px 0 0 0; }
+    .titleBlock h1{
+      margin:0 0 6px 0;
+      font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+      letter-spacing: -0.4px;
+    }
+    .titleBlock p{
+      margin:0;
+      color: var(--muted);
+      line-height:1.4;
+      max-width: 70ch;
+    }
 
-    .btn{
-      display:inline-flex;
+    .hud{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
       align-items:center;
-      justify-content:center;
-      padding: 10px 12px;
+      justify-content:flex-end;
+    }
+    .pill{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    .pill b{ color: var(--text); }
+    .btn{
       border-radius: 12px;
       border: 1px solid var(--border);
       background: rgba(255,255,255,0.03);
       color: var(--text);
       font-weight: 700;
+      padding: 9px 12px;
       cursor:pointer;
-      gap:8px;
-      user-select:none;
-      text-decoration:none;
     }
     .btn:hover{ background: rgba(255,255,255,0.06); }
 
-    .panel{
+    .boardWrap{
       position: relative;
       border: 1px solid var(--border);
-      background: rgba(15,26,46,0.55);
       border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+      overflow:hidden;
+      background: rgba(0,0,0,0.18);
     }
 
     canvas{
       display:block;
-      width: 100%;
-      max-width: 520px;
-      aspect-ratio: 1 / 1;
-      background:#020617;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+      width:100%;
+      height:auto;
+      touch-action: none;
     }
 
-    /* overlay for "Start" state */
+    /* Overlay */
     .overlay{
       position:absolute;
-      inset: 16px;
+      inset:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      pointer-events:none;
+      background: rgba(11,18,32,0.78);
+      backdrop-filter: blur(6px);
+      padding: 18px;
     }
     .overlayCard{
-      pointer-events:auto;
-      text-align:center;
-      padding: 14px 16px;
-      border-radius: 16px;
+      width:min(520px, 100%);
       border: 1px solid var(--border);
-      background: rgba(2,6,23,0.78);
-      backdrop-filter: blur(6px);
-      max-width: 420px;
+      background: rgba(15,26,46,0.75);
+      border-radius: 18px;
+      padding: 18px;
+      text-align:center;
     }
-    .overlayTitle{ font-weight: 900; margin: 0 0 6px 0; }
-    .overlayText{ color: var(--muted); margin: 0 0 12px 0; line-height:1.45; }
+    .overlayTitle{
+      margin:0 0 8px 0;
+      font-size: 1.35rem;
+      letter-spacing: -0.3px;
+    }
+    .overlayText{
+      margin:0 0 14px 0;
+      color: var(--muted);
+      line-height:1.5;
+    }
 
-    .hud{
-      margin-top: 12px;
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
+    /* Mobile controls */
+    .mobileControls{
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 64px 64px 64px;
+      grid-template-rows: 56px 56px 56px;
+      gap: 10px;
+      justify-content: center;
+    }
+    .padBtn{
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-weight: 900;
+      font-size: 1.1rem;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .padBtn:active{
+      transform: translateY(1px);
+      background: rgba(255,255,255,0.06);
+    }
+    .padCenter{
+      color: var(--accent);
+    }
+    .hint{
+      margin-top: 10px;
       color: var(--muted);
       font-size: 0.95rem;
+      line-height:1.4;
+      text-align:center;
     }
-    .hud b{ color: var(--text); }
+
+    @media (min-width: 860px){
+      .mobileControls{ display:none; }
+      .hint{ text-align:left; }
+    }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="topRow">
-      <div>
-        <h1>🐍 Snake</h1>
-        <p class="sub">Arrow keys or WASD · Eat food · Don’t crash</p>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="logo.png" alt="DWA Logo" class="brandLogo">
+        <span>David Arthurian</span>
       </div>
-
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a class="btn" href="game.html">← Back</a>
-        <button class="btn" id="startBtn">Start</button>
-        <button class="btn" id="restartBtn">Restart</button>
-      </div>
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="projects.html">Projects</a>
+        <a href="travel.html">Travel</a>
+        <a href="cats.html">Cats</a>
+        <a href="game.html" style="color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.03);">Fun</a>
+      </nav>
     </div>
+  </header>
 
-    <div class="panel">
-      <canvas id="game" width="520" height="520"></canvas>
+  <main>
+    <section class="panel" aria-label="Snake game panel">
+      <div class="topRow">
+        <div class="titleBlock">
+          <h1>Snake</h1>
+          <p>Eat the food, don’t hit walls or yourself. Works on desktop + mobile.</p>
+        </div>
 
-      <div class="overlay" id="overlay">
-        <div class="overlayCard">
-          <div class="overlayTitle">Press Start</div>
-          <p class="overlayText">Use <b>WASD</b> or <b>arrow keys</b> to move. High score is saved on this device.</p>
-          <button class="btn" id="overlayStartBtn">Start</button>
+        <div class="hud" aria-label="Game controls and stats">
+          <div class="pill">Score: <b id="score">0</b></div>
+          <div class="pill">High: <b id="highScore">0</b></div>
+          <div class="pill">Status: <b id="status">Ready</b></div>
+          <button class="btn" id="startBtn" type="button">Start</button>
+          <button class="btn" id="restartBtn" type="button">Restart</button>
         </div>
       </div>
 
-      <div class="hud">
-        <div>Score: <b id="score">0</b></div>
-        <div>High Score: <b id="highScore">0</b></div>
-        <div>Status: <b id="status">Ready</b></div>
+      <div class="boardWrap">
+        <canvas id="game" width="800" height="520" aria-label="Snake board"></canvas>
+
+        <div class="overlay" id="overlay" aria-label="Start overlay">
+          <div class="overlayCard">
+            <h2 class="overlayTitle">Press Start</h2>
+            <p class="overlayText">
+              Use <b>WASD</b> or <b>arrow keys</b> to move.
+              On mobile, use the buttons below.
+            </p>
+            <button class="btn" id="overlayStartBtn" type="button">Start</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-<script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+      <div class="mobileControls" aria-label="Mobile controls">
+        <div></div>
+        <button class="padBtn" data-dir="up" aria-label="Up">▲</button>
+        <div></div>
 
-const gridSize = 20;
-const tileCount = canvas.width / gridSize;
+        <button class="padBtn" data-dir="left" aria-label="Left">◀</button>
+        <button class="padBtn padCenter" id="mobileStart" aria-label="Start/Pause">▶</button>
+        <button class="padBtn" data-dir="right" aria-label="Right">▶</button>
 
-let snake, food, dx, dy, score;
-let running = false;
-let loopId = null;
-let speedMs = 110;
+        <div></div>
+        <button class="padBtn" data-dir="down" aria-label="Down">▼</button>
+        <div></div>
+      </div>
 
-const scoreEl = document.getElementById("score");
-const highScoreEl = document.getElementById("highScore");
-const statusEl = document.getElementById("status");
-const overlay = document.getElementById("overlay");
+      <div class="hint">
+        Tip: You can click <b>Start</b> again after Game Over to instantly play a fresh run.
+      </div>
+    </section>
+  </main>
 
-let highScore = Number(localStorage.getItem("snakeHighScore") || 0);
-highScoreEl.textContent = highScore;
+  <script>
+    // ====== Config ======
+    const cols = 28;
+    const rows = 18;
+    const cell = 28;       // internal render scale
+    const speedMs = 95;
 
-function initState(){
-  snake = [{x:10,y:10}];
-  dx = 1; dy = 0;
-  score = 0;
-  scoreEl.textContent = score;
-  placeFood();
-  draw(); // show initial board
-}
+    // ====== DOM ======
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const scoreEl = document.getElementById("score");
+    const highScoreEl = document.getElementById("highScore");
+    const statusEl = document.getElementById("status");
+    const overlay = document.getElementById("overlay");
 
-function startGame(){
-  if(running) return;
-  running = true;
-  overlay.style.display = "none";
-  statusEl.textContent = "Playing";
-  loopId = setInterval(update, speedMs);
-}
+    // Set internal canvas resolution based on grid
+    canvas.width = cols * cell;
+    canvas.height = rows * cell;
 
-function stopGame(statusText){
-  running = false;
-  if(loopId) clearInterval(loopId);
-  loopId = null;
-  statusEl.textContent = statusText || "Stopped";
-}
+    // ====== State ======
+    let snake = [];
+    let food = {x: 0, y: 0};
+    let dx = 1, dy = 0;   // moving right initially
+    let score = 0;
 
-function resetGame(){
-  stopGame("Ready");
-  overlay.style.display = "flex";
-  initState();
-}
+    let running = false;
+    let loopId = null;
+    let gameEnded = false;
 
-function placeFood(){
-  // avoid placing on snake
-  while(true){
-    const candidate = {
-      x: Math.floor(Math.random()*tileCount),
-      y: Math.floor(Math.random()*tileCount),
-    };
-    const onSnake = snake.some(s => s.x === candidate.x && s.y === candidate.y);
-    if(!onSnake){
-      food = candidate;
-      return;
-    }
-  }
-}
-
-function drawGrid(){
-  // subtle grid
-  ctx.strokeStyle = "rgba(255,255,255,0.06)";
-  ctx.lineWidth = 1;
-
-  for(let x=0; x<=canvas.width; x+=gridSize){
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvas.height);
-    ctx.stroke();
-  }
-
-  for(let y=0; y<=canvas.height; y+=gridSize){
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(canvas.width, y);
-    ctx.stroke();
-  }
-}
-
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  drawGrid();
-
-  // food
-  ctx.fillStyle = "#7dd3fc";
-  ctx.fillRect(food.x*gridSize, food.y*gridSize, gridSize, gridSize);
-
-  // snake
-  ctx.fillStyle = "#e6edf7";
-  snake.forEach((s,i)=>{
-    ctx.fillRect(s.x*gridSize, s.y*gridSize, gridSize-1, gridSize-1);
-  });
-}
-
-function update(){
-  const head = {x: snake[0].x + dx, y: snake[0].y + dy};
-
-  // wall collision
-  if(head.x < 0 || head.y < 0 || head.x >= tileCount || head.y >= tileCount){
-    return gameOver();
-  }
-
-  // self collision
-  for(const s of snake){
-    if(s.x === head.x && s.y === head.y){
-      return gameOver();
-    }
-  }
-
-  snake.unshift(head);
-
-  if(head.x === food.x && head.y === food.y){
-    score++;
-    scoreEl.textContent = score;
-    placeFood();
-  } else {
-    snake.pop();
-  }
-
-  draw();
-}
-
-function gameOver(){
-  stopGame("Game Over");
-  if(score > highScore){
-    highScore = score;
-    localStorage.setItem("snakeHighScore", String(highScore));
+    let highScore = Number(localStorage.getItem("snakeHighScore") || "0");
     highScoreEl.textContent = highScore;
-  }
-  overlay.style.display = "flex";
-  overlay.querySelector(".overlayTitle").textContent = "Game Over";
-  overlay.querySelector(".overlayText").textContent = "Hit Start to play again.";
-}
 
-document.addEventListener("keydown", e=>{
-  const key = e.key.toLowerCase();
+    // ====== Helpers ======
+    function randInt(max){
+      return Math.floor(Math.random() * max);
+    }
 
-  // prevent scrolling with arrow keys on some browsers
-  if(["arrowup","arrowdown","arrowleft","arrowright"].includes(key)) e.preventDefault();
+    function sameCell(a,b){
+      return a.x === b.x && a.y === b.y;
+    }
 
-  // don’t allow reversing into itself
-  if((key==="arrowup"||key==="w") && dy===0){ dx=0; dy=-1; }
-  if((key==="arrowdown"||key==="s") && dy===0){ dx=0; dy=1; }
-  if((key==="arrowleft"||key==="a") && dx===0){ dx=-1; dy=0; }
-  if((key==="arrowright"||key==="d") && dx===0){ dx=1; dy=0; }
-});
+    function placeFood(){
+      // keep trying until it doesn't spawn on the snake
+      let tries = 0;
+      while(true){
+        const candidate = { x: randInt(cols), y: randInt(rows) };
+        const onSnake = snake.some(seg => sameCell(seg, candidate));
+        if(!onSnake){
+          food = candidate;
+          return;
+        }
+        tries++;
+        if(tries > 2000){
+          // fail-safe
+          food = {x: 0, y: 0};
+          return;
+        }
+      }
+    }
 
-document.getElementById("startBtn").addEventListener("click", startGame);
-document.getElementById("overlayStartBtn").addEventListener("click", () => {
-  // reset overlay text back to normal start state when replaying
-  overlay.querySelector(".overlayTitle").textContent = "Press Start";
-  overlay.querySelector(".overlayText").innerHTML = "Use <b>WASD</b> or <b>arrow keys</b> to move. High score is saved on this device.";
-  startGame();
-});
-document.getElementById("restartBtn").addEventListener("click", resetGame);
+    function drawGrid(){
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,0.06)";
+      ctx.lineWidth = 1;
+      for(let x=0; x<=cols; x++){
+        ctx.beginPath();
+        ctx.moveTo(x*cell + 0.5, 0);
+        ctx.lineTo(x*cell + 0.5, rows*cell);
+        ctx.stroke();
+      }
+      for(let y=0; y<=rows; y++){
+        ctx.beginPath();
+        ctx.moveTo(0, y*cell + 0.5);
+        ctx.lineTo(cols*cell, y*cell + 0.5);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
 
-// init (NO auto-start)
-initState();
-overlay.style.display = "flex";
-statusEl.textContent = "Ready";
-</script>
+    function draw(){
+      // background
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
 
+      // grid
+      drawGrid();
+
+      // food
+      ctx.fillStyle = "#7dd3fc";
+      ctx.fillRect(food.x*cell, food.y*cell, cell, cell);
+
+      // snake
+      for(let i=0;i<snake.length;i++){
+        const seg = snake[i];
+        ctx.fillStyle = (i === 0) ? "#e6edf7" : "rgba(230,237,247,0.78)";
+        ctx.fillRect(seg.x*cell, seg.y*cell, cell, cell);
+      }
+    }
+
+    function initState(){
+      snake = [{x: 10, y: 9}];
+      dx = 1; dy = 0;
+      score = 0;
+      scoreEl.textContent = score;
+      placeFood();
+      gameEnded = false;
+      statusEl.textContent = "Ready";
+      draw();
+    }
+
+    function stopGame(statusText){
+      running = false;
+      if(loopId) clearInterval(loopId);
+      loopId = null;
+      if(statusText) statusEl.textContent = statusText;
+    }
+
+    function gameOver(){
+      stopGame("Game Over");
+      gameEnded = true;
+
+      if(score > highScore){
+        highScore = score;
+        localStorage.setItem("snakeHighScore", String(highScore));
+        highScoreEl.textContent = highScore;
+      }
+
+      overlay.style.display = "flex";
+      overlay.querySelector(".overlayTitle").textContent = "Game Over";
+      overlay.querySelector(".overlayText").textContent = "Hit Start to play again.";
+    }
+
+    function startGame(){
+      // Always re-init if we're coming from Game Over or first-time state.
+      if(!running){
+        if(gameEnded || statusEl.textContent !== "Playing"){
+          initState();
+        }
+      }
+
+      if(running) return;
+
+      running = true;
+      gameEnded = false;
+      statusEl.textContent = "Playing";
+      overlay.style.display = "none";
+
+      if(loopId) clearInterval(loopId);
+      loopId = setInterval(update, speedMs);
+    }
+
+    function resetGame(){
+      stopGame("Ready");
+      overlay.style.display = "flex";
+      overlay.querySelector(".overlayTitle").textContent = "Press Start";
+      overlay.querySelector(".overlayText").innerHTML =
+        "Use <b>WASD</b> or <b>arrow keys</b> to move. On mobile, use the buttons below.";
+      initState();
+    }
+
+    function setDirection(dir){
+      // Prevent reverse into itself
+      if(dir === "up" && dy === 0){ dx = 0; dy = -1; }
+      if(dir === "down" && dy === 0){ dx = 0; dy = 1; }
+      if(dir === "left" && dx === 0){ dx = -1; dy = 0; }
+      if(dir === "right" && dx === 0){ dx = 1; dy = 0; }
+    }
+
+    function update(){
+      const head = snake[0];
+      const next = { x: head.x + dx, y: head.y + dy };
+
+      // wall collision
+      if(next.x < 0 || next.x >= cols || next.y < 0 || next.y >= rows){
+        gameOver();
+        return;
+      }
+
+      // self collision
+      if(snake.some(seg => sameCell(seg, next))){
+        gameOver();
+        return;
+      }
+
+      // move
+      snake.unshift(next);
+
+      // eat
+      if(sameCell(next, food)){
+        score++;
+        scoreEl.textContent = score;
+        placeFood();
+      } else {
+        snake.pop();
+      }
+
+      draw();
+    }
+
+    // ====== Controls ======
+    document.addEventListener("keydown", (e)=>{
+      const k = e.key.toLowerCase();
+
+      if(k === " "){
+        e.preventDefault();
+        if(running){
+          stopGame("Paused");
+          overlay.style.display = "flex";
+          overlay.querySelector(".overlayTitle").textContent = "Paused";
+          overlay.querySelector(".overlayText").textContent = "Press Start to resume.";
+          gameEnded = false;
+        } else {
+          startGame();
+        }
+        return;
+      }
+
+      if(!running) startGame();
+
+      if(k === "arrowup" || k === "w") setDirection("up");
+      if(k === "arrowdown" || k === "s") setDirection("down");
+      if(k === "arrowleft" || k === "a") setDirection("left");
+      if(k === "arrowright" || k === "d") setDirection("right");
+    });
+
+    // Desktop buttons
+    document.getElementById("overlayStartBtn").addEventListener("click", startGame);
+    document.getElementById("startBtn").addEventListener("click", startGame);
+    document.getElementById("restartBtn").addEventListener("click", resetGame);
+
+    // Mobile: arrows
+    document.querySelectorAll(".padBtn[data-dir]").forEach(btn=>{
+      const dir = btn.getAttribute("data-dir");
+      btn.addEventListener("pointerdown", (e)=>{
+        e.preventDefault();
+        if(!running) startGame();
+        setDirection(dir);
+      });
+    });
+
+    // Mobile start/pause
+    document.getElementById("mobileStart").addEventListener("click", ()=>{
+      if(running){
+        stopGame("Paused");
+        overlay.style.display = "flex";
+        overlay.querySelector(".overlayTitle").textContent = "Paused";
+        overlay.querySelector(".overlayText").textContent = "Press Start to resume.";
+        gameEnded = false;
+      } else {
+        startGame();
+      }
+    });
+
+    // ====== Init ======
+    initState();
+    // overlay is visible by default; game won't auto-start
+  </script>
 </body>
 </html>
