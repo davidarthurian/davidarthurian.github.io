@@ -1,632 +1,631 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fun | Gobblet Tic-Tac-Toe</title>
-  <style>
-    :root{
-      --bg:#0b1220;
-      --panel:#0f1a2e;
-      --text:#e6edf7;
-      --muted:#9fb0c6;
-      --border:rgba(255,255,255,0.10);
-      --blue:#60a5fa;   /* player */
-      --red:#fb7185;    /* cpu */
-      --chip: rgba(255,255,255,0.05);
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding: 18px;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color: var(--text);
-      background:
-        radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
-        radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
-        var(--bg);
-    }
-
-    .wrap{
-      width:min(980px, 100%);
-      border:1px solid var(--border);
-      background: rgba(15,26,46,0.55);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
-    }
-
-    .top{
-      display:flex;
-      justify-content:space-between;
-      gap: 12px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-bottom: 12px;
-    }
-
-    .title{
-      font-weight: 900;
-      letter-spacing: -0.2px;
-    }
-
-    .hud{
-      display:flex;
-      gap: 10px;
-      flex-wrap:wrap;
-      color: var(--muted);
-      font-size: 0.95rem;
-      align-items:center;
-    }
-
-    .pill{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      border-radius: 999px;
-      padding: 6px 10px;
-      white-space:nowrap;
-    }
-
-    .btn{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-weight: 700;
-      cursor:pointer;
-    }
-    .btn:hover{ background: rgba(255,255,255,0.07); }
-
-    .layout{
-      display:grid;
-      grid-template-columns: 1fr 340px;
-      gap: 14px;
-      align-items:start;
-    }
-
-    .board{
-      border:1px solid var(--border);
-      border-radius: 16px;
-      overflow:hidden;
-      background: rgba(255,255,255,0.03);
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      aspect-ratio: 1 / 1;
-    }
-
-    .cell{
-      position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-right:1px solid var(--border);
-      border-bottom:1px solid var(--border);
-      cursor:pointer;
-      user-select:none;
-      min-height: 120px;
-    }
-    .cell:nth-child(3n){ border-right:none; }
-    .cell:nth-last-child(-n+3){ border-bottom:none; }
-    .cell:hover{ background: rgba(255,255,255,0.03); }
-
-    /* grid lines feel stronger */
-    .board{ box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02); }
-
-    .piece{
-      position:absolute;
-      border-radius: 999px;
-      opacity: 0.95;
-      border: 2px solid rgba(255,255,255,0.25);
-      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
-    }
-    .blue{ background: rgba(96,165,250,0.95); }
-    .red{ background: rgba(251,113,133,0.95); }
-
-    /* sizes (relative to cell) */
-    .s{ width: 32%; height: 32%; }
-    .m{ width: 52%; height: 52%; }
-    .l{ width: 74%; height: 74%; }
-
-    .side{
-      border:1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      background: rgba(255,255,255,0.03);
-    }
-
-    .sectionTitle{
-      font-weight: 900;
-      margin: 0 0 10px 0;
-      letter-spacing:-0.2px;
-    }
-
-    .info{
-      color: var(--muted);
-      line-height: 1.4;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-    }
-
-    .piecePicker{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .pickRow{
-      display:flex;
-      gap: 10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .pickLabel{
-      min-width: 70px;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--chip);
-      cursor:pointer;
-      user-select:none;
-    }
-    .chip:hover{ background: rgba(255,255,255,0.08); }
-    .chip[aria-disabled="true"]{
-      opacity: 0.45;
-      cursor:not-allowed;
-    }
-    .chip.active{
-      outline: 2px solid rgba(125,211,252,0.45);
-      background: rgba(125,211,252,0.10);
-    }
-
-    .dot{
-      border-radius: 999px;
-      border: 2px solid rgba(255,255,255,0.25);
-      background: rgba(96,165,250,0.95);
-      flex: 0 0 auto;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.25);
-    }
-    .dot.s{ width: 16px; height: 16px; }
-    .dot.m{ width: 24px; height: 24px; }
-    .dot.l{ width: 32px; height: 32px; }
-
-    .counts{
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-top: 6px;
-    }
-
-    .legend{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 10px;
-    }
-
-    .key{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      border-radius: 999px;
-      padding: 6px 10px;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-    .swatch{
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-    }
-    .swatch.blue{ background: var(--blue); }
-    .swatch.red{ background: var(--red); }
-
-    .toast{
-      margin-top: 12px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      border-radius: 14px;
-      padding: 10px 12px;
-      color: var(--muted);
-      line-height: 1.35;
-      font-size: 0.95rem;
-    }
-
-    @media (max-width: 860px){
-      .layout{ grid-template-columns: 1fr; }
-      .cell{ min-height: 110px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="top">
-      <div class="title">Gobblet Tic-Tac-Toe</div>
-      <div class="hud">
-        <span class="pill">Turn: <b id="turn">—</b></span>
-        <span class="pill">Status: <b id="status">Ready</b></span>
-        <button class="btn" id="startBtn">Start</button>
-        <button class="btn" id="resetBtn">Reset</button>
-      </div>
-    </div>
-
-    <div class="layout">
-      <div class="board" id="board" aria-label="Game board"></div>
-
-      <aside class="side">
-        <div class="sectionTitle">Your pieces (Blue)</div>
-        <div class="info">
-          You have <b>2 small</b>, <b>2 medium</b>, <b>2 large</b>.
-          You can place a piece on a cell if it’s empty OR the top piece is smaller than your piece.
-        </div>
-
-        <div class="piecePicker" id="picker"></div>
-
-        <div class="legend">
-          <div class="key"><span class="swatch blue"></span> You</div>
-          <div class="key"><span class="swatch red"></span> Computer</div>
-        </div>
-
-        <div class="toast" id="hint">
-          Click <b>Start</b>, pick a size, then tap a cell.
-        </div>
-      </aside>
-    </div>
-  </div>
-
 <script>
 (() => {
-  // Sizes: 1=small, 2=medium, 3=large
-  const SIZE_INFO = {
-    1: { key: "s", label: "Small", emoji: "●" },
-    2: { key: "m", label: "Medium", emoji: "●" },
-    3: { key: "l", label: "Large", emoji: "●" },
-  };
+  // Tile legend:
+  // 0 = empty corridor (used for tunnel row)
+  // 1 = wall
+  // 2 = pellet
+  // 3 = power pellet
+  // 4 = ghost house floor (walkable)
 
-  // Each cell holds a stack of pieces: [{owner:'P'|'C', size:1|2|3}, ...]
-  const stacks = Array.from({length:9}, () => []);
+  const MAP = [
+    "1111111111111111111111111111",
+    "1222222222222112222222222221",
+    "1211112111112112111112111121",
+    "1311112111112112111112111131",
+    "1211112111112112111112111121",
+    "1222222222222222222222222221",
+    "1211112112111111112112111121",
+    "1211112112111111112112111121",
+    "1222222112222112222112222221",
+    "1111112111112112111112111111",
+    "0000012111112112111112100000",
+    "1111112112111111112112111111",
+    "2222222222114444112222222222",
+    "1111112112111111112112111111",
+    "0000012111112112111112100000",
+    "1111112112111111112112111111",
+    "1222222222222112222222222221",
+    "1211112111112112111112111121",
+    "1311122222222222222222111131",
+    "1111122112111111112112111111",
+    "1222222112111111112112222221",
+    "1211111112222112222111111121",
+    "1211111111112112111111111121",
+    "1222222222222222222222222221",
+    "1111111111111111111111111111",
+  ];
 
-  // Inventory: 2 of each size
-  const inv = {
-    P: { 1:2, 2:2, 3:2 },
-    C: { 1:2, 2:2, 3:2 },
-  };
+  let grid = MAP.map(row => row.split("").map(n => Number(n)));
+  const ROWS = grid.length;
+  const COLS = grid[0].length;
 
-  // UI
-  const boardEl = document.getElementById("board");
-  const pickerEl = document.getElementById("picker");
+  // --- Canvas sizing ---
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d");
+
+  const TILE = 22;
+  canvas.width = COLS * TILE;
+  canvas.height = ROWS * TILE;
+
+  // --- UI ---
+  const scoreEl = document.getElementById("score");
+  const livesEl = document.getElementById("lives");
   const statusEl = document.getElementById("status");
-  const turnEl = document.getElementById("turn");
   const startBtn = document.getElementById("startBtn");
   const resetBtn = document.getElementById("resetBtn");
-  const hintEl = document.getElementById("hint");
 
-  // Game state
-  let running = false;
-  let turn = "P"; // P=player, C=computer
-  let selectedSize = 2; // default
-  let locked = false; // prevents double moves while CPU thinking
+  // --- Helpers ---
+  const tileRow = (y) => Math.floor(y / TILE);
+  const tileCol = (x) => Math.floor(x / TILE);
+  const centerOf = (r, c) => ({ x: c * TILE + TILE/2, y: r * TILE + TILE/2 });
 
-  // ===== Helpers =====
-  function topPiece(i){
-    const s = stacks[i];
-    return s.length ? s[s.length - 1] : null;
+  function isTunnelRow(r){
+    if (r < 0 || r >= ROWS) return false;
+    return grid[r][0] === 0 && grid[r][COLS-1] === 0;
   }
 
-  function canPlace(owner, size, i){
-    if (inv[owner][size] <= 0) return false;
-    const top = topPiece(i);
-    if (!top) return true;
-    return size > top.size; // must be larger than top
+  // Wrap if entity is on a tunnel row (OG behavior)
+  function wrapXIfTunnel(y, x){
+    const r = tileRow(y);
+    if (!isTunnelRow(r)) return x;
+    const W = COLS * TILE;
+    if (x < -TILE * 0.25) return x + W;
+    if (x >= W + TILE * 0.25) return x - W;
+    return x;
   }
 
-  function place(owner, size, i){
-    stacks[i].push({ owner, size });
-    inv[owner][size]--;
-  }
+  function tileAt(r, c){
+    if (r < 0 || r >= ROWS) return 1;
 
-  function visibleOwner(i){
-    const top = topPiece(i);
-    return top ? top.owner : null;
-  }
-
-  function visibleLineWinner(){
-    const lines = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
-    for (const [a,b,c] of lines){
-      const A = visibleOwner(a), B = visibleOwner(b), C = visibleOwner(c);
-      if (A && A === B && A === C) return A;
+    // Only allow column wrap on tunnel rows
+    if (c < 0 || c >= COLS) {
+      if (!isTunnelRow(r)) return 1;
+      c = (c + COLS) % COLS;
     }
-    return null;
+    return grid[r][c];
   }
 
-  function anyMovesLeft(owner){
-    for (let i=0;i<9;i++){
-      for (const size of [1,2,3]){
-        if (canPlace(owner,size,i)) return true;
+  function setTile(r, c, v){
+    if (r < 0 || r >= ROWS) return;
+
+    if (c < 0 || c >= COLS) {
+      if (!isTunnelRow(r)) return;
+      c = (c + COLS) % COLS;
+    }
+    grid[r][c] = v;
+  }
+
+  function isWall(r, c){
+    return tileAt(r, c) === 1;
+  }
+
+  function isCenteredOnTile(entity){
+    const cx = entity.x % TILE;
+    const cy = entity.y % TILE;
+    const eps = 1.2;
+    return Math.abs(cx - TILE/2) < eps && Math.abs(cy - TILE/2) < eps;
+  }
+
+  // --- Spawns ---
+  const PAC_SPAWN = { r: 17, c: 12 };
+  const GHOST_SPAWNS = [
+    { r: 12, c: 13 },
+    { r: 12, c: 14 },
+    { r: 12, c: 15 },
+    { r: 12, c: 14 },
+  ];
+
+  // Ghost exit corridor (door + tile above it) — we force these to be walkable
+  const DOOR = { r: 11, c: 14 };
+  const OUTSIDE = { r: 10, c: 14 }; // just above door (tunnel row)
+
+  // --- Game state ---
+  let running = false;
+  let gameOver = false;
+  let score = 0;
+  let lives = 3;
+  let gameTime = 0;
+
+  // Frightened mode timer (power pellet)
+  let frightenedUntil = 0;
+
+  const DIRS = {
+    LEFT:  { x:-1, y: 0 },
+    RIGHT: { x: 1, y: 0 },
+    UP:    { x: 0, y:-1 },
+    DOWN:  { x: 0, y: 1 },
+    NONE:  { x: 0, y: 0 },
+  };
+
+  const pac = {
+    x: 0, y: 0,
+    dir: DIRS.NONE,
+    nextDir: DIRS.NONE,
+    speed: 120,
+    radius: TILE * 0.42,
+  };
+
+  const ghosts = [
+    { x:0,y:0, dir:DIRS.LEFT,  speed:105, color:"#ff3b30", inHouse:true, releaseAt:0, dead:false },
+    { x:0,y:0, dir:DIRS.RIGHT, speed:100, color:"#34c759", inHouse:true, releaseAt:0, dead:false },
+    { x:0,y:0, dir:DIRS.UP,    speed: 98, color:"#0a84ff", inHouse:true, releaseAt:0, dead:false },
+    { x:0,y:0, dir:DIRS.DOWN,  speed:102, color:"#ff9f0a", inHouse:true, releaseAt:0, dead:false },
+  ];
+
+  function findNearestWalkable(sr, sc){
+    const q = [{r:sr, c:sc}];
+    const seen = new Set([`${sr},${sc}`]);
+    const ok = (r,c) => r>=0 && r<ROWS && c>=0 && c<COLS;
+    const walk = (r,c) => grid[r][c] !== 1;
+
+    while (q.length) {
+      const cur = q.shift();
+      if (walk(cur.r, cur.c)) return cur;
+      for (const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+        const nr = cur.r + dr, nc = cur.c + dc;
+        const key = `${nr},${nc}`;
+        if (!ok(nr,nc) || seen.has(key)) continue;
+        seen.add(key);
+        q.push({r:nr, c:nc});
       }
+    }
+    return {r:1,c:1};
+  }
+
+  function forceGhostDoorOpen(){
+    // Make door and the outside tile walkable (so ghosts can actually leave)
+    // Use 0 corridor (no pellet) so it feels like a clear doorway.
+    setTile(DOOR.r, DOOR.c, 0);
+    setTile(DOOR.r, DOOR.c - 1, 0);
+    setTile(OUTSIDE.r, OUTSIDE.c, 0);
+    setTile(OUTSIDE.r, OUTSIDE.c - 1, 0);
+  }
+
+  function resetPositions(){
+    const p = centerOf(PAC_SPAWN.r, PAC_SPAWN.c);
+    pac.x = p.x; pac.y = p.y;
+    pac.dir = DIRS.NONE;
+    pac.nextDir = DIRS.NONE;
+
+    if (isWall(tileRow(pac.y), tileCol(pac.x))) {
+      const fix = findNearestWalkable(PAC_SPAWN.r, PAC_SPAWN.c);
+      const cc = centerOf(fix.r, fix.c);
+      pac.x = cc.x; pac.y = cc.y;
+    }
+
+    ghosts.forEach((g, i) => {
+      const s = GHOST_SPAWNS[i] || GHOST_SPAWNS[0];
+      const c = centerOf(s.r, s.c);
+      g.x = c.x + (i - 1.5) * 3;
+      g.y = c.y + (i % 2 ? 3 : -3);
+      g.dir = [DIRS.LEFT, DIRS.RIGHT, DIRS.UP, DIRS.DOWN][i % 4];
+      g.inHouse = true;
+      g.dead = false;
+      g.releaseAt = gameTime + (i * 0.9); // staggered
+    });
+  }
+
+  function resetGame(full=false){
+    if (full) {
+      grid = MAP.map(row => row.split("").map(n => Number(n)));
+      score = 0;
+      lives = 3;
+      gameTime = 0;
+      frightenedUntil = 0;
+    }
+
+    forceGhostDoorOpen();
+
+    gameOver = false;
+    running = false;
+    statusEl.textContent = "Ready";
+    scoreEl.textContent = score;
+    livesEl.textContent = lives;
+    resetPositions();
+    draw();
+  }
+
+  // --- Robust collision: circle vs tile grid ---
+  function hitsWallAt(x, y, radius){
+    const r0 = tileRow(y - radius);
+    const r1 = tileRow(y + radius);
+    const c0 = tileCol(x - radius);
+    const c1 = tileCol(x + radius);
+
+    const pts = [
+      {r:r0, c:c0}, {r:r0, c:c1},
+      {r:r1, c:c0}, {r:r1, c:c1},
+    ];
+
+    for (const p of pts) {
+      let rr = p.r;
+      let cc = p.c;
+
+      if (rr < 0 || rr >= ROWS) return true;
+
+      if (cc < 0 || cc >= COLS) {
+        if (!isTunnelRow(rr)) return true;
+        cc = (cc + COLS) % COLS;
+      }
+      if (isWall(rr, cc)) return true;
     }
     return false;
   }
 
-  function updateHUD(){
-    if (!running) {
-      statusEl.textContent = "Ready";
-      turnEl.textContent = "—";
+  // Axis-separated movement, with tunnel wrap
+  function moveEntity(entity, dt){
+    if (entity.dir === DIRS.NONE) return false;
+    const r = entity.radius ?? (TILE * 0.40);
+
+    // X
+    let nx = entity.x + entity.dir.x * entity.speed * dt;
+    let ny = entity.y;
+
+    nx = wrapXIfTunnel(ny, nx);
+
+    if (!hitsWallAt(nx, ny, r * 0.95)) {
+      entity.x = nx;
     } else {
-      statusEl.textContent = locked ? "Thinking…" : "Playing";
-      turnEl.textContent = (turn === "P") ? "You (Blue)" : "Computer (Red)";
+      const cr = tileRow(entity.y);
+      const cc = tileCol(entity.x);
+      const center = centerOf(cr, cc);
+      entity.x = center.x;
+      if (entity === pac) entity.dir = DIRS.NONE;
+    }
+
+    // Y
+    nx = entity.x;
+    ny = entity.y + entity.dir.y * entity.speed * dt;
+
+    // Note: wrap uses current y; keep x wrap stable
+    entity.x = wrapXIfTunnel(ny, entity.x);
+
+    if (!hitsWallAt(entity.x, ny, r * 0.95)) {
+      entity.y = ny;
+    } else {
+      const cr = tileRow(entity.y);
+      const cc = tileCol(entity.x);
+      const center = centerOf(cr, cc);
+      entity.y = center.y;
+      if (entity === pac) entity.dir = DIRS.NONE;
+    }
+
+    // final wrap
+    entity.x = wrapXIfTunnel(entity.y, entity.x);
+    return true;
+  }
+
+  function tryTurnPac(){
+    if (pac.nextDir === DIRS.NONE) return;
+    if (!isCenteredOnTile(pac)) return;
+
+    const testX = wrapXIfTunnel(pac.y, pac.x + pac.nextDir.x * TILE * 0.55);
+    const testY = pac.y + pac.nextDir.y * TILE * 0.55;
+
+    if (!hitsWallAt(testX, testY, pac.radius * 0.95)) {
+      pac.dir = pac.nextDir;
     }
   }
 
-  // ===== Rendering =====
-  function renderBoard(){
-    boardEl.innerHTML = "";
-    for (let i=0;i<9;i++){
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.dataset.i = String(i);
+  function eat(){
+    const r = tileRow(pac.y);
+    const c = tileCol(pac.x);
+    const t = tileAt(r, c);
 
-      // draw stack bottom-to-top (visually: only top matters, but we’ll show depth by slight opacity)
-      const stack = stacks[i];
-      for (let k=0;k<stack.length;k++){
-        const p = stack[k];
-        const div = document.createElement("div");
-        div.className = `piece ${p.owner === "P" ? "blue" : "red"} ${SIZE_INFO[p.size].key}`;
-        // depth effect
-        div.style.opacity = String(0.55 + 0.45*(k/(stack.length)));
-        cell.appendChild(div);
+    if (t === 2) {
+      setTile(r, c, 0);
+      score += 10;
+    }
+    if (t === 3) {
+      setTile(r, c, 0);
+      score += 50;
+
+      // Frightened mode: 7 seconds
+      frightenedUntil = Math.max(frightenedUntil, gameTime) + 7.0;
+    }
+
+    scoreEl.textContent = score;
+  }
+
+  function isFrightened(){
+    return gameTime < frightenedUntil;
+  }
+
+  function collide(a, b){
+    return Math.hypot(a.x - b.x, a.y - b.y) < TILE * 0.55;
+  }
+
+  function moveToward(g, target){
+    const dx = target.x - g.x;
+    const dy = target.y - g.y;
+
+    // choose dominant axis
+    if (Math.abs(dx) > Math.abs(dy)) {
+      g.dir = dx > 0 ? DIRS.RIGHT : DIRS.LEFT;
+    } else {
+      g.dir = dy > 0 ? DIRS.DOWN : DIRS.UP;
+    }
+  }
+
+  function ghostAI(g){
+    // Dead ghosts go straight back into house (fast) then respawn
+    if (g.dead) {
+      g.speed = 150;
+      const home = centerOf(GHOST_SPAWNS[1].r, GHOST_SPAWNS[1].c);
+      moveToward(g, home);
+      if (Math.hypot(g.x - home.x, g.y - home.y) < 3) {
+        g.dead = false;
+        g.inHouse = true;
+        g.releaseAt = gameTime + 0.8; // re-release after a moment
+        g.speed = g.baseSpeed ?? g.speed;
       }
-
-      cell.addEventListener("click", () => {
-        if (!running || locked) return;
-        if (turn !== "P") return;
-        handlePlayerMove(i);
-      });
-
-      boardEl.appendChild(cell);
-    }
-  }
-
-  function renderPicker(){
-    pickerEl.innerHTML = "";
-
-    const rows = [
-      { size: 1, label: "Small" },
-      { size: 2, label: "Medium" },
-      { size: 3, label: "Large" },
-    ];
-
-    for (const row of rows){
-      const wrap = document.createElement("div");
-      wrap.className = "pickRow";
-
-      const lab = document.createElement("div");
-      lab.className = "pickLabel";
-      lab.textContent = row.label;
-
-      const chip = document.createElement("div");
-      chip.className = "chip";
-      chip.role = "button";
-
-      const dot = document.createElement("span");
-      dot.className = `dot ${SIZE_INFO[row.size].key}`;
-
-      const text = document.createElement("div");
-      text.innerHTML = `<b>${inv.P[row.size]}</b> left`;
-
-      chip.appendChild(dot);
-      chip.appendChild(text);
-
-      const disabled = inv.P[row.size] <= 0;
-      chip.setAttribute("aria-disabled", disabled ? "true" : "false");
-      if (!disabled && selectedSize === row.size) chip.classList.add("active");
-      if (disabled) chip.style.pointerEvents = "none";
-
-      chip.addEventListener("click", () => {
-        if (!running || locked) return;
-        selectedSize = row.size;
-        renderPicker();
-        hintEl.textContent = `Selected: ${row.label}. Tap a board cell to place it.`;
-      });
-
-      wrap.appendChild(lab);
-      wrap.appendChild(chip);
-      pickerEl.appendChild(wrap);
-    }
-  }
-
-  function setHint(msg){ hintEl.textContent = msg; }
-
-  function resetAll(){
-    for (let i=0;i<9;i++) stacks[i] = [];
-    inv.P[1]=2; inv.P[2]=2; inv.P[3]=2;
-    inv.C[1]=2; inv.C[2]=2; inv.C[3]=2;
-    selectedSize = 2;
-    turn = "P";
-    running = false;
-    locked = false;
-    setHint("Click Start, pick a size, then tap a cell.");
-    updateHUD();
-    renderBoard();
-    renderPicker();
-  }
-
-  // ===== Gameplay =====
-  function endGame(message){
-    running = false;
-    locked = false;
-    updateHUD();
-    setHint(message + " Press Start to play again.");
-  }
-
-  function afterMove(){
-    renderBoard();
-    renderPicker();
-
-    const winner = visibleLineWinner();
-    if (winner){
-      if (winner === "P") endGame("✅ You win!");
-      else endGame("💀 Computer wins!");
       return;
     }
 
-    // If neither side can move, it's a draw
-    if (!anyMovesLeft("P") && !anyMovesLeft("C")){
-      endGame("🤝 Draw — no moves left.");
-      return;
-    }
-
-    // Next turn
-    turn = (turn === "P") ? "C" : "P";
-    locked = (turn === "C");
-    updateHUD();
-
-    if (turn === "C"){
-      setHint("Computer thinking…");
-      // slight delay feels nicer
-      setTimeout(cpuMove, 380);
-    } else {
-      setHint("Your turn — pick a size and place it.");
-    }
-  }
-
-  function handlePlayerMove(i){
-    const size = selectedSize;
-    if (!canPlace("P", size, i)){
-      const top = topPiece(i);
-      if (!top) setHint("You can’t place that size (no pieces left).");
-      else setHint(`Needs to be larger than the top piece (${sizeName(top.size)}).`);
-      return;
-    }
-    place("P", size, i);
-    afterMove();
-  }
-
-  function sizeName(s){
-    return s===1?"Small":s===2?"Medium":"Large";
-  }
-
-  // ===== Basic AI =====
-  // Strategy:
-  // 1) Win now (any size, any cell)
-  // 2) Block player's win
-  // 3) Prefer center if possible
-  // 4) Otherwise choose a move that increases chance (corners, edges)
-  function cpuMove(){
-    if (!running) return;
-
-    const move =
-      findWinningMove("C") ||
-      findWinningMove("P", /*block*/true) ||
-      findPreferredMove();
-
-    if (!move){
-      // no move possible
-      endGame("🤝 Draw — computer has no moves.");
-      return;
-    }
-
-    place("C", move.size, move.i);
-    afterMove();
-  }
-
-  function simulatePlace(owner, size, i){
-    stacks[i].push({ owner, size });
-    const w = visibleLineWinner();
-    stacks[i].pop();
-    return w;
-  }
-
-  function findWinningMove(targetOwner, block=false){
-    // If block=true, we simulate targetOwner winning, then CPU places a move that prevents it by making itself win? —
-    // easier: just find player-winning moves and place something bigger on those cells if possible.
-    if (!block){
-      // CPU tries to win: simulate CPU move
-      for (let i=0;i<9;i++){
-        for (const size of [1,2,3]){
-          if (!canPlace("C", size, i)) continue;
-          const w = simulatePlace("C", size, i);
-          if (w === "C") return { i, size };
+    // Release from house: go to door then to outside tile, then normal AI
+    if (g.inHouse) {
+      if (gameTime < g.releaseAt) {
+        // idle wiggle
+        if (isCenteredOnTile(g) && Math.random() < 0.25) {
+          g.dir = [DIRS.LEFT, DIRS.RIGHT][Math.random() < 0.5 ? 0 : 1];
         }
+        return;
       }
-      return null;
-    } else {
-      // Block player: find any player move that would win, then cover that cell with a legal CPU piece
-      for (let i=0;i<9;i++){
-        for (const pSize of [1,2,3]){
-          // simulate player making a winning move
-          if (inv.P[pSize] <= 0) continue;
-          const top = topPiece(i);
-          const playerCan = (!top) ? true : (pSize > top.size);
-          if (!playerCan) continue;
 
-          const w = simulatePlace("P", pSize, i);
-          if (w === "P") {
-            // can CPU place something on i to prevent? It must be > current top (which is whatever is there now, not the simulated move).
-            // Realistically, the block needs to occupy that cell now with any legal move.
-            for (const cSize of [1,2,3]){
-              if (canPlace("C", cSize, i)) return { i, size: cSize };
-            }
+      const door = centerOf(DOOR.r, DOOR.c);
+      const outside = centerOf(OUTSIDE.r, OUTSIDE.c);
+
+      // step 1: reach door
+      if (Math.hypot(g.x - door.x, g.y - door.y) > 2.5) {
+        moveToward(g, door);
+        return;
+      }
+      // step 2: go outside
+      if (Math.hypot(g.x - outside.x, g.y - outside.y) > 2.5) {
+        moveToward(g, outside);
+        return;
+      }
+
+      g.inHouse = false;
+      return;
+    }
+
+    // Normal AI at intersections
+    if (!isCenteredOnTile(g)) return;
+
+    const frightened = isFrightened();
+
+    const options = [DIRS.LEFT, DIRS.RIGHT, DIRS.UP, DIRS.DOWN].filter(d => {
+      const reverse = (d.x === -g.dir.x && d.y === -g.dir.y);
+      if (reverse) return false;
+
+      const tx = wrapXIfTunnel(g.y, g.x + d.x * TILE * 0.55);
+      const ty = g.y + d.y * TILE * 0.55;
+      return !hitsWallAt(tx, ty, TILE * 0.38);
+    });
+
+    if (options.length === 0) {
+      g.dir = { x:-g.dir.x, y:-g.dir.y };
+      return;
+    }
+
+    // chase when normal; flee when frightened
+    let best = options[0];
+    let bestScore = frightened ? -Infinity : Infinity;
+
+    for (const d of options) {
+      const tx = wrapXIfTunnel(g.y, g.x + d.x * TILE);
+      const ty = g.y + d.y * TILE;
+      const dist = Math.hypot(pac.x - tx, pac.y - ty);
+
+      if (!frightened) {
+        if (dist < bestScore) { bestScore = dist; best = d; }
+      } else {
+        if (dist > bestScore) { bestScore = dist; best = d; }
+      }
+    }
+
+    g.dir = (Math.random() < 0.18)
+      ? options[Math.floor(Math.random() * options.length)]
+      : best;
+  }
+
+  // --- Rendering ---
+  let last = performance.now();
+  let perfNow = last;
+  let accumulator = 0;
+  const FIXED = 1/120;
+
+  function dirToAngle(d){
+    if (d === DIRS.RIGHT) return 0;
+    if (d === DIRS.LEFT) return Math.PI;
+    if (d === DIRS.UP) return -Math.PI/2;
+    if (d === DIRS.DOWN) return Math.PI/2;
+    return 0;
+  }
+
+  function overlayText(text){
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#e6edf7";
+    ctx.font = "700 34px ui-sans-serif, system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText(text, canvas.width/2, canvas.height/2);
+    ctx.font = "500 16px ui-sans-serif, system-ui";
+    ctx.fillStyle = "rgba(230,237,247,0.8)";
+    ctx.fillText("Use arrow keys / WASD", canvas.width/2, canvas.height/2 + 28);
+  }
+
+  function drawGhost(g){
+    const r = TILE * 0.42;
+    const x = g.x, y = g.y;
+
+    const frightened = isFrightened();
+    const flashing = frightened && (frightenedUntil - gameTime) < 2.0 && (Math.floor(gameTime * 8) % 2 === 0);
+
+    let bodyColor = g.color;
+    if (g.dead) bodyColor = "rgba(255,255,255,0.0)";
+    else if (frightened) bodyColor = flashing ? "#ffffff" : "#e9f3ff";
+
+    // body
+    ctx.fillStyle = bodyColor;
+    ctx.beginPath();
+    ctx.arc(x, y, r, Math.PI, 0);
+    ctx.lineTo(x + r, y + r);
+    for (let i=0;i<6;i++){
+      const px = x + r - (i*(2*r/5));
+      const py = y + r - (i%2 ? 4 : 0);
+      ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // eyes (keep readable)
+    if (!g.dead) {
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.arc(x - r*0.35, y - r*0.15, r*0.22, 0, Math.PI*2);
+      ctx.arc(x + r*0.35, y - r*0.15, r*0.22, 0, Math.PI*2);
+      ctx.fill();
+
+      const pdx = g.dir.x * 2.2;
+      const pdy = g.dir.y * 2.2;
+      ctx.fillStyle = frightened ? "#0b1220" : "#111";
+      ctx.beginPath();
+      ctx.arc(x - r*0.35 + pdx, y - r*0.15 + pdy, r*0.10, 0, Math.PI*2);
+      ctx.arc(x + r*0.35 + pdx, y - r*0.15 + pdy, r*0.10, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for (let r=0;r<ROWS;r++){
+      for (let c=0;c<COLS;c++){
+        const t = grid[r][c];
+        const x = c*TILE, y = r*TILE;
+
+        if (t === 1) {
+          ctx.fillStyle = "#0a2a8a";
+          ctx.fillRect(x, y, TILE, TILE);
+        } else {
+          ctx.fillStyle = "#050a12";
+          ctx.fillRect(x, y, TILE, TILE);
+
+          ctx.strokeStyle = "rgba(255,255,255,0.035)";
+          ctx.strokeRect(x, y, TILE, TILE);
+
+          if (t === 2) {
+            ctx.fillStyle = "#ffd60a";
+            ctx.beginPath();
+            ctx.arc(x+TILE/2, y+TILE/2, 2.2, 0, Math.PI*2);
+            ctx.fill();
+          }
+          if (t === 3) {
+            ctx.fillStyle = "#ffd60a";
+            ctx.beginPath();
+            ctx.arc(x+TILE/2, y+TILE/2, 5.0, 0, Math.PI*2);
+            ctx.fill();
+          }
+          if (t === 4) {
+            ctx.fillStyle = "rgba(255,255,255,0.05)";
+            ctx.fillRect(x, y, TILE, TILE);
           }
         }
       }
-      return null;
     }
+
+    // Pac-Man
+    const mouth = running ? (0.25 + 0.15*Math.sin(perfNow/90)) : 0.25;
+    ctx.fillStyle = "#ffd60a";
+    ctx.beginPath();
+    const angle = dirToAngle(pac.dir);
+    ctx.moveTo(pac.x, pac.y);
+    ctx.arc(pac.x, pac.y, pac.radius, angle + mouth, angle + Math.PI*2 - mouth);
+    ctx.closePath();
+    ctx.fill();
+
+    ghosts.forEach(drawGhost);
+
+    if (!running && !gameOver) overlayText("Press Start");
+    if (gameOver) overlayText("Game Over");
   }
 
-  function findPreferredMove(){
-    // Prefer center, then corners, then edges. Also prefer using smallest size that is legal (save big pieces).
-    const order = [4,0,2,6,8,1,3,5,7];
-    for (const i of order){
-      for (const size of [1,2,3]){
-        if (canPlace("C", size, i)) return { i, size };
+  // --- Input ---
+  window.addEventListener("keydown", (e) => {
+    const k = e.key.toLowerCase();
+    if (k === "arrowleft" || k === "a") pac.nextDir = DIRS.LEFT;
+    if (k === "arrowright" || k === "d") pac.nextDir = DIRS.RIGHT;
+    if (k === "arrowup" || k === "w") pac.nextDir = DIRS.UP;
+    if (k === "arrowdown" || k === "s") pac.nextDir = DIRS.DOWN;
+  });
+
+  startBtn.addEventListener("click", () => {
+    if (gameOver) resetGame(false);
+    running = true;
+    statusEl.textContent = "Playing";
+  });
+
+  resetBtn.addEventListener("click", () => resetGame(true));
+
+  // --- Loop ---
+  function tick(now){
+    perfNow = now;
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    accumulator += dt;
+
+    while (accumulator >= FIXED) {
+      if (running && !gameOver) update(FIXED);
+      accumulator -= FIXED;
+    }
+
+    draw();
+    requestAnimationFrame(tick);
+  }
+
+  function update(dt){
+    gameTime += dt;
+
+    tryTurnPac();
+    if (pac.dir !== DIRS.NONE) moveEntity(pac, dt);
+
+    eat();
+
+    for (const g of ghosts) {
+      ghostAI(g);
+      moveEntity(g, dt);
+
+      if (collide(pac, g)) {
+        if (isFrightened() && !g.dead && !g.inHouse) {
+          // Eat ghost
+          score += 200;
+          scoreEl.textContent = score;
+          g.dead = true;
+          // send them back “home” (AI handles it)
+        } else if (!isFrightened() && !g.dead) {
+          // Pac dies
+          lives--;
+          livesEl.textContent = lives;
+
+          if (lives <= 0) {
+            running = false;
+            gameOver = true;
+            statusEl.textContent = "Game Over";
+          } else {
+            running = false;
+            statusEl.textContent = "Ready";
+            resetPositions();
+          }
+          break;
+        }
       }
     }
-    return null;
   }
 
-  // ===== Buttons =====
-  startBtn.addEventListener("click", () => {
-    // Start also acts like "play again"
-    if (!running){
-      resetAll();
-      running = true;
-      turn = "P";
-      locked = false;
-      updateHUD();
-      setHint("Your turn — pick a size and place it.");
-    } else {
-      // if already running, do nothing
-      setHint("Game is already running.");
-    }
-  });
-
-  resetBtn.addEventListener("click", () => {
-    resetAll();
-  });
-
-  // Initial render
-  resetAll();
+  // init
+  resetGame(true);
+  requestAnimationFrame(tick);
 })();
 </script>
-</body>
-</html>
