@@ -99,7 +99,7 @@
   // 1 = wall
   // 2 = pellet
   // 3 = power pellet
-  // 4 = ghost house floor (walkable; pac can enter only if you allow — we allow for simplicity)
+  // 4 = ghost house floor (walkable)
 
   const MAP = [
     "1111111111111111111111111111",
@@ -137,7 +137,7 @@
   const canvas = document.getElementById("c");
   const ctx = canvas.getContext("2d");
 
-  const TILE = 22; // tweak for size
+  const TILE = 22;
   canvas.width = COLS * TILE;
   canvas.height = ROWS * TILE;
 
@@ -149,46 +149,73 @@
   const resetBtn = document.getElementById("resetBtn");
 
   // --- Helpers ---
-  const isWall = (r, c) => {
-    const t = tileAt(r, c);
-    return t === 1; // IMPORTANT: only 1 is a wall. 4 is NOT a wall.
-  };
-
-  const tileAt = (r, c) => {
-    if (r < 0 || r >= ROWS) return 1;
-    // wrap columns for tunnel behavior, but only if that row has 0 corridor on edges
-    if (c < 0) c = COLS - 1;
-    if (c >= COLS) c = 0;
-    return grid[r][c];
-  };
-
-  const setTile = (r, c, v) => {
-    if (r < 0 || r >= ROWS) return;
-    if (c < 0) c = COLS - 1;
-    if (c >= COLS) c = 0;
-    grid[r][c] = v;
-  };
-
+  const tileRow = (y) => Math.floor(y / TILE);
+  const tileCol = (x) => Math.floor(x / TILE);
   const centerOf = (r, c) => ({ x: c * TILE + TILE/2, y: r * TILE + TILE/2 });
 
-  // Find a safe spawn tile near the center/bottom (must be walkable: 0/2/3/4)
-  // Your previous pac spawn was on (17,14) which is a WALL (1).
-  const PAC_SPAWN = { r: 17, c: 12 }; // tile=2 here in your map
+  function isTunnelRow(r){
+    if (r < 0 || r >= ROWS) return false;
+    return grid[r][0] === 0 && grid[r][COLS-1] === 0;
+  }
+
+  function wrapXIfTunnel(r, x){
+    if (!isTunnelRow(r)) return x;
+    const W = COLS * TILE;
+    if (x < 0) return x + W;
+    if (x >= W) return x - W;
+    return x;
+  }
+
+  function tileAt(r, c){
+    if (r < 0 || r >= ROWS) return 1;
+    // Only wrap columns for tunnel rows
+    if (c < 0 || c >= COLS) {
+      if (!isTunnelRow(r)) return 1;
+      c = (c + COLS) % COLS;
+    }
+    return grid[r][c];
+  }
+
+  function setTile(r, c, v){
+    if (r < 0 || r >= ROWS) return;
+    if (c < 0 || c >= COLS) {
+      if (!isTunnelRow(r)) return;
+      c = (c + COLS) % COLS;
+    }
+    grid[r][c] = v;
+  }
+
+  function isWall(r, c){
+    return tileAt(r, c) === 1;
+  }
+
+  function isCenteredOnTile(entity){
+    const cx = entity.x % TILE;
+    const cy = entity.y % TILE;
+    const eps = 1.2;
+    return Math.abs(cx - TILE/2) < eps && Math.abs(cy - TILE/2) < eps;
+  }
+
+  // --- Spawns ---
+  const PAC_SPAWN = { r: 17, c: 12 }; // walkable in your map
   const GHOST_SPAWNS = [
-    { r: 12, c: 13 }, // all 4's in your map
+    { r: 12, c: 13 },
     { r: 12, c: 14 },
     { r: 12, c: 15 },
-    { r: 12, c: 14 }, // duplicate center but offset in pixel space
+    { r: 12, c: 14 },
   ];
+
+  // "Door" above the ghost house:
+  // We mark these as walkable pellets so ghosts reliably exit.
+  const GHOST_DOOR = [{ r: 11, c: 13 }, { r: 11, c: 14 }];
 
   // --- Game state ---
   let running = false;
   let gameOver = false;
-
   let score = 0;
   let lives = 3;
+  let gameTime = 0;
 
-  // directions
   const DIRS = {
     LEFT:  { x:-1, y: 0 },
     RIGHT: { x: 1, y: 0 },
@@ -201,186 +228,22 @@
     x: 0, y: 0,
     dir: DIRS.NONE,
     nextDir: DIRS.NONE,
-    speed: 120, // px/sec
+    speed: 120,
     radius: TILE * 0.42,
   };
 
   const ghosts = [
-    { x:0,y:0, dir:DIRS.LEFT,  speed: 105, color:"#ff3b30" }, // red
-    { x:0,y:0, dir:DIRS.RIGHT, speed: 100, color:"#34c759" }, // green
-    { x:0,y:0, dir:DIRS.UP,    speed: 98,  color:"#0a84ff" }, // blue
-    { x:0,y:0, dir:DIRS.DOWN,  speed: 102, color:"#ff9f0a" }, // orange
+    { x:0,y:0, dir:DIRS.LEFT,  speed:105, color:"#ff3b30", inHouse:true, releaseAt:0 },
+    { x:0,y:0, dir:DIRS.RIGHT, speed:100, color:"#34c759", inHouse:true, releaseAt:0 },
+    { x:0,y:0, dir:DIRS.UP,    speed: 98, color:"#0a84ff", inHouse:true, releaseAt:0 },
+    { x:0,y:0, dir:DIRS.DOWN,  speed:102, color:"#ff9f0a", inHouse:true, releaseAt:0 },
   ];
 
-  function resetPositions() {
-    const p = centerOf(PAC_SPAWN.r, PAC_SPAWN.c);
-    pac.x = p.x; pac.y = p.y;
-    pac.dir = DIRS.NONE;
-    pac.nextDir = DIRS.NONE;
-
-    ghosts.forEach((g, i) => {
-      const s = GHOST_SPAWNS[i] || GHOST_SPAWNS[0];
-      const c = centerOf(s.r, s.c);
-      // tiny offsets so they don't overlap perfectly
-      g.x = c.x + (i - 1.5) * 3;
-      g.y = c.y + (i % 2 ? 3 : -3);
-      g.dir = [DIRS.LEFT, DIRS.RIGHT, DIRS.UP, DIRS.DOWN][i % 4];
-    });
-
-    // Safety check: if spawn is accidentally in a wall, move it to nearest walkable
-    if (isWall(tileRow(pac.y), tileCol(pac.x))) {
-      const fix = findNearestWalkable(PAC_SPAWN.r, PAC_SPAWN.c);
-      const cc = centerOf(fix.r, fix.c);
-      pac.x = cc.x; pac.y = cc.y;
-    }
-    ghosts.forEach(g => {
-      if (isWall(tileRow(g.y), tileCol(g.x))) {
-        const fix = findNearestWalkable(12, 14);
-        const cc = centerOf(fix.r, fix.c);
-        g.x = cc.x; g.y = cc.y;
-      }
-    });
-  }
-
-  function resetGame(full = false) {
-    if (full) {
-      // restore pellets/power by reloading grid
-      for (let r=0;r<ROWS;r++){
-        for (let c=0;c<COLS;c++){
-          grid[r][c] = Number(MAP[r][c]);
-        }
-      }
-      score = 0;
-      lives = 3;
-    }
-    gameOver = false;
-    running = false;
-    statusEl.textContent = "Ready";
-    scoreEl.textContent = score;
-    livesEl.textContent = lives;
-    resetPositions();
-    draw();
-  }
-
-  function tileRow(y){ return Math.floor(y / TILE); }
-  function tileCol(x){ return Math.floor(x / TILE); }
-
-  function isCenteredOnTile(entity) {
-    const cx = entity.x % TILE;
-    const cy = entity.y % TILE;
-    const eps = 1.2; // tolerance
-    return Math.abs(cx - TILE/2) < eps && Math.abs(cy - TILE/2) < eps;
-  }
-
-  function canMoveTo(x, y) {
-    const r = tileRow(y);
-    let c = tileCol(x);
-
-    // Allow wrap through tunnel: when moving beyond canvas, wrap columns
-    if (c < 0) c = COLS - 1;
-    if (c >= COLS) c = 0;
-
-    return !isWall(r, c);
-  }
-
-  function stepEntity(entity, dt) {
-    const nx = entity.x + entity.dir.x * entity.speed * dt;
-    const ny = entity.y + entity.dir.y * entity.speed * dt;
-
-    // Wrap x through edges (OG style)
-    let wrappedX = nx;
-    if (wrappedX < 0) wrappedX += COLS * TILE;
-    if (wrappedX >= COLS * TILE) wrappedX -= COLS * TILE;
-
-    // Only accept move if target tile isn't a wall
-    if (canMoveTo(wrappedX, ny)) {
-      entity.x = wrappedX;
-      entity.y = ny;
-      return true;
-    }
-
-    // If blocked, snap to center of current tile for clean turns
-    entity.x = Math.round(entity.x / 1) / 1;
-    entity.y = Math.round(entity.y / 1) / 1;
-    return false;
-  }
-
-  function tryTurnPac() {
-    if (pac.nextDir === DIRS.NONE) return;
-
-    // Only turn cleanly near the tile center
-    if (!isCenteredOnTile(pac)) return;
-
-    const testX = pac.x + pac.nextDir.x * TILE * 0.55;
-    const testY = pac.y + pac.nextDir.y * TILE * 0.55;
-
-    if (canMoveTo(testX, testY)) {
-      pac.dir = pac.nextDir;
-    }
-  }
-
-  function eat() {
-    const r = tileRow(pac.y);
-    const c = tileCol(pac.x);
-    const t = tileAt(r, c);
-
-    if (t === 2) { setTile(r, c, 0); score += 10; }
-    if (t === 3) { setTile(r, c, 0); score += 50; }
-    scoreEl.textContent = score;
-  }
-
-  function collide(a, b) {
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
-    const dist = Math.hypot(dx, dy);
-    return dist < TILE * 0.55;
-  }
-
-  function ghostAI(g) {
-    // simple intersection turning:
-    // when centered, choose a direction that isn't a wall, prefer heading toward pac
-    if (!isCenteredOnTile(g)) return;
-
-    const options = [DIRS.LEFT, DIRS.RIGHT, DIRS.UP, DIRS.DOWN].filter(d => {
-      // don't reverse unless forced
-      const reverse = (d.x === -g.dir.x && d.y === -g.dir.y);
-      if (reverse) return false;
-      const tx = g.x + d.x * TILE * 0.55;
-      const ty = g.y + d.y * TILE * 0.55;
-      return canMoveTo(tx, ty);
-    });
-
-    if (options.length === 0) {
-      // allow reverse if stuck
-      const rev = { x:-g.dir.x, y:-g.dir.y };
-      g.dir = rev;
-      return;
-    }
-
-    // choose option that reduces distance to pac most often (not perfect, but feels “chasey”)
-    let best = options[0];
-    let bestScore = Infinity;
-    for (const d of options) {
-      const tx = g.x + d.x * TILE;
-      const ty = g.y + d.y * TILE;
-      const s = Math.hypot(pac.x - tx, pac.y - ty);
-      if (s < bestScore) { bestScore = s; best = d; }
-    }
-
-    // small randomness so they don't stack
-    if (Math.random() < 0.18) {
-      g.dir = options[Math.floor(Math.random() * options.length)];
-    } else {
-      g.dir = best;
-    }
-  }
-
-  // Find nearest walkable tile if a spawn ever lands on a wall (safety net)
-  function findNearestWalkable(sr, sc) {
+  function findNearestWalkable(sr, sc){
     const q = [{r:sr, c:sc}];
     const seen = new Set([`${sr},${sc}`]);
     const ok = (r,c) => r>=0 && r<ROWS && c>=0 && c<COLS;
-    const walk = (r,c) => grid[r][c] !== 1; // anything except wall
+    const walk = (r,c) => grid[r][c] !== 1;
 
     while (q.length) {
       const cur = q.shift();
@@ -396,11 +259,295 @@
     return {r:1,c:1};
   }
 
+  function resetPositions(){
+    const p = centerOf(PAC_SPAWN.r, PAC_SPAWN.c);
+    pac.x = p.x; pac.y = p.y;
+    pac.dir = DIRS.NONE;
+    pac.nextDir = DIRS.NONE;
+
+    // safety: if pac spawn ever becomes wall, fix
+    if (isWall(tileRow(pac.y), tileCol(pac.x))) {
+      const fix = findNearestWalkable(PAC_SPAWN.r, PAC_SPAWN.c);
+      const cc = centerOf(fix.r, fix.c);
+      pac.x = cc.x; pac.y = cc.y;
+    }
+
+    ghosts.forEach((g, i) => {
+      const s = GHOST_SPAWNS[i] || GHOST_SPAWNS[0];
+      const c = centerOf(s.r, s.c);
+      g.x = c.x + (i - 1.5) * 3;
+      g.y = c.y + (i % 2 ? 3 : -3);
+      g.dir = [DIRS.LEFT, DIRS.RIGHT, DIRS.UP, DIRS.DOWN][i % 4];
+      g.inHouse = true;
+      g.releaseAt = gameTime + (i * 0.9); // staggered release
+    });
+
+    // safety for ghosts
+    ghosts.forEach(g => {
+      if (isWall(tileRow(g.y), tileCol(g.x))) {
+        const fix = findNearestWalkable(12, 14);
+        const cc = centerOf(fix.r, fix.c);
+        g.x = cc.x; g.y = cc.y;
+      }
+    });
+  }
+
+  function resetGame(full=false){
+    if (full) {
+      for (let r=0;r<ROWS;r++){
+        for (let c=0;c<COLS;c++){
+          grid[r][c] = Number(MAP[r][c]);
+        }
+      }
+      score = 0;
+      lives = 3;
+      gameTime = 0;
+    }
+
+    // ensure ghost door is open (walkable)
+    for (const d of GHOST_DOOR) {
+      if (tileAt(d.r, d.c) === 1) setTile(d.r, d.c, 2);
+    }
+
+    gameOver = false;
+    running = false;
+    statusEl.textContent = "Ready";
+    scoreEl.textContent = score;
+    livesEl.textContent = lives;
+    resetPositions();
+    draw();
+  }
+
+  // --- Robust collision: circle vs tile grid ---
+  function hitsWallAt(x, y, radius){
+    const r0 = tileRow(y - radius);
+    const r1 = tileRow(y + radius);
+    const c0 = tileCol(x - radius);
+    const c1 = tileCol(x + radius);
+
+    // sample 4 corners of the circle's bounding box (works great for these sprites)
+    const pts = [
+      {r:r0, c:c0}, {r:r0, c:c1},
+      {r:r1, c:c0}, {r:r1, c:c1},
+    ];
+
+    for (const p of pts) {
+      let rr = p.r;
+      let cc = p.c;
+
+      if (rr < 0 || rr >= ROWS) return true;
+
+      // only wrap columns if tunnel row
+      if (cc < 0 || cc >= COLS) {
+        if (!isTunnelRow(rr)) return true;
+        cc = (cc + COLS) % COLS;
+      }
+      if (isWall(rr, cc)) return true;
+    }
+    return false;
+  }
+
+  // Move with axis separation so you never get embedded in walls.
+  function moveEntity(entity, dt){
+    if (entity.dir === DIRS.NONE) return false;
+
+    const r = entity.radius ?? (TILE * 0.40);
+
+    // --- X move ---
+    let nx = entity.x + entity.dir.x * entity.speed * dt;
+    let ny = entity.y;
+
+    // tunnel wrap only if current row is tunnel row
+    nx = wrapXIfTunnel(tileRow(ny), nx);
+
+    if (!hitsWallAt(nx, ny, r * 0.95)) {
+      entity.x = nx;
+    } else {
+      // snap out: align to nearest safe edge
+      // If moving right, snap to left edge of next wall tile; if left, snap to right edge
+      const curR = tileRow(entity.y);
+      const curC = tileCol(entity.x);
+      const center = centerOf(curR, curC);
+      entity.x = center.x;
+      // stop horizontal motion
+      if (entity.dir.x !== 0) entity.dir = (entity === pac) ? DIRS.NONE : entity.dir;
+      // ghosts keep their dir; AI will change next center
+      if (entity !== pac) entity.dir = { x: 0, y: entity.dir.y };
+    }
+
+    // --- Y move ---
+    nx = entity.x;
+    ny = entity.y + entity.dir.y * entity.speed * dt;
+
+    if (!hitsWallAt(nx, ny, r * 0.95)) {
+      entity.y = ny;
+    } else {
+      const curR = tileRow(entity.y);
+      const curC = tileCol(entity.x);
+      const center = centerOf(curR, curC);
+      entity.y = center.y;
+      if (entity.dir.y !== 0) entity.dir = (entity === pac) ? DIRS.NONE : entity.dir;
+      if (entity !== pac) entity.dir = { x: entity.dir.x, y: 0 };
+    }
+
+    // final wrap (in case x changed row mid-step)
+    entity.x = wrapXIfTunnel(tileRow(entity.y), entity.x);
+    return true;
+  }
+
+  function tryTurnPac(){
+    if (pac.nextDir === DIRS.NONE) return;
+    if (!isCenteredOnTile(pac)) return;
+
+    const testX = pac.x + pac.nextDir.x * TILE * 0.55;
+    const testY = pac.y + pac.nextDir.y * TILE * 0.55;
+
+    const r = pac.radius * 0.95;
+    const tx = wrapXIfTunnel(tileRow(testY), testX);
+
+    if (!hitsWallAt(tx, testY, r)) pac.dir = pac.nextDir;
+  }
+
+  function eat(){
+    const r = tileRow(pac.y);
+    const c = tileCol(pac.x);
+    const t = tileAt(r, c);
+
+    if (t === 2) { setTile(r, c, 0); score += 10; }
+    if (t === 3) { setTile(r, c, 0); score += 50; }
+    scoreEl.textContent = score;
+  }
+
+  function collide(a, b){
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.hypot(dx, dy) < TILE * 0.55;
+  }
+
+  function ghostAI(g){
+    // Ghost release logic: get them out of the house first.
+    if (g.inHouse) {
+      if (gameTime < g.releaseAt) {
+        // idle wiggle inside house
+        if (isCenteredOnTile(g) && Math.random() < 0.25) {
+          g.dir = [DIRS.LEFT, DIRS.RIGHT][Math.random() < 0.5 ? 0 : 1];
+        }
+        return;
+      }
+
+      // head to door center
+      const door = centerOf(GHOST_DOOR[1].r, GHOST_DOOR[1].c);
+      const dx = door.x - g.x;
+      const dy = door.y - g.y;
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        g.dir = dx > 0 ? DIRS.RIGHT : DIRS.LEFT;
+      } else {
+        g.dir = dy > 0 ? DIRS.DOWN : DIRS.UP;
+      }
+
+      // once above the house area, switch to normal AI
+      if (tileRow(g.y) <= GHOST_DOOR[1].r) {
+        // if they've reached the door row and are not inside 4's anymore, release them
+        const tr = tileRow(g.y);
+        const tc = tileCol(g.x);
+        if (tileAt(tr, tc) !== 4) g.inHouse = false;
+      }
+      return;
+    }
+
+    // normal chase-ish turning at intersections
+    if (!isCenteredOnTile(g)) return;
+
+    const options = [DIRS.LEFT, DIRS.RIGHT, DIRS.UP, DIRS.DOWN].filter(d => {
+      const reverse = (d.x === -g.dir.x && d.y === -g.dir.y);
+      if (reverse) return false;
+
+      const tx = wrapXIfTunnel(tileRow(g.y), g.x + d.x * TILE * 0.55);
+      const ty = g.y + d.y * TILE * 0.55;
+
+      return !hitsWallAt(tx, ty, TILE * 0.38);
+    });
+
+    if (options.length === 0) {
+      g.dir = { x:-g.dir.x, y:-g.dir.y };
+      return;
+    }
+
+    let best = options[0];
+    let bestScore = Infinity;
+    for (const d of options) {
+      const tx = wrapXIfTunnel(tileRow(g.y), g.x + d.x * TILE);
+      const ty = g.y + d.y * TILE;
+      const s = Math.hypot(pac.x - tx, pac.y - ty);
+      if (s < bestScore) { bestScore = s; best = d; }
+    }
+
+    g.dir = (Math.random() < 0.18)
+      ? options[Math.floor(Math.random() * options.length)]
+      : best;
+  }
+
   // --- Rendering ---
-  function draw() {
+  let last = performance.now();
+  let perfNow = last;
+  let accumulator = 0;
+  const FIXED = 1/120;
+
+  function dirToAngle(d){
+    if (d === DIRS.RIGHT) return 0;
+    if (d === DIRS.LEFT) return Math.PI;
+    if (d === DIRS.UP) return -Math.PI/2;
+    if (d === DIRS.DOWN) return Math.PI/2;
+    return 0;
+  }
+
+  function drawGhost(g){
+    const r = TILE * 0.42;
+    const x = g.x, y = g.y;
+
+    ctx.fillStyle = g.color;
+    ctx.beginPath();
+    ctx.arc(x, y, r, Math.PI, 0);
+    ctx.lineTo(x + r, y + r);
+    for (let i=0;i<6;i++){
+      const px = x + r - (i*(2*r/5));
+      const py = y + r - (i%2 ? 4 : 0);
+      ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(x - r*0.35, y - r*0.15, r*0.22, 0, Math.PI*2);
+    ctx.arc(x + r*0.35, y - r*0.15, r*0.22, 0, Math.PI*2);
+    ctx.fill();
+
+    const pdx = g.dir.x * 2.2;
+    const pdy = g.dir.y * 2.2;
+    ctx.fillStyle = "#111";
+    ctx.beginPath();
+    ctx.arc(x - r*0.35 + pdx, y - r*0.15 + pdy, r*0.10, 0, Math.PI*2);
+    ctx.arc(x + r*0.35 + pdx, y - r*0.15 + pdy, r*0.10, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function overlayText(text){
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#e6edf7";
+    ctx.font = "700 34px ui-sans-serif, system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText(text, canvas.width/2, canvas.height/2);
+    ctx.font = "500 16px ui-sans-serif, system-ui";
+    ctx.fillStyle = "rgba(230,237,247,0.8)";
+    ctx.fillText("Use arrow keys / WASD", canvas.width/2, canvas.height/2 + 28);
+  }
+
+  function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // draw tiles
     for (let r=0;r<ROWS;r++){
       for (let c=0;c<COLS;c++){
         const t = grid[r][c];
@@ -410,11 +557,9 @@
           ctx.fillStyle = "#0a2a8a";
           ctx.fillRect(x, y, TILE, TILE);
         } else {
-          // background
           ctx.fillStyle = "#050a12";
           ctx.fillRect(x, y, TILE, TILE);
 
-          // subtle grid lines
           ctx.strokeStyle = "rgba(255,255,255,0.035)";
           ctx.strokeRect(x, y, TILE, TILE);
 
@@ -431,7 +576,6 @@
             ctx.fill();
           }
           if (t === 4) {
-            // ghost house floor tint
             ctx.fillStyle = "rgba(255,255,255,0.05)";
             ctx.fillRect(x, y, TILE, TILE);
           }
@@ -439,7 +583,7 @@
       }
     }
 
-    // Pac-Man (mouth animation)
+    // Pac-Man
     const mouth = running ? (0.25 + 0.15*Math.sin(perfNow/90)) : 0.25;
     ctx.fillStyle = "#ffd60a";
     ctx.beginPath();
@@ -449,71 +593,10 @@
     ctx.closePath();
     ctx.fill();
 
-    // ghosts
     ghosts.forEach(g => drawGhost(g));
 
-    // overlay
-    if (!running && !gameOver) {
-      overlayText("Press Start");
-    }
-    if (gameOver) {
-      overlayText("Game Over");
-    }
-  }
-
-  function overlayText(text){
-    ctx.fillStyle = "rgba(0,0,0,0.55)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "#e6edf7";
-    ctx.font = "700 34px ui-sans-serif, system-ui";
-    ctx.textAlign = "center";
-    ctx.fillText(text, canvas.width/2, canvas.height/2);
-    ctx.font = "500 16px ui-sans-serif, system-ui";
-    ctx.fillStyle = "rgba(230,237,247,0.8)";
-    ctx.fillText("Use arrow keys / WASD", canvas.width/2, canvas.height/2 + 28);
-  }
-
-  function dirToAngle(d){
-    if (d === DIRS.RIGHT) return 0;
-    if (d === DIRS.LEFT) return Math.PI;
-    if (d === DIRS.UP) return -Math.PI/2;
-    if (d === DIRS.DOWN) return Math.PI/2;
-    return 0;
-  }
-
-  function drawGhost(g){
-    const r = TILE * 0.42;
-    const x = g.x, y = g.y;
-
-    // body
-    ctx.fillStyle = g.color;
-    ctx.beginPath();
-    ctx.arc(x, y, r, Math.PI, 0);
-    ctx.lineTo(x + r, y + r);
-    // wavy bottom
-    for (let i=0;i<6;i++){
-      const px = x + r - (i*(2*r/5));
-      const py = y + r - (i%2 ? 4 : 0);
-      ctx.lineTo(px, py);
-    }
-    ctx.closePath();
-    ctx.fill();
-
-    // eyes
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(x - r*0.35, y - r*0.15, r*0.22, 0, Math.PI*2);
-    ctx.arc(x + r*0.35, y - r*0.15, r*0.22, 0, Math.PI*2);
-    ctx.fill();
-
-    // pupils
-    const pdx = g.dir.x * 2.2;
-    const pdy = g.dir.y * 2.2;
-    ctx.fillStyle = "#111";
-    ctx.beginPath();
-    ctx.arc(x - r*0.35 + pdx, y - r*0.15 + pdy, r*0.10, 0, Math.PI*2);
-    ctx.arc(x + r*0.35 + pdx, y - r*0.15 + pdy, r*0.10, 0, Math.PI*2);
-    ctx.fill();
+    if (!running && !gameOver) overlayText("Press Start");
+    if (gameOver) overlayText("Game Over");
   }
 
   // --- Input ---
@@ -526,23 +609,14 @@
   });
 
   startBtn.addEventListener("click", () => {
-    if (gameOver) {
-      resetGame(false);
-    }
+    if (gameOver) resetGame(false);
     running = true;
     statusEl.textContent = "Playing";
   });
 
-  resetBtn.addEventListener("click", () => {
-    resetGame(true);
-  });
+  resetBtn.addEventListener("click", () => resetGame(true));
 
-  // --- Loop (smooth) ---
-  let last = performance.now();
-  let perfNow = last;
-  let accumulator = 0;
-  const FIXED = 1/120; // 120 Hz sim for smoothness
-
+  // --- Loop ---
   function tick(now){
     perfNow = now;
     const dt = Math.min(0.05, (now - last) / 1000);
@@ -559,12 +633,12 @@
   }
 
   function update(dt){
-    // turn if possible
-    tryTurnPac();
+    gameTime += dt;
 
-    // move pac
+    // pac turn + move
+    tryTurnPac();
     if (pac.dir !== DIRS.NONE) {
-      const moved = stepEntity(pac, dt);
+      const moved = moveEntity(pac, dt);
       if (!moved) pac.dir = DIRS.NONE;
     }
 
@@ -572,10 +646,10 @@
     eat();
 
     // ghosts
-    ghosts.forEach(g => {
+    for (const g of ghosts) {
       ghostAI(g);
-      stepEntity(g, dt);
-      // collision check
+      moveEntity(g, dt);
+
       if (collide(pac, g)) {
         lives--;
         livesEl.textContent = lives;
@@ -588,8 +662,9 @@
           statusEl.textContent = "Ready";
           resetPositions();
         }
+        break;
       }
-    });
+    }
   }
 
   // init
