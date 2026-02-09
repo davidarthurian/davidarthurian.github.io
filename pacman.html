@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Pac-Man | David Arthurian</title>
+  <meta name="description" content="Pac-Man style game — play on desktop or mobile." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="logo-favicon-192.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="logo-favicon-192.png">
+  <link rel="icon" sizes="192x192" href="logo-favicon-192.png">
+  <link rel="icon" sizes="512x512" href="logo-favicon-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo-favicon-512.png">
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a2e;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+      --accent:#7dd3fc;
+      --danger:#fda4af;
+      --good:#a7f3d0;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.10), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.08), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* Header (match index.html) */
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: var(--text);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .brandLogo{ height:16px; width:auto; display:block; }
+    nav{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .nav a{
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      text-decoration:none;
+    }
+    .nav a:hover{
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+
+    main{
+      flex:1;
+      display:flex;
+      justify-content:center;
+      padding: 28px 18px 36px;
+    }
+
+    .panel{
+      width:min(980px, 100%);
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.55);
+      border-radius: 22px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+      overflow:hidden;
+      padding: 18px;
+    }
+
+    .topRow{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .titleBlock h1{
+      margin:0 0 6px 0;
+      font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+      letter-spacing: -0.4px;
+    }
+    .titleBlock p{
+      margin:0;
+      color: var(--muted);
+      line-height:1.4;
+      max-width: 70ch;
+    }
+
+    .hud{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .pill{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    .pill b{ color: var(--text); }
+    .btn{
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-weight: 700;
+      padding: 9px 12px;
+      cursor:pointer;
+    }
+    .btn:hover{ background: rgba(255,255,255,0.06); }
+
+    .boardWrap{
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(0,0,0,0.18);
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:auto;
+      touch-action: none;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(11,18,32,0.78);
+      backdrop-filter: blur(6px);
+      padding: 18px;
+    }
+    .overlayCard{
+      width:min(520px, 100%);
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.75);
+      border-radius: 18px;
+      padding: 18px;
+      text-align:center;
+    }
+    .overlayTitle{
+      margin:0 0 8px 0;
+      font-size: 1.35rem;
+      letter-spacing: -0.3px;
+    }
+    .overlayText{
+      margin:0 0 14px 0;
+      color: var(--muted);
+      line-height:1.5;
+    }
+
+    /* Mobile controls */
+    .mobileControls{
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 64px 64px 64px;
+      grid-template-rows: 56px 56px 56px;
+      gap: 10px;
+      justify-content: center;
+    }
+    .padBtn{
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-weight: 900;
+      font-size: 1.1rem;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .padBtn:active{
+      transform: translateY(1px);
+      background: rgba(255,255,255,0.06);
+    }
+    .padCenter{
+      color: var(--accent);
+    }
+
+    .hint{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height:1.4;
+      text-align:center;
+    }
+
+    @media (min-width: 860px){
+      .mobileControls{ display:none; }
+      .hint{ text-align:left; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="logo.png" alt="DWA Logo" class="brandLogo">
+        <span>David Arthurian</span>
+      </div>
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="projects.html">Projects</a>
+        <a href="travel.html">Travel</a>
+        <a href="cats.html">Cats</a>
+        <a href="game.html" style="color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.03);">Fun</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel" aria-label="Pacman game panel">
+      <div class="topRow">
+        <div class="titleBlock">
+          <h1>Pac-Man</h1>
+          <p>Eat all pellets. Power pellets let you eat ghosts briefly. Arrow/WASD + mobile controls.</p>
+        </div>
+
+        <div class="hud">
+          <div class="pill">Score: <b id="score">0</b></div>
+          <div class="pill">High: <b id="highScore">0</b></div>
+          <div class="pill">Lives: <b id="lives">3</b></div>
+          <div class="pill">Status: <b id="status">Ready</b></div>
+          <button class="btn" id="startBtn" type="button">Start</button>
+          <button class="btn" id="restartBtn" type="button">Restart</button>
+        </div>
+      </div>
+
+      <div class="boardWrap">
+        <canvas id="game" aria-label="Pacman board"></canvas>
+
+        <div class="overlay" id="overlay">
+          <div class="overlayCard">
+            <h2 class="overlayTitle">Press Start</h2>
+            <p class="overlayText">
+              Use <b>WASD</b> or <b>arrow keys</b>. On mobile use the buttons.
+              <br><br>
+              <span style="color:var(--muted)">Power pellet = you can eat ghosts for a few seconds.</span>
+            </p>
+            <button class="btn" id="overlayStartBtn" type="button">Start</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobileControls" aria-label="Mobile controls">
+        <div></div>
+        <button class="padBtn" data-dir="up" aria-label="Up">▲</button>
+        <div></div>
+
+        <button class="padBtn" data-dir="left" aria-label="Left">◀</button>
+        <button class="padBtn padCenter" id="mobileStart" aria-label="Start/Pause">▶</button>
+        <button class="padBtn" data-dir="right" aria-label="Right">▶</button>
+
+        <div></div>
+        <button class="padBtn" data-dir="down" aria-label="Down">▼</button>
+        <div></div>
+      </div>
+
+      <div class="hint">Tip: Space = pause/resume. Start after “Game Over” begins a fresh run.</div>
+    </section>
+  </main>
+
+  <script>
+    // ====== Map ======
+    // Legend:
+    // # wall
+    // . pellet
+    // o power pellet
+    // ' ' empty
+    // P pacman start
+    // G ghost start
+    const LEVEL = [
+      "####################",
+      "#o........##........#",
+      "#.####.###.##.###.###",
+      "#....................#",
+      "#.####.##.####.##.###",
+      "#......##....##......#",
+      "######.#####.#####.###",
+      "     #.##  G  ##.#     ",
+      "######.## ### ##.######",
+      "P.......  # #  .......#",
+      "######.## ### ##.######",
+      "     #.##  G  ##.#     ",
+      "######.##.####.##.######",
+      "#........##...........o#",
+      "#.###.####.##.####.###.#",
+      "#...#......G.......#...#",
+      "###.###.########.###.###",
+      "#......................#",
+      "####################"
+    ];
+
+    // Normalize rows to same length (pads with spaces)
+    const width = Math.max(...LEVEL.map(r => r.length));
+    const grid = LEVEL.map(r => r.padEnd(width, " "));
+
+    // ====== Canvas sizing ======
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+
+    // Choose cell size responsive-ish
+    // We'll set internal resolution based on grid and a base cell size, then scale with CSS width:100%.
+    const cell = 26;
+    const cols = width;
+    const rows = grid.length;
+    canvas.width = cols * cell;
+    canvas.height = rows * cell;
+
+    // ====== DOM ======
+    const scoreEl = document.getElementById("score");
+    const highScoreEl = document.getElementById("highScore");
+    const livesEl = document.getElementById("lives");
+    const statusEl = document.getElementById("status");
+    const overlay = document.getElementById("overlay");
+
+    // ====== State ======
+    const TICK_MS = 90;
+
+    let pelletsLeft = 0;
+    let score = 0;
+    let lives = 3;
+
+    let running = false;
+    let loopId = null;
+    let gameEnded = false;
+    let frightenedUntil = 0;
+
+    let highScore = Number(localStorage.getItem("pacmanHighScore") || "0");
+    highScoreEl.textContent = highScore;
+
+    // Positions are in grid coordinates
+    const pac = { x: 1, y: 1, dir: {x:0,y:0}, nextDir: {x:0,y:0} };
+
+    const ghosts = [
+      { x: 10, y: 7,  dir:{x:1,y:0}, home:{x:10,y:7},  color:"#fda4af" }, // pink
+      { x: 10, y: 11, dir:{x:-1,y:0},home:{x:10,y:11}, color:"#a7f3d0" }, // mint
+      { x: 9,  y: 15, dir:{x:0,y:-1},home:{x:9,y:15},  color:"#fde68a" }  // yellow
+    ];
+
+    function resetLevel(){
+      // Count pellets + find starts
+      pelletsLeft = 0;
+
+      for(let y=0;y<rows;y++){
+        for(let x=0;x<cols;x++){
+          const c = grid[y][x];
+          if(c === "." || c === "o") pelletsLeft++;
+        }
+      }
+
+      // Find P start
+      for(let y=0;y<rows;y++){
+        const ix = grid[y].indexOf("P");
+        if(ix !== -1){
+          pac.x = ix; pac.y = y;
+          break;
+        }
+      }
+      pac.dir = {x:0,y:0};
+      pac.nextDir = {x:0,y:0};
+
+      // Reset ghosts to their home
+      ghosts.forEach(g=>{
+        g.x = g.home.x;
+        g.y = g.home.y;
+        g.dir = {x:1,y:0};
+      });
+
+      frightenedUntil = 0;
+    }
+
+    function initState(){
+      score = 0;
+      lives = 3;
+      scoreEl.textContent = score;
+      livesEl.textContent = lives;
+      statusEl.textContent = "Ready";
+      gameEnded = false;
+
+      // Clone grid to mutable map (we'll remove pellets)
+      map = grid.map(r => r.split(""));
+
+      resetLevel();
+      draw();
+    }
+
+    let map = null;
+
+    // ====== Helpers ======
+    function now(){ return performance.now(); }
+
+    function inBounds(x,y){
+      return y>=0 && y<rows && x>=0 && x<cols;
+    }
+
+    function isWall(x,y){
+      if(!inBounds(x,y)) return true;
+      return map[y][x] === "#";
+    }
+
+    function canMove(x,y,dir){
+      const nx = x + dir.x;
+      const ny = y + dir.y;
+      // allow tunnels through spaces even if out-of-bounds? keep simple: clamp to bounds
+      if(!inBounds(nx,ny)) return false;
+      return !isWall(nx,ny);
+    }
+
+    function dirs(){
+      return [
+        {x:1,y:0},
+        {x:-1,y:0},
+        {x:0,y:1},
+        {x:0,y:-1}
+      ];
+    }
+
+    function opposite(a,b){
+      return a.x === -b.x && a.y === -b.y;
+    }
+
+    function distManhattan(ax,ay,bx,by){
+      return Math.abs(ax-bx) + Math.abs(ay-by);
+    }
+
+    function stopGame(statusText){
+      running = false;
+      if(loopId) clearInterval(loopId);
+      loopId = null;
+      if(statusText) statusEl.textContent = statusText;
+    }
+
+    function showOverlay(title, text){
+      overlay.style.display = "flex";
+      overlay.querySelector(".overlayTitle").textContent = title;
+      overlay.querySelector(".overlayText").innerHTML = text;
+    }
+
+    function hideOverlay(){
+      overlay.style.display = "none";
+    }
+
+    function gameOver(){
+      stopGame("Game Over");
+      gameEnded = true;
+
+      if(score > highScore){
+        highScore = score;
+        localStorage.setItem("pacmanHighScore", String(highScore));
+        highScoreEl.textContent = highScore;
+      }
+
+      showOverlay("Game Over", "Hit <b>Start</b> to play again.");
+    }
+
+    function win(){
+      stopGame("You Win");
+      if(score > highScore){
+        highScore = score;
+        localStorage.setItem("pacmanHighScore", String(highScore));
+        highScoreEl.textContent = highScore;
+      }
+      showOverlay("You Win 🎉", "All pellets cleared. Hit <b>Restart</b> to run it back.");
+    }
+
+    function startGame(){
+      // Always reset cleanly if ended
+      if(gameEnded){
+        // Full reset
+        map = grid.map(r => r.split(""));
+        initState();
+      }
+
+      if(running) return;
+
+      // If we're in "Ready" but not moving, pick a default direction
+      if(pac.dir.x === 0 && pac.dir.y === 0){
+        pac.nextDir = {x:1,y:0};
+        pac.dir = {x:1,y:0};
+      }
+
+      running = true;
+      gameEnded = false;
+      statusEl.textContent = "Playing";
+      hideOverlay();
+
+      if(loopId) clearInterval(loopId);
+      loopId = setInterval(tick, TICK_MS);
+    }
+
+    function restartGame(){
+      stopGame("Ready");
+      map = grid.map(r => r.split(""));
+      initState();
+      showOverlay("Press Start", "Use <b>WASD</b> or <b>arrow keys</b>. Power pellet lets you eat ghosts briefly.");
+    }
+
+    function setPacNext(dir){
+      // Don't allow reverse when already moving (keeps controls tight)
+      if(pac.dir.x !== 0 || pac.dir.y !== 0){
+        if(opposite(dir, pac.dir)) return;
+      }
+      pac.nextDir = dir;
+    }
+
+    function eatAt(x,y){
+      const c = map[y][x];
+      if(c === "."){
+        map[y][x] = " ";
+        pelletsLeft--;
+        score += 10;
+        scoreEl.textContent = score;
+      } else if(c === "o"){
+        map[y][x] = " ";
+        pelletsLeft--;
+        score += 50;
+        scoreEl.textContent = score;
+        frightenedUntil = now() + 5500; // 5.5 seconds
+      }
+      if(pelletsLeft <= 0) win();
+    }
+
+    function collideWithGhost(){
+      for(const g of ghosts){
+        if(g.x === pac.x && g.y === pac.y){
+          const frightened = now() < frightenedUntil;
+          if(frightened){
+            // eat ghost
+            score += 200;
+            scoreEl.textContent = score;
+            g.x = g.home.x;
+            g.y = g.home.y;
+            g.dir = {x:1,y:0};
+          } else {
+            // lose life
+            lives--;
+            livesEl.textContent = lives;
+            if(lives <= 0){
+              gameOver();
+              return true;
+            }
+            // reset positions but keep pellets
+            statusEl.textContent = "Ready";
+            stopGame("Ready");
+            resetPositionsOnly();
+            showOverlay("Ouch!", "You got caught. Hit <b>Start</b> to continue.");
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function resetPositionsOnly(){
+      // Pac to start
+      for(let y=0;y<rows;y++){
+        const ix = grid[y].indexOf("P");
+        if(ix !== -1){
+          pac.x = ix; pac.y = y;
+          break;
+        }
+      }
+      pac.dir = {x:0,y:0};
+      pac.nextDir = {x:0,y:0};
+
+      ghosts.forEach(g=>{
+        g.x = g.home.x;
+        g.y = g.home.y;
+        g.dir = {x:1,y:0};
+      });
+      frightenedUntil = 0;
+      draw();
+    }
+
+    function movePac(){
+      // Apply buffered direction if possible
+      if(canMove(pac.x, pac.y, pac.nextDir)){
+        pac.dir = { ...pac.nextDir };
+      }
+      if(!canMove(pac.x, pac.y, pac.dir)){
+        // stop if blocked
+        pac.dir = {x:0,y:0};
+        return;
+      }
+      pac.x += pac.dir.x;
+      pac.y += pac.dir.y;
+
+      eatAt(pac.x, pac.y);
+    }
+
+    function chooseGhostDir(g){
+      const options = dirs().filter(d => canMove(g.x,g.y,d) && !opposite(d, g.dir));
+      if(options.length === 0){
+        // allow reverse if stuck
+        const any = dirs().filter(d => canMove(g.x,g.y,d));
+        if(any.length) return any[Math.floor(Math.random()*any.length)];
+        return g.dir;
+      }
+
+      const frightened = now() < frightenedUntil;
+
+      // Simple behavior:
+      // - When frightened: pick direction that increases distance
+      // - Otherwise: pick direction that decreases distance (chase)
+      let best = options[0];
+      let bestScore = frightened ? -Infinity : Infinity;
+
+      for(const d of options){
+        const nx = g.x + d.x;
+        const ny = g.y + d.y;
+        const dist = distManhattan(nx,ny,pac.x,pac.y);
+
+        if(frightened){
+          // maximize distance
+          if(dist > bestScore){
+            bestScore = dist;
+            best = d;
+          }
+        } else {
+          // minimize distance
+          if(dist < bestScore){
+            bestScore = dist;
+            best = d;
+          }
+        }
+      }
+
+      // Add a little randomness so it doesn't feel robotic
+      if(Math.random() < 0.18){
+        return options[Math.floor(Math.random()*options.length)];
+      }
+      return best;
+    }
+
+    function moveGhosts(){
+      for(const g of ghosts){
+        // If multiple options, choose direction; else keep going
+        if(!canMove(g.x,g.y,g.dir)){
+          g.dir = chooseGhostDir(g);
+        } else {
+          // Sometimes re-evaluate at intersections
+          const count = dirs().filter(d => canMove(g.x,g.y,d)).length;
+          if(count >= 3){
+            g.dir = chooseGhostDir(g);
+          }
+        }
+
+        // step
+        if(canMove(g.x,g.y,g.dir)){
+          g.x += g.dir.x;
+          g.y += g.dir.y;
+        }
+      }
+    }
+
+    function tick(){
+      // If paused/ended, do nothing
+      if(!running) return;
+
+      movePac();
+      if(collideWithGhost()) return;
+
+      moveGhosts();
+      if(collideWithGhost()) return;
+
+      draw();
+    }
+
+    // ====== Rendering ======
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      // background
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      // grid cells
+      for(let y=0;y<rows;y++){
+        for(let x=0;x<cols;x++){
+          const c = map[y][x];
+          const px = x*cell;
+          const py = y*cell;
+
+          if(c === "#"){
+            ctx.fillStyle = "rgba(125,211,252,0.10)";
+            ctx.fillRect(px,py,cell,cell);
+            ctx.strokeStyle = "rgba(255,255,255,0.06)";
+            ctx.strokeRect(px+0.5,py+0.5,cell-1,cell-1);
+          } else {
+            // subtle grid lines (optional, helps visibility)
+            ctx.strokeStyle = "rgba(255,255,255,0.03)";
+            ctx.strokeRect(px+0.5,py+0.5,cell-1,cell-1);
+
+            if(c === "."){
+              ctx.fillStyle = "rgba(230,237,247,0.75)";
+              ctx.beginPath();
+              ctx.arc(px+cell/2, py+cell/2, 2.6, 0, Math.PI*2);
+              ctx.fill();
+            } else if(c === "o"){
+              ctx.fillStyle = "rgba(125,211,252,0.95)";
+              ctx.beginPath();
+              ctx.arc(px+cell/2, py+cell/2, 6.0, 0, Math.PI*2);
+              ctx.fill();
+            }
+          }
+        }
+      }
+
+      // Pacman
+      drawPacman();
+
+      // Ghosts
+      const frightened = now() < frightenedUntil;
+      for(const g of ghosts){
+        drawGhost(g.x, g.y, frightened ? "rgba(230,237,247,0.7)" : g.color);
+      }
+
+      // frightened timer hint
+      if(frightened){
+        ctx.fillStyle = "rgba(167,243,208,0.9)";
+        ctx.font = "bold 14px ui-sans-serif, system-ui";
+        ctx.fillText("POWER", 10, 18);
+      }
+    }
+
+    function drawPacman(){
+      const cx = pac.x*cell + cell/2;
+      const cy = pac.y*cell + cell/2;
+      const r = cell*0.42;
+
+      // mouth angle changes with time
+      const t = now()*0.012;
+      const mouth = 0.25 + 0.12*Math.sin(t);
+
+      let angle = 0;
+      if(pac.dir.x === 1) angle = 0;
+      else if(pac.dir.x === -1) angle = Math.PI;
+      else if(pac.dir.y === 1) angle = Math.PI/2;
+      else if(pac.dir.y === -1) angle = -Math.PI/2;
+
+      ctx.fillStyle = "#fde68a";
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,r, angle + mouth, angle + (Math.PI*2 - mouth));
+      ctx.closePath();
+      ctx.fill();
+
+      // eye
+      ctx.fillStyle = "rgba(11,18,32,0.65)";
+      ctx.beginPath();
+      ctx.arc(cx + (pac.dir.y !== 0 ? 4 : 6), cy - 6, 2.2, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    function drawGhost(gx, gy, color){
+      const x = gx*cell;
+      const y = gy*cell;
+
+      ctx.fillStyle = color;
+
+      // body (rounded top)
+      ctx.beginPath();
+      ctx.arc(x+cell/2, y+cell/2, cell*0.42, Math.PI, 0);
+      ctx.lineTo(x+cell*0.92, y+cell*0.90);
+      // wavy bottom
+      ctx.quadraticCurveTo(x+cell*0.80, y+cell*0.78, x+cell*0.68, y+cell*0.90);
+      ctx.quadraticCurveTo(x+cell*0.56, y+cell*0.78, x+cell*0.44, y+cell*0.90);
+      ctx.quadraticCurveTo(x+cell*0.32, y+cell*0.78, x+cell*0.20, y+cell*0.90);
+      ctx.lineTo(x+cell*0.08, y+cell*0.90);
+      ctx.closePath();
+      ctx.fill();
+
+      // eyes
+      ctx.fillStyle = "rgba(230,237,247,0.95)";
+      ctx.beginPath();
+      ctx.arc(x+cell*0.40, y+cell*0.52, cell*0.10, 0, Math.PI*2);
+      ctx.arc(x+cell*0.62, y+cell*0.52, cell*0.10, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(11,18,32,0.75)";
+      ctx.beginPath();
+      ctx.arc(x+cell*0.42, y+cell*0.54, cell*0.05, 0, Math.PI*2);
+      ctx.arc(x+cell*0.64, y+cell*0.54, cell*0.05, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // ====== Controls ======
+    function togglePause(){
+      if(running){
+        stopGame("Paused");
+        showOverlay("Paused", "Press <b>Start</b> to resume.");
+        gameEnded = false;
+      } else {
+        startGame();
+      }
+    }
+
+    document.addEventListener("keydown", (e)=>{
+      const k = e.key.toLowerCase();
+
+      if(k === " "){
+        e.preventDefault();
+        togglePause();
+        return;
+      }
+
+      // If not running, start on first move input
+      if(!running && !gameEnded) startGame();
+
+      if(k === "arrowup" || k === "w") setPacNext({x:0,y:-1});
+      if(k === "arrowdown" || k === "s") setPacNext({x:0,y:1});
+      if(k === "arrowleft" || k === "a") setPacNext({x:-1,y:0});
+      if(k === "arrowright" || k === "d") setPacNext({x:1,y:0});
+    });
+
+    document.getElementById("overlayStartBtn").addEventListener("click", startGame);
+    document.getElementById("startBtn").addEventListener("click", startGame);
+    document.getElementById("restartBtn").addEventListener("click", restartGame);
+
+    // Mobile arrows
+    document.querySelectorAll(".padBtn[data-dir]").forEach(btn=>{
+      const dir = btn.getAttribute("data-dir");
+      btn.addEventListener("pointerdown", (e)=>{
+        e.preventDefault();
+        if(!running && !gameEnded) startGame();
+        if(dir === "up") setPacNext({x:0,y:-1});
+        if(dir === "down") setPacNext({x:0,y:1});
+        if(dir === "left") setPacNext({x:-1,y:0});
+        if(dir === "right") setPacNext({x:1,y:0});
+      });
+    });
+
+    document.getElementById("mobileStart").addEventListener("click", togglePause);
+
+    // ====== Init ======
+    function setOverlayReady(){
+      showOverlay("Press Start", "Use <b>WASD</b> or <b>arrow keys</b>. Power pellet lets you eat ghosts briefly.");
+    }
+
+    initState();
+    setOverlayReady();
+  </script>
+</body>
+</html>
