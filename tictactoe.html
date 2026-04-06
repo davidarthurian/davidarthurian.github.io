@@ -748,11 +748,18 @@ function cpuMove() {
 
   // Try to win, then block, then random
   const move = findBestMove(2) || findBestMove(1) || randomMove();
-  if (!move) return;
+
+  // No valid move at all — it's a draw
+  if (!move) {
+    gameOver = true;
+    showDraw();
+    render();
+    return;
+  }
 
   if (move.source === 'hand') {
     const hi = hands[2].findIndex(p => !p.used && p.size === move.size);
-    if (hi === -1) return;
+    if (hi === -1) { gameOver = true; showDraw(); render(); return; }
     doPlace({player:2, size:move.size}, move.cell, true, hi);
   } else {
     doMoveBoard(move.from, move.cell);
@@ -800,13 +807,23 @@ function findBestMove(forPlayer) {
 }
 
 function randomMove() {
-  // Pick any valid hand placement
-  const available = hands[2].filter(p => !p.used);
-  if (available.length) {
+  // Try hand placements first (largest to smallest)
+  const available = hands[2].filter(p => !p.used).sort((a,b) => b.size - a.size);
+  for (const p of available) {
     for (let ci = 0; ci < 9; ci++) {
-      const p = available[available.length - 1];
       if (canPlace({player:2, size:p.size}, ci)) {
         return {source:'hand', size:p.size, cell:ci};
+      }
+    }
+  }
+  // Fallback: try moving any board piece to any valid cell
+  for (let from = 0; from < 9; from++) {
+    const top = topOf(from);
+    if (!top || top.p !== 2) continue;
+    for (let to = 0; to < 9; to++) {
+      if (from === to) continue;
+      if (canPlace({player:2, size:top.s}, to)) {
+        return {source:'board', from, cell:to};
       }
     }
   }
