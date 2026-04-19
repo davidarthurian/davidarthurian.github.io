@@ -449,33 +449,176 @@ function makePacman() {
 // FIX 1: Completely reworked ghost exit system using explicit exit phases.
 // Phases: 'bounce' (bob in house) -> 'moveUp' (swim to exit) -> 'done' (free on map)
 // Blinky (index 0) spawns above the house and is immediately 'done'.
-function makeGhosts() {
-  const defs = [
-    // Blinky: starts outside above house, exits immediately
-    { col: 12, row: 11, startDx: -1, startDy: 0, exitDelay: 0, startPhase: 'done', startInHouse: false },
-    // Pinky: inside, exits after short delay
-    { col: 13, row: 14, startDx:  0, startDy: 1, exitDelay: 100,  startPhase: 'bounce', startInHouse: true  },
-    // Inky: inside, exits after medium delay
-    { col: 11, row: 14, startDx:  0, startDy:-1, exitDelay: 200,  startPhase: 'bounce', startInHouse: true  },
-    // Clyde: inside, exits after longest delay
-    { col: 15, row: 14, startDx:  0, startDy: 1, exitDelay: 300,  startPhase: 'bounce', startInHouse: true  },
-  ];
+function moveGhosts() {
+  ghosts.forEach((g, ghostIndex) => {
+    const speed = g.speed;
 
-  return defs.map((d, i) => ({
-    col: d.col, row: d.row,
-    x: d.col * CELL + CELL/2,
-    y: d.row * CELL + CELL/2,
-    dx: d.startDx, dy: d.startDy,
-    speed: 1.2 + level * 0.08,
-    color: GHOST_COLORS[i],
-    name: GHOST_NAMES[i],
-    state: d.startPhase === 'done' ? 'scatter' : 'exiting',
-    exitDelay: d.exitDelay,
-    exitTimer: 0,
-    inHouse: d.startInHouse,
-    exitPhase: d.startPhase,  // 'bounce' | 'moveUp' | 'done'
-    eaten: false,
-  }));
+    // Current tile based on actual pixel position
+    g.col = Math.floor(g.x / CELL);
+    g.row = Math.floor(g.y / CELL);
+
+    const centerX = g.col * CELL + CELL / 2;
+    const centerY = g.row * CELL + CELL / 2;
+
+    const atCenter =
+      Math.abs(g.x - centerX) < 0.5 &&
+      Math.abs(g.y - centerY) < 0.5;
+
+    if (atCenter) {
+      g.x = centerX;
+      g.y = centerY;
+    }
+
+    // ── Waiting inside house ──
+    if (g.inHouse && g.exitPhase === 'bounce') {
+      g.exitTimer++;
+
+      g.y += g.dy * 0.6;
+
+      const topY = 13 * CELL + CELL / 2;
+      const botY = 15 * CELL + CELL / 2;
+
+      if (g.y <= topY) g.dy = 1;
+      if (g.y >= botY) g.dy = -1;
+
+      if (g.exitTimer >= g.exitDelay) {
+        g.exitPhase = 'moveUp';
+        g.dx = 0;
+        g.dy = 0;
+      }
+      return;
+    }
+
+    // ── Exiting house ──
+    if (g.inHouse && g.exitPhase === 'moveUp') {
+      // First line up with the doorway column
+      if (Math.abs(g.x - EXIT_X) > speed) {
+        g.x += Math.sign(EXIT_X - g.x) * speed;
+        return;
+      }
+
+      g.x = EXIT_X;
+
+      // Then rise out through the door
+      if (g.y > EXIT_Y) {
+        g.y -= speed;
+        return;
+      }
+
+      // Once fully outside, snap to a clean corridor tile,
+      // not the doorway tile where they were getting stuck.
+      g.inHouse = false;
+      g.exitPhase = 'done';
+      g.state = frightTimer > 0 ? 'frightened' : 'scatter';
+
+      if (ghostIndex % 2 === 0) {
+        g.col = 12;
+        g.row = 11;
+        g.x = g.col * CELL + CELL / 2;
+        g.y = g.row * CELL + CELL / 2;
+        g.dx = -1;
+        g.dy = 0;
+      } else {
+        g.col = 14;
+        g.row = 11;
+        g.x = g.col * CELL + CELL / 2;
+        g.y = g.row * CELL + CELL / 2;
+        g.dx = 1;
+        g.dy = 0;
+      }
+
+      return;
+    }
+
+    // ── Eaten ghost returning home ──
+    if (g.eaten) {
+      const targetX = EXIT_X;
+      const targetY = 14 * CELL + CELL / 2;
+
+      const dxToHome = targetX - g.x;
+      const dyToHome = targetY - g.y;
+      const dist = Math.hypot(dxToHome, dyToHome);
+
+      if (dist <= speed * 2) {
+        g.x = targetX;
+        g.y = targetY;
+        g.col = 13;
+        g.row = 14;
+
+        g.eaten = false;
+        g.inHouse = true;
+        g.exitPhase = 'bounce';
+        g.exitDelay = 60;
+        g.exitTimer = 0;
+        g.state = 'exiting';
+        g.dx = 0;
+        g.dy = 1;
+        return;
+      }
+
+      g.x += (dxToHome / dist) * speed * 2;
+      g.y += (dyToHome / dist) * speed * 2;
+      return;
+    }
+
+    // ── Normal maze routing ──
+    if (atCenter) {
+      const target = getGhostTarget(g, g.col, g.row);
+
+      let options = DIRS.filter(d => {
+        if (d.dx === -g.dx && d.dy === -g.dy) return false;
+
+        const nc = g.col + d.dx;
+        const nr = g.row + d.dy;
+        return isGhostWalkable(nc, nr, g);
+      });
+
+      // fallback: allow reverse if no forward options
+      if (options.length === 0) {
+        options = DIRS.filter(d => {
+          const nc = g.col + d.dx;
+          const nr = g.row + d.dy;
+          return isGhostWalkable(nc, nr, g);
+        });
+      }
+
+      if (options.length > 0) {
+        if (g.state === 'frightened') {
+          const pick = options[Math.floor(Math.random() * options.length)];
+          g.dx = pick.dx;
+          g.dy = pick.dy;
+        } else {
+          let best = options[0];
+          let bestDist = Infinity;
+
+          for (const d of options) {
+            const nc = g.col + d.dx;
+            const nr = g.row + d.dy;
+            const dist = (nc - target.col) ** 2 + (nr - target.row) ** 2;
+
+            if (dist < bestDist) {
+              bestDist = dist;
+              best = d;
+            }
+          }
+
+          g.dx = best.dx;
+          g.dy = best.dy;
+        }
+      }
+    }
+
+    // Move ghost
+    g.x += g.dx * speed;
+    g.y += g.dy * speed;
+
+    // Tunnel wrap
+    if (g.x < 0) g.x = COLS * CELL;
+    if (g.x > COLS * CELL) g.x = 0;
+
+    g.col = Math.floor(g.x / CELL);
+    g.row = Math.floor(g.y / CELL);
+  });
 }
 
 // ═══════════════════════════════════════════════
@@ -666,8 +809,8 @@ function moveGhosts() {
     const speed = g.speed;
 
     // Use floor-based tile tracking so ghosts don't snap back to the same tile
-    g.col = Math.floor(g.x / CELL);
-    g.row = Math.floor(g.y / CELL);
+    g.col = Math.floor((g.x / CELL);
+    g.row = Math.floor((g.y / CELL);
 
     const centerX = g.col * CELL + CELL / 2;
     const centerY = g.row * CELL + CELL / 2;
