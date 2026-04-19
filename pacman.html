@@ -677,13 +677,16 @@ function moveGhosts() {
         // Snap cleanly to the corridor above the ghost house
         g.y = EXIT_Y;
         g.x = EXIT_X;
+        g.col = 13;
+        g.row = EXIT_ROW;
         g.inHouse = false;
         g.exitPhase = 'done';
         g.state = frightTimer > 0 ? 'frightened' : 'scatter';
 
-        // Let normal AI choose direction next tick
-        g.dx = 0;
+        // Force one clean horizontal launch step out of the doorway
+        g.dx = ghosts.indexOf(g) % 2 === 0 ? -1 : 1;
         g.dy = 0;
+        g.justExited = true;
       }
 
       return;
