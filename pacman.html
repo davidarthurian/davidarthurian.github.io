@@ -466,7 +466,7 @@ function makeGhosts() {
     x: d.col * CELL + CELL/2,
     y: d.row * CELL + CELL/2,
     dx: d.startDx, dy: d.startDy,
-    speed: 1.6 + level * 0.12,
+    speed: 1.2 + level * 0.08,
     color: GHOST_COLORS[i],
     name: GHOST_NAMES[i],
     state: d.startPhase === 'done' ? 'scatter' : 'exiting',
@@ -673,19 +673,17 @@ function moveGhosts() {
       g.y -= g.speed * 1.5;
 
       if (g.y <= EXIT_Y) {
-        // Snap cleanly to grid center of exit row
+        // Snap cleanly to the corridor above the ghost house
         g.y = EXIT_Y;
         g.x = EXIT_X;
         g.inHouse = false;
         g.exitPhase = 'done';
         g.state = frightTimer > 0 ? 'frightened' : 'scatter';
-        // Move left along row 11. No-U-turn blocks dx=0,dy=1 (back into house).
-        // The AI will immediately re-evaluate at the next grid center.
-        g.dx = -1;
+
+        // Reset direction so normal AI picks a valid route immediately
+        g.dx = 0;
         g.dy = 0;
       }
-      return;
-    }
 
     // ── Eaten: return to ghost house ──
     if (g.eaten) {
@@ -716,18 +714,32 @@ function moveGhosts() {
     const row = Math.round((g.y - CELL/2) / CELL);
     const cx  = col * CELL + CELL/2;
     const cy  = row * CELL + CELL/2;
-    const atCenter = Math.abs(g.x - cx) < g.speed + 1 && Math.abs(g.y - cy) < g.speed + 1;
-
+    const atCenter = Math.abs(g.x - cx) <= g.speed + 1.5 && Math.abs(g.y - cy) <= g.speed + 1.5;
+      
     if (atCenter) {
       g.x = cx; g.y = cy;
       const target = getGhostTarget(g, col, row);
 
       const validDirs = DIRS.filter(d => {
         if (d.dx === -g.dx && d.dy === -g.dy) return false; // no U-turn
-        const nc = col + d.dx, nr = row + d.dy;
+
+        const nc = col + d.dx;
+        const nr = row + d.dy;
+
         if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) return false;
+
         const cell = map[nr]?.[nc];
-        return cell !== 1 && cell !== 4; // walls and ghost door are impassable
+
+        // Hard walls are always blocked
+        if (cell === 1) return false;
+
+        // Ghost door is blocked during normal roaming
+        if (cell === 4) return false;
+
+        // Once a ghost is out in the maze, it should not path back into the ghost house
+        if (!g.inHouse && !g.eaten && cell === 5) return false;
+
+        return true;
       });
 
       if (validDirs.length === 0) { g.dx *= -1; g.dy *= -1; return; }
