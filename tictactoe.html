@@ -692,9 +692,53 @@ function checkWinner() {
   return null;
 }
 
+function getAllLegalMoves(player) {
+  const moves = [];
+
+  // Hand placements
+  for (let handIdx = 0; handIdx < hands[player].length; handIdx++) {
+    const piece = hands[player][handIdx];
+    if (piece.used) continue;
+
+    for (let cell = 0; cell < 9; cell++) {
+      if (canPlace({ player, size: piece.size }, cell)) {
+        moves.push({
+          source: 'hand',
+          player,
+          size: piece.size,
+          handIdx,
+          cell
+        });
+      }
+    }
+  }
+
+  // Board moves (only move your own top pieces)
+  for (let from = 0; from < 9; from++) {
+    const top = topOf(from);
+    if (!top || top.p !== player) continue;
+
+    for (let to = 0; to < 9; to++) {
+      if (from === to) continue;
+      if (canPlace({ player, size: top.s }, to)) {
+        moves.push({
+          source: 'board',
+          player,
+          from,
+          cell: to,
+          size: top.s
+        });
+      }
+    }
+  }
+
+  return moves;
+}
+  
 function isDraw() {
-  // Draw if all cells occupied (top piece exists in all 9)
-  return board.every(st => st.length > 0);
+  // In Gobblet, a full-looking board is NOT necessarily a draw.
+  // It's only a draw if neither player has any legal move left.
+  return getAllLegalMoves(1).length === 0 && getAllLegalMoves(2).length === 0;
 }
 
 function doPlace(piece, cellIdx, fromHand, handIdx) {
@@ -746,90 +790,111 @@ function endTurn() {
 function cpuMove() {
   if (gameOver) return;
 
-  // Try to win, then block, then random
-  const move = findBestMove(2) || findBestMove(1) || randomMove();
+  // 1) Try to win
+  let move = findBestMove(2);
 
-  // No valid move at all — it's a draw
+  // 2) Try to block player 1, but only using legal CPU moves
   if (!move) {
-    gameOver = true;
-    showDraw();
+    const cpuMoves = getAllLegalMoves(2);
+
+    for (const m of cpuMoves) {
+      // simulate CPU move
+      let movedPiece = null;
+
+      if (m.source === 'hand') {
+        board[m.cell].push({ p: 2, s: m.size });
+      } else {
+        movedPiece = board[m.from].pop();
+        board[m.cell].push(movedPiece);
+      }
+
+      // after this CPU move, see if player 1 still has an immediate winning move
+      const playerThreat = findBestMove(1);
+
+      // undo simulation
+      if (m.source === 'hand') {
+        board[m.cell].pop();
+      } else {
+        board[m.cell].pop();
+        board[m.from].push(movedPiece);
+      }
+
+      if (!playerThreat) {
+        move = m;
+        break;
+      }
+    }
+  }
+
+  // 3) Fallback random legal CPU move
+  if (!move) {
+    move = randomMove();
+  }
+
+  // 4) If truly no CPU move exists, only then check for draw/pass
+  if (!move) {
+    if (isDraw()) {
+      gameOver = true;
+      showDraw();
+      render();
+      return;
+    }
+
+    // If CPU somehow has no move but game isn't a draw, pass turn back
+    currentPlayer = 1;
+    selected = null;
     render();
     return;
   }
 
+  // Execute chosen move
   if (move.source === 'hand') {
-    const hi = hands[2].findIndex(p => !p.used && p.size === move.size);
-    if (hi === -1) { gameOver = true; showDraw(); render(); return; }
-    doPlace({player:2, size:move.size}, move.cell, true, hi);
+    doPlace({ player: 2, size: move.size }, move.cell, true, move.handIdx);
   } else {
     doMoveBoard(move.from, move.cell);
   }
+
   endTurn();
 }
 
 function findBestMove(forPlayer) {
-  // Try placing each available piece to complete a line
-  for (let sz = 2; sz >= 0; sz--) {
-    const hi = hands[forPlayer].findIndex(p => !p.used && p.size === sz);
-    if (hi !== -1) {
-      for (let ci = 0; ci < 9; ci++) {
-        if (canPlace({player:forPlayer, size:sz}, ci)) {
-          // Simulate
-          board[ci].push({p:forPlayer, s:sz});
-          const w = checkWinner();
-          board[ci].pop();
-          if (w && w.player === forPlayer) {
-            return {source:'hand', size:sz, cell:ci};
-          }
-        }
-      }
+  const legalMoves = getAllLegalMoves(forPlayer);
+
+  for (const move of legalMoves) {
+    let movedPiece = null;
+
+    // simulate move
+    if (move.source === 'hand') {
+      board[move.cell].push({ p: forPlayer, s: move.size });
+    } else {
+      movedPiece = board[move.from].pop();
+      board[move.cell].push(movedPiece);
+    }
+
+    const w = checkWinner();
+
+    // undo move
+    if (move.source === 'hand') {
+      board[move.cell].pop();
+    } else {
+      board[move.cell].pop();
+      board[move.from].push(movedPiece);
+    }
+
+    if (w && w.player === forPlayer) {
+      return move;
     }
   }
-  // Try moving a board piece to win/block
-  for (let from = 0; from < 9; from++) {
-    const top = topOf(from);
-    if (!top || top.p !== forPlayer) continue;
-    for (let to = 0; to < 9; to++) {
-      if (from === to) continue;
-      if (canPlace({player:forPlayer, size:top.s}, to)) {
-        board[from].pop();
-        board[to].push(top);
-        const w = checkWinner();
-        board[to].pop();
-        board[from].push(top);
-        if (w && w.player === forPlayer) {
-          return {source:'board', from, cell:to};
-        }
-      }
-    }
-  }
+
   return null;
 }
-
+  
 function randomMove() {
-  // Try hand placements first (largest to smallest)
-  const available = hands[2].filter(p => !p.used).sort((a,b) => b.size - a.size);
-  for (const p of available) {
-    for (let ci = 0; ci < 9; ci++) {
-      if (canPlace({player:2, size:p.size}, ci)) {
-        return {source:'hand', size:p.size, cell:ci};
-      }
-    }
-  }
-  // Fallback: try moving any board piece to any valid cell
-  for (let from = 0; from < 9; from++) {
-    const top = topOf(from);
-    if (!top || top.p !== 2) continue;
-    for (let to = 0; to < 9; to++) {
-      if (from === to) continue;
-      if (canPlace({player:2, size:top.s}, to)) {
-        return {source:'board', from, cell:to};
-      }
-    }
-  }
-  return null;
+  const moves = getAllLegalMoves(2);
+  if (moves.length === 0) return null;
+  return moves[Math.floor(Math.random() * moves.length)];
 }
-
+  
 // ─────────────────────────────────────────────
 // INTERACTIONS
 // ─────────────────────────────────────────────
