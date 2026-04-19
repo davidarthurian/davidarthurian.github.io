@@ -674,19 +674,23 @@ function moveGhosts() {
       g.y -= g.speed * 1.5;
 
       if (g.y <= EXIT_Y) {
-        // Snap cleanly to the corridor above the ghost house
+        const launchRight = ghosts.indexOf(g) % 2 === 1;
+
+        // Skip the doorway tile entirely and place the ghost
+        // one full tile outside the spawn exit.
         g.y = EXIT_Y;
-        g.x = EXIT_X;
-        g.col = 13;
+        g.x = EXIT_X + (launchRight ? CELL : -CELL);
+
+        g.col = Math.round((g.x - CELL / 2) / CELL);
         g.row = EXIT_ROW;
+
         g.inHouse = false;
         g.exitPhase = 'done';
         g.state = frightTimer > 0 ? 'frightened' : 'scatter';
 
-        // Force one clean horizontal launch step out of the doorway
-        g.dx = ghosts.indexOf(g) % 2 === 0 ? -1 : 1;
+        g.dx = launchRight ? 1 : -1;
         g.dy = 0;
-        g.justExited = true;
+        g.justExited = false;
       }
 
       return;
