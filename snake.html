@@ -196,45 +196,47 @@
       line-height:1.5;
     }
 
-    /* Mobile controls */
-    .mobileControls{
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: 64px 64px 64px;
-      grid-template-rows: 56px 56px 56px;
-      gap: 10px;
-      justify-content: center;
-    }
-    .padBtn{
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      color: var(--text);
-      font-weight: 900;
-      font-size: 1.1rem;
-      cursor: pointer;
-      user-select: none;
-      touch-action: manipulation;
-    }
-    .padBtn:active{
-      transform: translateY(1px);
-      background: rgba(255,255,255,0.06);
-    }
-    .padCenter{
-      color: var(--accent);
-    }
-    .hint{
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height:1.4;
-      text-align:center;
-    }
+/* Mobile controls */
+.mobileControls{
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 72px 72px 72px;
+  grid-template-rows: 64px 64px 64px;
+  gap: 12px;
+  justify-content: center;
+}
+.padBtn{
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+  font-weight: 900;
+  font-size: 1.35rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  min-height: 64px;
+}
+.padBtn:active{
+  transform: translateY(1px);
+  background: rgba(255,255,255,0.09);
+}
+.padSpacer{
+  border-radius: 16px;
+}
+.hint{
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height:1.4;
+  text-align:center;
+}
 
-    @media (min-width: 860px){
-      .mobileControls{ display:none; }
-      .hint{ text-align:left; }
-    }
+@media (min-width: 860px){
+  .mobileControls{ display:none; }
+  .hint{ text-align:left; }
+}
   </style>
 </head>
 
@@ -288,19 +290,19 @@
         </div>
       </div>
 
-      <div class="mobileControls" aria-label="Mobile controls">
+      <div class="mobileControls" aria-label="Mobile arrow controls">
         <div></div>
-        <button class="padBtn" data-dir="up" aria-label="Up">▲</button>
+        <button class="padBtn" data-dir="up" aria-label="Move up">▲</button>
         <div></div>
 
-        <button class="padBtn" data-dir="left" aria-label="Left">◀</button>
-        <button class="padBtn padCenter" id="mobileStart" aria-label="Start/Pause">▶</button>
-        <button class="padBtn" data-dir="right" aria-label="Right">▶</button>
+        <button class="padBtn" data-dir="left" aria-label="Move left">◀</button>
+        <div class="padSpacer" aria-hidden="true"></div>
+        <button class="padBtn" data-dir="right" aria-label="Move right">▶</button>
 
-        <div></div>
-        <button class="padBtn" data-dir="down" aria-label="Down">▼</button>
-        <div></div>
-      </div>
+      <div></div>
+  <button class="padBtn" data-dir="down" aria-label="Move down">▼</button>
+  <div></div>
+</div>
 
       <div class="hint">
         Tip: You can click <b>Start</b> again after Game Over to instantly play a fresh run.
@@ -508,31 +510,35 @@
       draw();
     }
 
-    // ====== Controls ======
-    document.addEventListener("keydown", (e)=>{
-      const k = e.key.toLowerCase();
+document.addEventListener("keydown", (e)=>{
+  const k = e.key.toLowerCase();
+  const isArrowKey = ["arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k);
+  const isMoveKey = isArrowKey || ["w", "a", "s", "d"].includes(k);
 
-      if(k === " "){
-        e.preventDefault();
-        if(running){
-          stopGame("Paused");
-          overlay.style.display = "flex";
-          overlay.querySelector(".overlayTitle").textContent = "Paused";
-          overlay.querySelector(".overlayText").textContent = "Press Start to resume.";
-          gameEnded = false;
-        } else {
-          startGame();
-        }
-        return;
-      }
+  if(isArrowKey || k === " "){
+    e.preventDefault();
+  }
 
-      if(!running) startGame();
+  if(k === " "){
+    if(running){
+      stopGame("Paused");
+      overlay.style.display = "flex";
+      overlay.querySelector(".overlayTitle").textContent = "Paused";
+      overlay.querySelector(".overlayText").textContent = "Press Start to resume.";
+      gameEnded = false;
+    } else {
+      startGame();
+    }
+    return;
+  }
 
-      if(k === "arrowup" || k === "w") setDirection("up");
-      if(k === "arrowdown" || k === "s") setDirection("down");
-      if(k === "arrowleft" || k === "a") setDirection("left");
-      if(k === "arrowright" || k === "d") setDirection("right");
-    });
+  if(!running && isMoveKey) startGame();
+
+  if(k === "arrowup" || k === "w") setDirection("up");
+  if(k === "arrowdown" || k === "s") setDirection("down");
+  if(k === "arrowleft" || k === "a") setDirection("left");
+  if(k === "arrowright" || k === "d") setDirection("right");
+});
 
     // Desktop buttons
     document.getElementById("overlayStartBtn").addEventListener("click", startGame);
@@ -547,19 +553,6 @@
         if(!running) startGame();
         setDirection(dir);
       });
-    });
-
-    // Mobile start/pause
-    document.getElementById("mobileStart").addEventListener("click", ()=>{
-      if(running){
-        stopGame("Paused");
-        overlay.style.display = "flex";
-        overlay.querySelector(".overlayTitle").textContent = "Paused";
-        overlay.querySelector(".overlayText").textContent = "Press Start to resume.";
-        gameEnded = false;
-      } else {
-        startGame();
-      }
     });
 
     // ====== Init ======
