@@ -640,144 +640,189 @@ const EXIT_X   = 13 * CELL + CELL/2;
 const EXIT_ROW = 11;
 const EXIT_Y   = EXIT_ROW * CELL + CELL/2;
 
-function moveGhosts() {
-  ghosts.forEach(g => {
+function isGhostWalkable(col, row, ghost) {
+  if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return false;
 
-    // ── Phase: bounce inside house while waiting ──
+  const cell = map[row]?.[col];
+
+  // walls always blocked
+  if (cell === 1) return false;
+
+  // door is only allowed while ghost is exiting or returning after being eaten
+  if (cell === 4) {
+    return ghost.inHouse || ghost.eaten;
+  }
+
+  // ghost-house interior should only be allowed while inHouse or eaten
+  if (cell === 5) {
+    return ghost.inHouse || ghost.eaten;
+  }
+
+  return true;
+}
+  
+function moveGhosts() {
+  ghosts.forEach((g, ghostIndex) => {
+    const speed = g.speed;
+
+    // Keep row/col synced from current pixel position
+    g.col = Math.round((g.x - CELL / 2) / CELL);
+    g.row = Math.round((g.y - CELL / 2) / CELL);
+
+    const centerX = g.col * CELL + CELL / 2;
+    const centerY = g.row * CELL + CELL / 2;
+    const atCenter =
+      Math.abs(g.x - centerX) <= speed &&
+      Math.abs(g.y - centerY) <= speed;
+
+    // Snap to tile center when close enough
+    if (atCenter) {
+      g.x = centerX;
+      g.y = centerY;
+    }
+
+    // ── Ghost waiting inside house ──
     if (g.inHouse && g.exitPhase === 'bounce') {
       g.exitTimer++;
-      // Bob up and down gently
+
       g.y += g.dy * 0.6;
-      if (g.y < 13 * CELL + CELL/2) g.dy = 1;
-      if (g.y > 15 * CELL + CELL/2) g.dy = -1;
+
+      const topY = 13 * CELL + CELL / 2;
+      const botY = 15 * CELL + CELL / 2;
+
+      if (g.y <= topY) g.dy = 1;
+      if (g.y >= botY) g.dy = -1;
 
       if (g.exitTimer >= g.exitDelay) {
-        // Switch to exit: move toward horizontal center, then up
         g.exitPhase = 'moveUp';
-        g.dx = 0; g.dy = 0;
+        g.dx = 0;
+        g.dy = 0;
       }
       return;
     }
 
-    // ── Phase: navigate out of house ──
-        if (g.inHouse && g.exitPhase === 'moveUp') {
-      // Step 1: Center horizontally on the exit column
-      const distX = EXIT_X - g.x;
-      if (Math.abs(distX) > 1) {
-        g.x += Math.sign(distX) * Math.min(g.speed, Math.abs(distX));
-        return; // center X first before moving up
+    // ── Ghost exiting house deterministically ──
+    if (g.inHouse && g.exitPhase === 'moveUp') {
+      // First center horizontally on the door column
+      if (Math.abs(g.x - EXIT_X) > speed) {
+        g.x += Math.sign(EXIT_X - g.x) * speed;
+        return;
       }
 
       g.x = EXIT_X;
 
-      // Step 2: Move upward until we reach row 11 (open corridor above door)
-      g.y -= g.speed * 1.5;
-
-      if (g.y <= EXIT_Y) {
-        const launchRight = ghosts.indexOf(g) % 2 === 1;
-
-        // Skip the doorway tile entirely and place the ghost
-        // one full tile outside the spawn exit.
-        g.y = EXIT_Y;
-        g.x = EXIT_X + (launchRight ? CELL : -CELL);
-
-        g.col = Math.round((g.x - CELL / 2) / CELL);
-        g.row = EXIT_ROW;
-
-        g.inHouse = false;
-        g.exitPhase = 'done';
-        g.state = frightTimer > 0 ? 'frightened' : 'scatter';
-
-        g.dx = launchRight ? 1 : -1;
-        g.dy = 0;
-        g.justExited = false;
+      // Then move upward through the door until fully outside
+      if (g.y > EXIT_Y) {
+        g.y -= speed;
+        return;
       }
 
+      // Place ghost fully outside and choose a clean starting direction
+      g.y = EXIT_Y;
+      g.inHouse = false;
+      g.exitPhase = 'done';
+      g.state = frightTimer > 0 ? 'frightened' : 'scatter';
+
+      // Alternate launch direction so they don't stack
+      g.dx = ghostIndex % 2 === 0 ? -1 : 1;
+      g.dy = 0;
+
+      // Move one immediate step outward so they're not sitting on the doorway
+      g.x += g.dx * speed;
+      g.col = Math.round((g.x - CELL / 2) / CELL);
+      g.row = Math.round((g.y - CELL / 2) / CELL);
       return;
     }
 
-    // ── Eaten: return to ghost house ──
+    // ── Eaten ghost returns home ──
     if (g.eaten) {
-      // Head straight back to exit point then re-enter
-      const tx = EXIT_X, ty = EXIT_Y;
-      const ddx = tx - g.x, ddy = ty - g.y;
-      const dist = Math.sqrt(ddx*ddx + ddy*ddy);
-      if (dist < g.speed * 2) {
-        // Arrived — reset into house
+      const targetX = EXIT_X;
+      const targetY = 14 * CELL + CELL / 2;
+
+      const dx = targetX - g.x;
+      const dy = targetY - g.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist <= speed * 2) {
+        g.x = targetX;
+        g.y = targetY;
+        g.col = 13;
+        g.row = 14;
+
         g.eaten = false;
         g.inHouse = true;
         g.exitPhase = 'bounce';
         g.exitDelay = 60;
         g.exitTimer = 0;
         g.state = 'exiting';
-        g.x = EXIT_X;
-        g.y = 14 * CELL + CELL/2;
-        g.dx = 0; g.dy = 1;
+        g.dx = 0;
+        g.dy = 1;
         return;
       }
-      g.x += (ddx / dist) * g.speed * 2;
-      g.y += (ddy / dist) * g.speed * 2;
+
+      g.x += (dx / dist) * speed * 2;
+      g.y += (dy / dist) * speed * 2;
       return;
     }
 
-    // ── Normal grid-based maze movement ──
-    const col = Math.round((g.x - CELL/2) / CELL);
-    const row = Math.round((g.y - CELL/2) / CELL);
-    const cx  = col * CELL + CELL/2;
-    const cy  = row * CELL + CELL/2;
-    const atCenter = Math.abs(g.x - cx) <= g.speed + 1.5 && Math.abs(g.y - cy) <= g.speed + 1.5;
-      
+    // ── Normal maze routing: only choose direction at tile centers ──
     if (atCenter) {
-      g.x = cx; g.y = cy;
-      const target = getGhostTarget(g, col, row);
+      const target = getGhostTarget(g, g.col, g.row);
 
-      const validDirs = DIRS.filter(d => {
-        if (d.dx === -g.dx && d.dy === -g.dy) return false; // no U-turn
+      let options = DIRS.filter(d => {
+        // no immediate reverse unless it's the only path
+        if (d.dx === -g.dx && d.dy === -g.dy) return false;
 
-        const nc = col + d.dx;
-        const nr = row + d.dy;
-
-        if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) return false;
-
-        const cell = map[nr]?.[nc];
-
-        // Hard walls are always blocked
-        if (cell === 1) return false;
-
-        // Ghost door is blocked during normal roaming
-        if (cell === 4) return false;
-
-        // Once a ghost is out in the maze, it should not path back into the ghost house
-        if (!g.inHouse && !g.eaten && cell === 5) return false;
-
-        return true;
+        const nc = g.col + d.dx;
+        const nr = g.row + d.dy;
+        return isGhostWalkable(nc, nr, g);
       });
 
-      if (validDirs.length === 0) { g.dx *= -1; g.dy *= -1; return; }
+      // If no options, allow reversing as fallback
+      if (options.length === 0) {
+        options = DIRS.filter(d => {
+          const nc = g.col + d.dx;
+          const nr = g.row + d.dy;
+          return isGhostWalkable(nc, nr, g);
+        });
+      }
 
-      if (g.state === 'frightened') {
-        const d = validDirs[Math.floor(Math.random() * validDirs.length)];
-        g.dx = d.dx; g.dy = d.dy;
-      } else {
-        let best = null, bestDist = Infinity;
-        for (const d of validDirs) {
-          const nc = col + d.dx, nr = row + d.dy;
-          const dist = (nc - target.col) ** 2 + (nr - target.row) ** 2;
-          if (dist < bestDist) { bestDist = dist; best = d; }
+      if (options.length > 0) {
+        if (g.state === 'frightened') {
+          const pick = options[Math.floor(Math.random() * options.length)];
+          g.dx = pick.dx;
+          g.dy = pick.dy;
+        } else {
+          let best = options[0];
+          let bestDist = Infinity;
+
+          for (const d of options) {
+            const nc = g.col + d.dx;
+            const nr = g.row + d.dy;
+            const dist = (nc - target.col) ** 2 + (nr - target.row) ** 2;
+
+            if (dist < bestDist) {
+              bestDist = dist;
+              best = d;
+            }
+          }
+
+          g.dx = best.dx;
+          g.dy = best.dy;
         }
-        if (best) { g.dx = best.dx; g.dy = best.dy; }
       }
     }
 
-    g.x += g.dx * g.speed;
-    g.y += g.dy * g.speed;
+    // Move in current direction
+    g.x += g.dx * speed;
+    g.y += g.dy * speed;
 
     // Tunnel wrap
     if (g.x < 0) g.x = COLS * CELL;
     if (g.x > COLS * CELL) g.x = 0;
 
-    g.col = Math.round((g.x - CELL/2) / CELL);
-    g.row = Math.round((g.y - CELL/2) / CELL);
+    g.col = Math.round((g.x - CELL / 2) / CELL);
+    g.row = Math.round((g.y - CELL / 2) / CELL);
   });
 }
 
