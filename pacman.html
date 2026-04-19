@@ -441,7 +441,7 @@ function makePacman() {
     x: 14 * CELL + CELL/2, y: 23 * CELL + CELL/2,
     dx: 0, dy: 0,
     nextDx: 0, nextDy: 0,
-    speed: 1.6 + level * 0.12,
+    speed: 1.25 + level * 0.08,
     moving: false,
   };
 }
@@ -452,7 +452,7 @@ function makePacman() {
 function makeGhosts() {
   const defs = [
     // Blinky: starts outside above house, exits immediately
-    { col: 13, row: 11, startDx: -1, startDy: 0, exitDelay: 0,   startPhase: 'done',   startInHouse: false },
+    { col: 12, row: 11, startDx: -1, startDy: 0, exitDelay: 0, startPhase: 'done', startInHouse: false },
     // Pinky: inside, exits after short delay
     { col: 13, row: 14, startDx:  0, startDy: 1, exitDelay: 100,  startPhase: 'bounce', startInHouse: true  },
     // Inky: inside, exits after medium delay
@@ -665,17 +665,17 @@ function moveGhosts() {
   ghosts.forEach((g, ghostIndex) => {
     const speed = g.speed;
 
-    // Keep row/col synced from current pixel position
-    g.col = Math.round((g.x - CELL / 2) / CELL);
-    g.row = Math.round((g.y - CELL / 2) / CELL);
+    // Use floor-based tile tracking so ghosts don't snap back to the same tile
+    g.col = Math.floor(g.x / CELL);
+    g.row = Math.floor(g.y / CELL);
 
     const centerX = g.col * CELL + CELL / 2;
     const centerY = g.row * CELL + CELL / 2;
-    const atCenter =
-      Math.abs(g.x - centerX) <= speed &&
-      Math.abs(g.y - centerY) <= speed;
 
-    // Snap to tile center when close enough
+    const atCenter =
+      Math.abs(g.x - centerX) < 0.5 &&
+      Math.abs(g.y - centerY) < 0.5;
+
     if (atCenter) {
       g.x = centerX;
       g.y = centerY;
@@ -729,8 +729,8 @@ function moveGhosts() {
 
       // Move one immediate step outward so they're not sitting on the doorway
       g.x += g.dx * speed;
-      g.col = Math.round((g.x - CELL / 2) / CELL);
-      g.row = Math.round((g.y - CELL / 2) / CELL);
+      g.col = Math.floor(g.x / CELL);
+      g.row = Math.floor(g.y / CELL);
       return;
     }
 
@@ -821,8 +821,8 @@ function moveGhosts() {
     if (g.x < 0) g.x = COLS * CELL;
     if (g.x > COLS * CELL) g.x = 0;
 
-    g.col = Math.round((g.x - CELL / 2) / CELL);
-    g.row = Math.round((g.y - CELL / 2) / CELL);
+    g.col = Math.floor((g.x / CELL);
+    g.row = Math.floor((g.y / CELL);
   });
 }
 
