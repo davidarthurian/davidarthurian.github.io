@@ -660,13 +660,14 @@ function moveGhosts() {
     }
 
     // ── Phase: navigate out of house ──
-    if (g.inHouse && g.exitPhase === 'moveUp') {
+        if (g.inHouse && g.exitPhase === 'moveUp') {
       // Step 1: Center horizontally on the exit column
       const distX = EXIT_X - g.x;
       if (Math.abs(distX) > 1) {
         g.x += Math.sign(distX) * Math.min(g.speed, Math.abs(distX));
         return; // center X first before moving up
       }
+
       g.x = EXIT_X;
 
       // Step 2: Move upward until we reach row 11 (open corridor above door)
@@ -680,10 +681,13 @@ function moveGhosts() {
         g.exitPhase = 'done';
         g.state = frightTimer > 0 ? 'frightened' : 'scatter';
 
-        // Reset direction so normal AI picks a valid route immediately
+        // Let normal AI choose direction next tick
         g.dx = 0;
         g.dy = 0;
       }
+
+      return;
+    }
 
     // ── Eaten: return to ghost house ──
     if (g.eaten) {
