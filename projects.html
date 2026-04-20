@@ -1,4 +1,4 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -20,17 +20,25 @@
       --muted:#9fb0c6;
       --border:rgba(255,255,255,0.10);
       --link:#7dd3fc;
+      --linkHover:#7dd3fc;
     }
 
     *{ box-sizing:border-box; }
-    
 
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui;
-      background: var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
       color: var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
     }
+
+    a{ color:var(--link); text-decoration:none; }
+    a:hover{ color:var(--linkHover); }
 
     header{
       position: sticky;
@@ -73,7 +81,7 @@
       padding: 8px 10px;
       border-radius: 10px;
       border: 1px solid transparent;
-      text-decoration: none; /* add this */
+      text-decoration:none;
     }
     .nav a:hover{
       color: var(--text);
@@ -82,62 +90,88 @@
     }
 
     main{
+      flex:1;
       max-width: 980px;
-      margin: 40px auto;
-      padding: 0 18px;
+      margin: 0 auto;
+      width:100%;
+      padding: 34px 18px 28px;
     }
 
-    h1{
-      font-size: 2rem;
-      margin-bottom: 6px;
+    .pageTitle{
+      margin: 0 0 8px 0;
+      font-size: clamp(1.8rem, 3vw, 2.2rem);
+      letter-spacing:-0.4px;
     }
 
     .subtitle{
+      margin: 0 0 18px 0;
       color: var(--muted);
-      margin-bottom: 26px;
     }
 
     .projectList{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .projectRow{
+      border: 1px solid var(--border);
+      background: rgba(15,26,46,0.55);
+      border-radius: 16px;
+      padding: 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      transition: transform .12s ease, background .12s ease;
+      text-decoration:none;
+    }
+
+    .projectRow:hover{
+      transform: translateY(-2px);
+      background: rgba(15,26,46,0.7);
+    }
+
+    .projectLeft{
       display:flex;
       flex-direction:column;
-      gap: 14px;
-    }
-
-    .projectRow{
-      display:block;
-      padding: 18px 20px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      text-decoration:none;
-      transition: 0.2s;
-    }
-
-    .projectRow{
-      color: var(--text);
-    }
-
-    
-    .projectRow:hover{
-      background: rgba(255,255,255,0.06);
-      transform: translateY(-2px);
+      gap:6px;
+      min-width:0;
     }
 
     .projectTitle{
-      margin: 0 0 10px 0;
-      font-weight: 800;
-      margin-bottom: 6px;
+      font-weight:700;
+      color: var(--text);
+      margin:0;
     }
 
     .projectDesc{
       color: var(--muted);
       font-size: 0.95rem;
+      line-height:1.45;
+    }
+
+    .pill{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      white-space:nowrap;
+      flex-shrink:0;
+    }
+
+    @media (max-width: 680px){
+      .projectRow{
+        align-items:flex-start;
+      }
     }
   </style>
 </head>
 
 <body>
-<header>
+  <header>
     <div class="nav">
       <div class="brand">
         <img src="logo.png" alt="DWA Logo" class="brandLogo">
@@ -146,7 +180,7 @@
       <nav aria-label="Primary">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a href="projects.html">Projects</a>
+        <a href="projects.html" style="color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.03);">Projects</a>
         <a href="travel.html">Travel</a>
         <a href="cats.html">Cats</a>
         <a href="game.html">Fun</a>
@@ -154,39 +188,53 @@
     </div>
   </header>
 
-<main>
-  <h1>Projects</h1>
-  <div class="subtitle">Hands-on engineering projects — from where it started to where it's going.</div>
+  <main>
+    <h1 class="pageTitle">Projects</h1>
+    <p class="subtitle">Hands-on engineering projects — from where it started to where it's going.</p>
 
-  <div class="projectList">
+    <div class="projectList">
 
-    <a class="projectRow" href="#">
-      <div class="projectTitle">🔋 Power Storage/Transfer — DIY Altoids Battery Pack</div>
-      <div class="projectDesc">The project that started it all. A homemade portable power system built from scratch.</div>
-    </a>
+      <a class="projectRow" href="#">
+        <div class="projectLeft">
+          <div class="projectTitle">🔋 Altoids Battery Pack</div>
+          <div class="projectDesc">The project that started it all. A homemade portable power system built from scratch.</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
 
-    <a class="projectRow" href="#">
-      <div class="projectTitle">🏎 PID Tuning — Line Following Micro Car</div>
-      <div class="projectDesc">Implemented closed-loop control and tuning algorithms for precision autonomous movement.</div>
-    </a>
+      <a class="projectRow" href="#">
+        <div class="projectLeft">
+          <div class="projectTitle">🏎 Line Following Micro Car</div>
+          <div class="projectDesc">Implemented closed-loop control and tuning algorithms for precision autonomous movement.</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
 
-    <a class="projectRow" href="#">
-      <div class="projectTitle">☁️ Cloud Computing — Homemade NAS</div>
-      <div class="projectDesc">Designed and deployed a personal network-attached storage server for distributed access.</div>
-    </a>
+      <a class="projectRow" href="#">
+        <div class="projectLeft">
+          <div class="projectTitle">☁️ Homemade NAS</div>
+          <div class="projectDesc">Designed and deployed a personal network-attached storage server for distributed access.</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
 
-    <a class="projectRow" href="#">
-      <div class="projectTitle">🎮 Embedded Systems — Interactive Multiplayer Video Game</div>
-      <div class="projectDesc">Embedded + networking project combining hardware interaction and multiplayer logic.</div>
-    </a>
+      <a class="projectRow" href="#">
+        <div class="projectLeft">
+          <div class="projectTitle">🎮 Embedded Systems Multiplayer Video Game</div>
+          <div class="projectDesc">Embedded + networking project combining hardware interaction and multiplayer logic.</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
 
-    <a class="projectRow" href="#">
-      <div class="projectTitle">🚁 Unmanned Aircraft Systems — DIY Homemade Drone</div>
-      <div class="projectDesc">Designed and built a fully functional drone system with flight control and telemetry.</div>
-    </a>
+      <a class="projectRow" href="#">
+        <div class="projectLeft">
+          <div class="projectTitle">🚁 DIY Drone</div>
+          <div class="projectDesc">Designed and built a fully functional drone system with flight control and telemetry.</div>
+        </div>
+        <div class="pill">Open →</div>
+      </a>
 
-  </div>
-</main>
-
+    </div>
+  </main>
 </body>
 </html>
