@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project | David Arthurian</title>
+  <title>DIY Battery Pack | David Arthurian</title>
 
   <style>
     :root{
       --bg:#0b1220;
-      --panel:#0f1a2e;
       --text:#e6edf7;
       --muted:#9fb0c6;
       --border:rgba(255,255,255,0.10);
@@ -17,8 +16,10 @@
 
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui;
-      background: var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
       color: var(--text);
       padding: 30px 18px;
     }
@@ -28,37 +29,53 @@
       margin: 0 auto;
     }
 
-    h1{
-      margin-bottom: 8px;
-    }
+    h1{ margin-bottom: 8px; }
 
     .subtitle{
       color: var(--muted);
       margin-bottom: 24px;
+      line-height: 1.5;
     }
 
-    .section{
-      margin-bottom: 28px;
-    }
+    .section{ margin-bottom: 28px; }
 
     .card{
       border:1px solid var(--border);
       border-radius:14px;
-      padding:16px;
+      padding:18px;
       background: rgba(255,255,255,0.03);
     }
 
-    img, video{
+    p, li{
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    h3{
+      margin-top:0;
+      color: var(--text);
+    }
+
+    img{
       width:100%;
       border-radius:12px;
       margin-top:12px;
+      border:1px solid var(--border);
     }
 
-    pre{
-      background:#000;
-      padding:12px;
-      border-radius:10px;
-      overflow-x:auto;
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin: 16px 0 24px;
+    }
+
+    .tag{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border-radius:999px;
+      padding:7px 10px;
       font-size:0.9rem;
     }
 
@@ -81,71 +98,69 @@
 <body>
 <div class="container">
 
-  <!-- TITLE -->
-  <h1>🔋 Project Title Here</h1>
-  <div class="subtitle">1-line description of what this project is</div>
+  <h1>🔋 DIY Altoids Battery Pack</h1>
+  <div class="subtitle">
+    A simple sixth-grade electronics project that repurposed a 12V car USB charger circuit into a homemade portable USB power source inside an Altoids tin.
+  </div>
 
-  <!-- HERO IMAGE / VIDEO -->
+  <div class="tagRow">
+    <div class="tag">Early Electronics</div>
+    <div class="tag">Power Conversion</div>
+    <div class="tag">Soldering</div>
+    <div class="tag">Repurposed Hardware</div>
+  </div>
+
   <div class="section card">
     <h3>Overview</h3>
     <p>
-      Explain what the project is, what problem it solves, and why you built it.
+      This was one of my earliest hands-on electronics projects. I built a small portable battery pack using an Altoids tin as the enclosure, a 9V battery as the power source, and the circuit board from a disassembled 12V car auxiliary USB charger.
+    </p>
+    <p>
+      The idea was to take something that normally plugs into a car outlet, reuse its USB charging circuit, and package it into a small portable container. It was a simple project, but it introduced me to the idea that electronics could be taken apart, understood, modified, and rebuilt into something new.
     </p>
 
-    <img src="images/project.jpg" alt="Project image">
-    <!-- or -->
-    <!--
-    <video controls>
-      <source src="demo.mp4" type="video/mp4">
-    </video>
-    -->
+    <img src="images/diyBatteryPack.jpg" alt="DIY Altoids battery pack project">
   </div>
 
-  <!-- TECH STACK -->
   <div class="section card">
-    <h3>Tools & Technologies</h3>
+    <h3>How I Built It</h3>
     <ul>
-      <li>Arduino / C++</li>
-      <li>PID Control</li>
-      <li>3D Printing</li>
+      <li>Started with an empty Altoids tin as the enclosure.</li>
+      <li>Disassembled a 12V car auxiliary USB charger and removed the internal circuit board.</li>
+      <li>Connected a 9V battery to the charger circuit board as the power input.</li>
+      <li>Positioned the USB output so it could be accessed from the tin.</li>
+      <li>Packaged the wiring, battery, and board inside the Altoids tin.</li>
     </ul>
   </div>
 
-  <!-- GALLERY -->
-  <div class="section card">
-    <h3>Build / Gallery</h3>
-    <img src="images/build1.jpg">
-    <img src="images/build2.jpg">
-  </div>
-
-  <!-- TECHNICAL -->
   <div class="section card">
     <h3>Technical Breakdown</h3>
     <p>
-      Describe how it works (architecture, logic, system design).
+      The reused car charger circuit acted as a basic power conversion module. In a car, that circuit normally steps down the vehicle’s 12V supply to a USB-friendly output. In this project, I connected it to a 9V battery instead, using the same circuit to create a small portable USB power source.
     </p>
-  </div>
-
-  <!-- CODE -->
-  <div class="section card">
-    <h3>Code Snippet</h3>
-    <pre><code>
-// Example logic
-int error = target - sensor;
-output = kp * error;
-    </code></pre>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="section card">
-    <h3>Results & Learnings</h3>
     <p>
-      What worked, what didn’t, what you’d improve.
+      While the project was simple, it helped me understand the relationship between a power source, a circuit board, an output connector, and an enclosure. It was also an early lesson in voltage conversion, packaging, and practical wiring.
     </p>
   </div>
 
-  <!-- BACK BUTTON -->
-  <a href="../projects.html" class="backBtn">← Back to Projects</a>
+  <div class="section card">
+    <h3>What I Learned</h3>
+    <ul>
+      <li>How to safely take apart a consumer electronic device and identify useful components.</li>
+      <li>How batteries, wiring, and circuit boards connect together in a real physical system.</li>
+      <li>How enclosure design matters, even for a simple electronics project.</li>
+      <li>That small, improvised projects can be a strong starting point for learning engineering.</li>
+    </ul>
+  </div>
+
+  <div class="section card">
+    <h3>Reflection</h3>
+    <p>
+      Looking back, this project was basic, but it was important because it made electronics feel approachable. It was one of the first times I realized I could modify existing hardware and turn it into something functional. That curiosity eventually grew into more advanced projects involving control systems, embedded systems, hardware design, and power electronics.
+    </p>
+  </div>
+
+  <a href="projects.html" class="backBtn">← Back to Projects</a>
 
 </div>
 </body>
