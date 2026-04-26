@@ -49,7 +49,7 @@
 
     h1{
       margin-bottom: 8px;
-      color: var(--text); /* ensures white title */
+      color: var(--text);
     }
 
     .subtitle{
@@ -93,6 +93,13 @@
       font-size:0.9rem;
     }
 
+    img{
+      width:100%;
+      border-radius:12px;
+      margin-top:12px;
+      border:1px solid var(--border);
+    }
+
     .diagram{
       width:100%;
       margin-top:14px;
@@ -125,7 +132,7 @@
 
 <div class="container">
 
-  <h1>🔋 DIY Altoids Battery Pack</h1>
+  <h1>🔋 DIY Battery Pack</h1>
 
   <div class="subtitle">
     A simple sixth-grade electronics project that repurposed a 12V car USB charger circuit into a homemade portable USB power source inside an Altoids tin.
@@ -142,32 +149,28 @@
     <h3>Overview</h3>
 
     <p>
-      This was one of my earliest hands-on electronics projects. I built a small portable battery pack using an Altoids tin as the enclosure, a 9V battery as the power source, and the circuit board from a disassembled 12V car auxiliary USB charger.
+      This was one of my earliest hands-on electronics projects. I built a small portable battery pack using an Altoids tin, a 9V battery, and a repurposed USB charger circuit.
     </p>
 
-    <p>
-      The idea was to take something that normally plugs into a car outlet, reuse its USB charging circuit, and package it into a small portable container.
-    </p>
+    <!-- YOUR IMAGE -->
+    <img src="diyBatteryPack.png" alt="DIY Altoids battery pack">
 
-    <!-- Diagram -->
-    <svg class="diagram" viewBox="0 0 900 320">
-      <rect x="40" y="70" width="180" height="90" rx="16" fill="rgba(125,211,252,0.10)" stroke="rgba(125,211,252,0.65)" stroke-width="2"/>
-      <text x="130" y="105" text-anchor="middle" fill="#e6edf7">9V Battery</text>
+    <!-- CONDENSED DIAGRAM -->
+    <svg class="diagram" viewBox="0 0 700 160">
+      <rect x="20" y="50" width="140" height="50" rx="10" fill="rgba(125,211,252,0.10)" stroke="#7dd3fc"/>
+      <text x="90" y="80" text-anchor="middle" fill="#e6edf7" font-size="14">9V Battery</text>
 
-      <line x1="220" y1="115" x2="330" y2="115" stroke="#7dd3fc" stroke-width="3"/>
+      <line x1="160" y1="75" x2="250" y2="75" stroke="#7dd3fc" stroke-width="2"/>
 
-      <rect x="340" y="55" width="220" height="120" rx="16" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
-      <text x="450" y="110" text-anchor="middle" fill="#e6edf7">USB Charger Circuit</text>
+      <rect x="250" y="40" width="200" height="70" rx="10" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.2)"/>
+      <text x="350" y="75" text-anchor="middle" fill="#e6edf7" font-size="14">USB Charger Circuit</text>
 
-      <line x1="560" y1="115" x2="670" y2="115" stroke="#7dd3fc" stroke-width="3"/>
+      <line x1="450" y1="75" x2="540" y2="75" stroke="#7dd3fc" stroke-width="2"/>
 
-      <rect x="680" y="70" width="180" height="90" rx="16" fill="rgba(244,114,182,0.10)" stroke="rgba(244,114,182,0.65)" stroke-width="2"/>
-      <text x="770" y="105" text-anchor="middle" fill="#e6edf7">USB Output</text>
+      <rect x="540" y="50" width="140" height="50" rx="10" fill="rgba(244,114,182,0.10)" stroke="#f472b6"/>
+      <text x="610" y="80" text-anchor="middle" fill="#e6edf7" font-size="14">USB Output</text>
     </svg>
 
-    <p style="font-size:0.85rem;">
-      Simplified diagram of the original build.
-    </p>
   </div>
 
   <div class="section card">
