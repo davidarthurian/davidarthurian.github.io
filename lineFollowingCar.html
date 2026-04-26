@@ -229,19 +229,56 @@
   </div>
 
   <div class="section card">
-    <h3>Example Control Logic</h3>
-    <pre><code>// Simplified PID-style line following logic
-error = targetPosition - measuredLinePosition;
+    <div class="section card">
+  <h3>PID Control Implementation</h3>
 
-integral += error;
-derivative = error - previousError;
+  <p>
+    The controller continuously computes the error between the desired line position (center of the sensor array)
+    and the measured position. A PID controller is used to generate a correction term that adjusts the motor speeds
+    to keep the robot aligned with the track.
+  </p>
 
-correction = (kp * error) + (ki * integral) + (kd * derivative);
+  <pre><code>// PID constants (tuned experimentally)
+float kp = 0.6;
+float ki = 0.02;
+float kd = 1.2;
 
-leftMotorSpeed  = baseSpeed - correction;
-rightMotorSpeed = baseSpeed + correction;
+float error = 0;
+float previousError = 0;
+float integral = 0;
 
-previousError = error;</code></pre>
+int baseSpeed = 120;  // forward speed
+
+void loop() {
+  // Read sensor array and compute line position
+  int position = readLineSensors();  // returns weighted position
+  int target = 3500; // center value for 8 sensors
+
+  // Calculate error
+  error = target - position;
+
+  // PID components
+  integral += error;
+  float derivative = error - previousError;
+
+  // Compute correction
+  float correction = (kp * error) + (ki * integral) + (kd * derivative);
+
+  // Apply correction to motors
+  int leftSpeed  = baseSpeed - correction;
+  int rightSpeed = baseSpeed + correction;
+
+  setMotorSpeeds(leftSpeed, rightSpeed);
+
+  previousError = error;
+}</code></pre>
+
+  <p>
+    The proportional term reacts to current error, the integral term compensates for accumulated bias,
+    and the derivative term dampens oscillations. Careful tuning of these gains allowed the robot to
+    move aggressively while remaining stable on sharp turns.
+  </p>
+</div>
   </div>
 
   <div class="section card">
