@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project | David Arthurian</title>
+  <title>Line Following Car | David Arthurian</title>
 
   <style>
     :root{
       --bg:#0b1220;
-      --panel:#0f1a2e;
       --text:#e6edf7;
       --muted:#9fb0c6;
       --border:rgba(255,255,255,0.10);
@@ -17,10 +16,30 @@
 
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui;
-      background: var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
       color: var(--text);
       padding: 30px 18px;
+    }
+
+    .topBar{
+      max-width:900px;
+      margin:0 auto 24px;
+    }
+
+    .navBack{
+      display:inline-block;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+    }
+
+    .navBack:hover{
+      background:rgba(255,255,255,0.05);
     }
 
     .container{
@@ -30,36 +49,75 @@
 
     h1{
       margin-bottom: 8px;
+      color: var(--text);
     }
 
     .subtitle{
       color: var(--muted);
       margin-bottom: 24px;
+      line-height: 1.5;
     }
 
-    .section{
-      margin-bottom: 28px;
-    }
+    .section{ margin-bottom: 28px; }
 
     .card{
       border:1px solid var(--border);
       border-radius:14px;
-      padding:16px;
+      padding:18px;
       background: rgba(255,255,255,0.03);
     }
 
-    img, video{
+    p, li{
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    h3{
+      margin-top:0;
+      color: var(--text);
+    }
+
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin: 16px 0 24px;
+    }
+
+    .tag{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:0.9rem;
+    }
+
+    video{
       width:100%;
       border-radius:12px;
       margin-top:12px;
+      border:1px solid var(--border);
+      background:#000;
+    }
+
+    .diagram{
+      width:100%;
+      margin-top:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(255,255,255,0.02);
     }
 
     pre{
-      background:#000;
-      padding:12px;
-      border-radius:10px;
+      background:#05070d;
+      color:#e6edf7;
+      padding:14px;
+      border-radius:12px;
       overflow-x:auto;
+      border:1px solid var(--border);
       font-size:0.9rem;
+      line-height:1.5;
     }
 
     .backBtn{
@@ -79,74 +137,133 @@
 </head>
 
 <body>
+
+<div class="topBar">
+  <a href="projects.html" class="navBack">← Back to Projects</a>
+</div>
+
 <div class="container">
 
-  <!-- TITLE -->
-  <h1>🔋 Project Title Here</h1>
-  <div class="subtitle">1-line description of what this project is</div>
+  <h1>🏎 Line Following Car</h1>
 
-  <!-- HERO IMAGE / VIDEO -->
+  <div class="subtitle">
+    A TI-RSLK robotics project using an 8-sensor array and a tuned PID controller to follow a track, complete a 180-degree turn, and return to the starting position as quickly as possible.
+  </div>
+
+  <div class="tagRow">
+    <div class="tag">TI-RSLK</div>
+    <div class="tag">PID Control</div>
+    <div class="tag">Arduino IDE</div>
+    <div class="tag">Sensor Arrays</div>
+    <div class="tag">Motor Control</div>
+    <div class="tag">Robotics</div>
+  </div>
+
   <div class="section card">
     <h3>Overview</h3>
     <p>
-      Explain what the project is, what problem it solves, and why you built it.
+      This project used the TI-RSLK robotics platform to build and tune an autonomous line-following car. The car used an array of eight sensors underneath the chassis to detect a black line on paper and continuously estimate its position relative to the track.
+    </p>
+    <p>
+      My partner and I programmed the control logic in the Arduino IDE and tuned a PID controller to adjust the left and right wheel motors. The goal was to complete the track, perform a full 180-degree spin, and return to the starting position as quickly as possible without derailing.
+    </p>
+    <p>
+      Our build achieved the fastest completion time in our cohort for this track.
     </p>
 
-    <img src="images/project.jpg" alt="Project image">
-    <!-- or -->
-    <!--
     <video controls>
-      <source src="demo.mp4" type="video/mp4">
+      <source src="lineFollowingCar.mp4" type="video/mp4">
+      Your browser does not support the video tag.
     </video>
-    -->
   </div>
 
-  <!-- TECH STACK -->
   <div class="section card">
-    <h3>Tools & Technologies</h3>
+    <h3>System Diagram</h3>
+
+    <svg class="diagram" viewBox="0 0 760 190">
+      <rect x="25" y="60" width="150" height="60" rx="10" fill="rgba(125,211,252,0.10)" stroke="#7dd3fc"/>
+      <text x="100" y="88" text-anchor="middle" fill="#e6edf7" font-size="14">8-Sensor Array</text>
+      <text x="100" y="108" text-anchor="middle" fill="#9fb0c6" font-size="12">Line position</text>
+
+      <line x1="175" y1="90" x2="260" y2="90" stroke="#7dd3fc" stroke-width="2"/>
+
+      <rect x="260" y="45" width="180" height="90" rx="10" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.2)"/>
+      <text x="350" y="80" text-anchor="middle" fill="#e6edf7" font-size="14">PID Controller</text>
+      <text x="350" y="102" text-anchor="middle" fill="#9fb0c6" font-size="12">Arduino IDE</text>
+
+      <line x1="440" y1="90" x2="525" y2="90" stroke="#7dd3fc" stroke-width="2"/>
+
+      <rect x="525" y="35" width="100" height="55" rx="10" fill="rgba(244,114,182,0.10)" stroke="#f472b6"/>
+      <text x="575" y="67" text-anchor="middle" fill="#e6edf7" font-size="13">Left Motor</text>
+
+      <rect x="525" y="105" width="100" height="55" rx="10" fill="rgba(244,114,182,0.10)" stroke="#f472b6"/>
+      <text x="575" y="137" text-anchor="middle" fill="#e6edf7" font-size="13">Right Motor</text>
+
+      <line x1="625" y1="62" x2="710" y2="90" stroke="#7dd3fc" stroke-width="2"/>
+      <line x1="625" y1="132" x2="710" y2="90" stroke="#7dd3fc" stroke-width="2"/>
+
+      <rect x="710" y="60" width="30" height="60" rx="8" fill="rgba(52,211,153,0.10)" stroke="#34d399"/>
+      <text x="725" y="94" text-anchor="middle" fill="#e6edf7" font-size="12">Track</text>
+    </svg>
+  </div>
+
+  <div class="section card">
+    <h3>How It Worked</h3>
     <ul>
-      <li>Arduino / C++</li>
-      <li>PID Control</li>
-      <li>3D Printing</li>
+      <li>The 8-sensor array measured how far the robot was from the center of the black line.</li>
+      <li>The controller calculated an error value between the desired center position and the measured line position.</li>
+      <li>A tuned PID controller used proportional, integral, and derivative terms to correct the robot’s steering.</li>
+      <li>The motor outputs were adjusted independently so the car could steer, accelerate, decelerate, and recover from track curvature.</li>
+      <li>The robot had to complete the course, execute a 180-degree spin, and return to the start without leaving the line.</li>
     </ul>
   </div>
 
-  <!-- GALLERY -->
-  <div class="section card">
-    <h3>Build / Gallery</h3>
-    <img src="images/build1.jpg">
-    <img src="images/build2.jpg">
-  </div>
-
-  <!-- TECHNICAL -->
   <div class="section card">
     <h3>Technical Breakdown</h3>
     <p>
-      Describe how it works (architecture, logic, system design).
+      The key challenge was balancing speed and stability. If the car moved too slowly, the run time was not competitive. If it moved too quickly, the controller could overshoot the line and derail. We tuned the PID constants to make the car respond quickly to errors while avoiding excessive oscillation.
+    </p>
+    <p>
+      The proportional term handled immediate correction, the derivative term helped reduce overshoot, and the final motor outputs controlled how aggressively each wheel adjusted to keep the robot aligned with the track.
     </p>
   </div>
 
-  <!-- CODE -->
   <div class="section card">
-    <h3>Code Snippet</h3>
-    <pre><code>
-// Example logic
-int error = target - sensor;
-output = kp * error;
-    </code></pre>
+    <h3>Example Control Logic</h3>
+    <pre><code>// Simplified PID-style line following logic
+error = targetPosition - measuredLinePosition;
+
+integral += error;
+derivative = error - previousError;
+
+correction = (kp * error) + (ki * integral) + (kd * derivative);
+
+leftMotorSpeed  = baseSpeed - correction;
+rightMotorSpeed = baseSpeed + correction;
+
+previousError = error;</code></pre>
   </div>
 
-  <!-- RESULTS -->
   <div class="section card">
     <h3>Results & Learnings</h3>
+    <ul>
+      <li>Achieved the fastest track completion time in the cohort.</li>
+      <li>Learned how sensor feedback can be used to control physical motion.</li>
+      <li>Practiced tuning PID gains for speed, stability, and error correction.</li>
+      <li>Gained experience debugging the relationship between software, sensors, and motor behavior.</li>
+    </ul>
+  </div>
+
+  <div class="section card">
+    <h3>Reflection</h3>
     <p>
-      What worked, what didn’t, what you’d improve.
+      This project was one of my first experiences seeing control theory work in a real physical system. It showed me how small changes in software parameters could dramatically affect hardware behavior, and it helped build my interest in embedded systems, robotics, and feedback control.
     </p>
   </div>
 
-  <!-- BACK BUTTON -->
-  <a href="../projects.html" class="backBtn">← Back to Projects</a>
+  <a href="projects.html" class="backBtn">← Back to Projects</a>
 
 </div>
+
 </body>
 </html>
