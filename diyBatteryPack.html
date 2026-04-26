@@ -100,6 +100,35 @@
       font-size:0.9rem;
     }
 
+    .topBar{
+      max-width:900px;
+      margin:0 auto 24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .navBack{
+      display:inline-block;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+    }
+
+    .navBack:hover{
+      background:rgba(255,255,255,0.05);
+    }
+
+    .diagram{
+      width:100%;
+      margin-top:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(255,255,255,0.02);
+    }
+
     .backBtn{
       display:inline-block;
       margin-top:20px;
@@ -117,6 +146,9 @@
 </head>
 
 <body>
+<div class="topBar">
+  <a href="projects.html" class="navBack">← Back to Projects</a>
+</div>
 <div class="container">
 
   <h1>🔋 DIY Altoids Battery Pack</h1>
