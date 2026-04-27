@@ -26,16 +26,19 @@
 
     .topBar{ max-width:900px; margin:0 auto 24px; }
 
-    .navBack, .backBtn{
+    .navBack, .backBtn, .repoBtn{
       display:inline-block;
       padding:10px 14px;
       border:1px solid var(--border);
       border-radius:10px;
       text-decoration:none;
       color:var(--text);
+      font-weight:600;
     }
 
-    .navBack:hover, .backBtn:hover{ background:rgba(255,255,255,0.05); }
+    .navBack:hover, .backBtn:hover, .repoBtn:hover{
+      background:rgba(255,255,255,0.05);
+    }
 
     .container{ max-width:900px; margin:0 auto; }
 
@@ -70,7 +73,7 @@
       display:flex;
       flex-wrap:wrap;
       gap:8px;
-      margin:16px 0 24px;
+      margin:16px 0 18px;
     }
 
     .tag{
@@ -80,6 +83,13 @@
       border-radius:999px;
       padding:7px 10px;
       font-size:0.9rem;
+    }
+
+    .buttonRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:24px;
     }
 
     img, video{
@@ -139,6 +149,12 @@
     <div class="tag">ESP32</div>
   </div>
 
+  <div class="buttonRow">
+    <a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank" rel="noopener">
+      View Code on GitHub ↗
+    </a>
+  </div>
+
   <div class="section card">
     <h3>Overview</h3>
     <p>
@@ -146,6 +162,9 @@
     </p>
     <p>
       The system combined multiple input methods: camera-based localization, speech recognition, gesture recognition, and real-time multiplayer communication. Each player connected through a script that communicated with a host over WebSockets for low-latency gameplay.
+    </p>
+    <p>
+      Full source code and implementation details are available in the GitHub repository linked above.
     </p>
 
     <img src="railgunRampageHero.png" alt="Railgun Rampage project title or hero image">
@@ -175,7 +194,7 @@
   <div class="section card">
     <h3>Hardware Controller</h3>
     <p>
-      I worked on the railgun-style controller integration. The controller used embedded hardware to support player input, including aim tracking, gesture-based reloading, shooting inputs, lighting, and feedback effects. The presentation shows the evolution from a PVC prototype to the final 3D-printed railgun iteration. :contentReference[oaicite:1]{index=1}
+      I worked on the railgun-style controller integration. The controller used embedded hardware to support player input, including aim tracking, gesture-based reloading, shooting inputs, lighting, and feedback effects.
     </p>
 
     <img src="railgunFinalIteration.png" alt="Final railgun controller iteration">
@@ -220,6 +239,17 @@ Unity Client:
       <img src="railgunGameplayDemo.png" alt="Railgun Rampage singleplayer and multiplayer gameplay demo">
       <img src="railgunPeerDemo.png" alt="Railgun Rampage final product demo to peers">
     </div>
+  </div>
+
+  <div class="section card">
+    <h3>Repository</h3>
+    <p>
+      The original project source code is hosted on my UCLA GitHub account. The repository includes implementation work for the camera tracking, game logic, networking, and embedded controller portions of the project.
+    </p>
+
+    <a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank" rel="noopener">
+      Open GitHub Repository →
+    </a>
   </div>
 
   <div class="section card">
