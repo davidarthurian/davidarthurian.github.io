@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project | David Arthurian</title>
+  <title>Railgun Rampage | David Arthurian</title>
 
   <style>
     :root{
       --bg:#0b1220;
-      --panel:#0f1a2e;
       --text:#e6edf7;
       --muted:#9fb0c6;
       --border:rgba(255,255,255,0.10);
@@ -17,136 +16,244 @@
 
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui;
-      background: var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
       color: var(--text);
       padding: 30px 18px;
     }
 
-    .container{
-      max-width: 900px;
-      margin: 0 auto;
+    .topBar{ max-width:900px; margin:0 auto 24px; }
+
+    .navBack, .backBtn{
+      display:inline-block;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
     }
 
-    h1{
-      margin-bottom: 8px;
-    }
+    .navBack:hover, .backBtn:hover{ background:rgba(255,255,255,0.05); }
+
+    .container{ max-width:900px; margin:0 auto; }
+
+    h1{ margin-bottom:8px; color:var(--text); }
 
     .subtitle{
-      color: var(--muted);
-      margin-bottom: 24px;
+      color:var(--muted);
+      margin-bottom:24px;
+      line-height:1.5;
     }
 
-    .section{
-      margin-bottom: 28px;
-    }
+    .section{ margin-bottom:28px; }
 
     .card{
       border:1px solid var(--border);
       border-radius:14px;
-      padding:16px;
-      background: rgba(255,255,255,0.03);
+      padding:18px;
+      background:rgba(255,255,255,0.03);
+    }
+
+    p, li{
+      color:var(--muted);
+      line-height:1.65;
+    }
+
+    h3{
+      margin-top:0;
+      color:var(--text);
+    }
+
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:16px 0 24px;
+    }
+
+    .tag{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.03);
+      color:var(--muted);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:0.9rem;
     }
 
     img, video{
       width:100%;
       border-radius:12px;
       margin-top:12px;
+      border:1px solid var(--border);
+      background:#000;
+    }
+
+    .imageGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    @media(max-width:700px){
+      .imageGrid{ grid-template-columns:1fr; }
     }
 
     pre{
-      background:#000;
-      padding:12px;
-      border-radius:10px;
-      overflow-x:auto;
-      font-size:0.9rem;
-    }
-
-    .backBtn{
-      display:inline-block;
-      margin-top:20px;
-      padding:10px 14px;
+      background:#05070d;
+      color:#e6edf7;
+      padding:16px;
+      border-radius:12px;
       border:1px solid var(--border);
-      border-radius:10px;
-      text-decoration:none;
-      color: var(--text);
-    }
-
-    .backBtn:hover{
-      background: rgba(255,255,255,0.05);
+      font-size:0.9rem;
+      line-height:1.5;
+      overflow-x:auto;
     }
   </style>
 </head>
 
 <body>
+
+<div class="topBar">
+  <a href="projects.html" class="navBack">← Back to Projects</a>
+</div>
+
 <div class="container">
 
-  <!-- TITLE -->
-  <h1>🔋 Project Title Here</h1>
-  <div class="subtitle">1-line description of what this project is</div>
+  <h1>🎮 Railgun Rampage — Embedded System Multiplayer Game</h1>
 
-  <!-- HERO IMAGE / VIDEO -->
+  <div class="subtitle">
+    A UCLA senior embedded systems project combining computer vision, speech recognition, gesture recognition, WebSocket networking, hardware controllers, and a Unity multiplayer game.
+  </div>
+
+  <div class="tagRow">
+    <div class="tag">UCLA Senior Project</div>
+    <div class="tag">Embedded Systems</div>
+    <div class="tag">OpenCV</div>
+    <div class="tag">Python</div>
+    <div class="tag">Unity</div>
+    <div class="tag">WebSockets</div>
+    <div class="tag">IMU Sensor</div>
+    <div class="tag">Speech-to-Text</div>
+    <div class="tag">ESP32</div>
+  </div>
+
   <div class="section card">
     <h3>Overview</h3>
     <p>
-      Explain what the project is, what problem it solves, and why you built it.
+      Railgun Rampage was my embedded systems senior project at UCLA. My team of three built a multiplayer arcade-style shooter game where up to four players used custom railgun controllers to aim, shoot, reload, and interact with a Unity game environment.
+    </p>
+    <p>
+      The system combined multiple input methods: camera-based localization, speech recognition, gesture recognition, and real-time multiplayer communication. Each player connected through a script that communicated with a host over WebSockets for low-latency gameplay.
     </p>
 
-    <img src="images/project.jpg" alt="Project image">
-    <!-- or -->
-    <!--
-    <video controls>
-      <source src="demo.mp4" type="video/mp4">
-    </video>
-    -->
+    <img src="railgunRampageHero.png" alt="Railgun Rampage project title or hero image">
   </div>
 
-  <!-- TECH STACK -->
   <div class="section card">
-    <h3>Tools & Technologies</h3>
+    <h3>Project Requirements</h3>
     <ul>
-      <li>Arduino / C++</li>
-      <li>PID Control</li>
-      <li>3D Printing</li>
+      <li>Support online multiplayer gameplay for up to four players.</li>
+      <li>Use camera tracking to localize player aim.</li>
+      <li>Use speech recognition for voice-based interaction.</li>
+      <li>Use gesture recognition for actions like reloading.</li>
+      <li>Communicate between players and the host with low latency.</li>
+      <li>Display gameplay through an intuitive Unity GUI.</li>
     </ul>
   </div>
 
-  <!-- GALLERY -->
   <div class="section card">
-    <h3>Build / Gallery</h3>
-    <img src="images/build1.jpg">
-    <img src="images/build2.jpg">
+    <h3>System Architecture</h3>
+    <p>
+      The project used one host script to handle the main processing and game state, while player scripts connected to the host through WebSockets. Camera inputs were processed with OpenCV thresholding, speech commands were handled through a Google Speech-to-Text API, and gesture actions were detected with an IMU sensor from SparkFun.
+    </p>
+
+    <img src="railgunSystemDiagram.png" alt="Railgun Rampage system architecture diagram">
   </div>
 
-  <!-- TECHNICAL -->
   <div class="section card">
-    <h3>Technical Breakdown</h3>
+    <h3>Hardware Controller</h3>
     <p>
-      Describe how it works (architecture, logic, system design).
+      I worked on the railgun-style controller integration. The controller used embedded hardware to support player input, including aim tracking, gesture-based reloading, shooting inputs, lighting, and feedback effects. The presentation shows the evolution from a PVC prototype to the final 3D-printed railgun iteration. :contentReference[oaicite:1]{index=1}
+    </p>
+
+    <img src="railgunFinalIteration.png" alt="Final railgun controller iteration">
+  </div>
+
+  <div class="section card">
+    <h3>Software & Input Processing</h3>
+    <ul>
+      <li><strong>Camera tracking:</strong> OpenCV in Python with thresholding to detect the player’s aiming position.</li>
+      <li><strong>Speech recognition:</strong> Google Speech-to-Text API with a headset and microphone.</li>
+      <li><strong>Gesture recognition:</strong> SparkFun IMU sensor used to classify reload gestures.</li>
+      <li><strong>Networking:</strong> WebSockets used for communication between player scripts and the host script.</li>
+      <li><strong>GUI:</strong> Unity used to render the game interface and gameplay environment.</li>
+    </ul>
+  </div>
+
+  <div class="section card">
+    <h3>Example Networking Flow</h3>
+    <pre><code>// Simplified WebSocket-style flow
+
+Player Controller:
+  - Read camera aim position
+  - Read IMU gesture state
+  - Read speech command
+  - Package player input as JSON
+  - Send input packet to host
+
+Host Script:
+  - Receive player input packets
+  - Update shared game state
+  - Resolve shooting, reloading, and collisions
+  - Broadcast updated state to connected players
+
+Unity Client:
+  - Render current game state
+  - Display player actions, enemies, health, and effects</code></pre>
+  </div>
+
+  <div class="section card">
+    <h3>Demo Images</h3>
+    <div class="imageGrid">
+      <img src="railgunGameplayDemo.png" alt="Railgun Rampage singleplayer and multiplayer gameplay demo">
+      <img src="railgunPeerDemo.png" alt="Railgun Rampage final product demo to peers">
+    </div>
+  </div>
+
+  <div class="section card">
+    <h3>Technical Challenges</h3>
+    <ul>
+      <li>Managing real-time input, rendering, networking, and feedback with low latency.</li>
+      <li>Making the system robust across different lighting and sound conditions.</li>
+      <li>Balancing performance and feature complexity.</li>
+      <li>Integrating camera tracking, speech recognition, gesture recognition, and game logic into one working system.</li>
+      <li>Designing a railgun chassis that was functional, ergonomic, and visually aligned with the game theme.</li>
+    </ul>
+  </div>
+
+  <div class="section card">
+    <h3>Results</h3>
+    <ul>
+      <li>Created functional railgun controllers with multiplayer support.</li>
+      <li>Implemented smooth shooting and reloading interactions.</li>
+      <li>Achieved precise camera-based aim tracking.</li>
+      <li>Integrated lighting, sound, and trigger effects for better immersion.</li>
+      <li>Demonstrated the final product to peers.</li>
+    </ul>
+  </div>
+
+  <div class="section card">
+    <h3>What I Learned</h3>
+    <p>
+      This project taught me how to integrate hardware, software, communication protocols, and user interaction into a complete embedded system. It also reinforced the importance of iterative testing, system architecture, team coordination, and making tradeoffs between complexity, performance, and reliability.
     </p>
   </div>
 
-  <!-- CODE -->
-  <div class="section card">
-    <h3>Code Snippet</h3>
-    <pre><code>
-// Example logic
-int error = target - sensor;
-output = kp * error;
-    </code></pre>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="section card">
-    <h3>Results & Learnings</h3>
-    <p>
-      What worked, what didn’t, what you’d improve.
-    </p>
-  </div>
-
-  <!-- BACK BUTTON -->
-  <a href="../projects.html" class="backBtn">← Back to Projects</a>
+  <a href="projects.html" class="backBtn">← Back to Projects</a>
 
 </div>
+
 </body>
 </html>
