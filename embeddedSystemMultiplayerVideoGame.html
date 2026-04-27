@@ -102,12 +102,8 @@
 
     .imageGrid{
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
       gap:14px;
-    }
-
-    @media(max-width:700px){
-      .imageGrid{ grid-template-columns:1fr; }
     }
 
     pre{
@@ -150,7 +146,7 @@
   </div>
 
   <div class="buttonRow">
-    <a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank" rel="noopener">
+    <a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank">
       View Code on GitHub ↗
     </a>
   </div>
@@ -158,127 +154,53 @@
   <div class="section card">
     <h3>Overview</h3>
     <p>
-      Railgun Rampage was my embedded systems senior project at UCLA. My team of three built a multiplayer arcade-style shooter game where up to four players used custom railgun controllers to aim, shoot, reload, and interact with a Unity game environment.
-    </p>
-    <p>
-      The system combined multiple input methods: camera-based localization, speech recognition, gesture recognition, and real-time multiplayer communication. Each player connected through a script that communicated with a host over WebSockets for low-latency gameplay.
-    </p>
-    <p>
-      Full source code and implementation details are available in the GitHub repository linked above.
+      Railgun Rampage was my embedded systems senior project at UCLA. My team of three built a multiplayer arcade-style shooter game where up to four players used custom railgun controllers.
     </p>
 
-    <img src="railgunRampageHero.png" alt="Railgun Rampage project title or hero image">
-  </div>
-
-  <div class="section card">
-    <h3>Project Requirements</h3>
-    <ul>
-      <li>Support online multiplayer gameplay for up to four players.</li>
-      <li>Use camera tracking to localize player aim.</li>
-      <li>Use speech recognition for voice-based interaction.</li>
-      <li>Use gesture recognition for actions like reloading.</li>
-      <li>Communicate between players and the host with low latency.</li>
-      <li>Display gameplay through an intuitive Unity GUI.</li>
-    </ul>
-  </div>
-
-  <div class="section card">
-    <h3>System Architecture</h3>
-    <p>
-      The project used one host script to handle the main processing and game state, while player scripts connected to the host through WebSockets. Camera inputs were processed with OpenCV thresholding, speech commands were handled through a Google Speech-to-Text API, and gesture actions were detected with an IMU sensor from SparkFun.
-    </p>
-
-    <img src="railgunSystemDiagram.png" alt="Railgun Rampage system architecture diagram">
+    <img src="railgunRampageHero.png">
   </div>
 
   <div class="section card">
     <h3>Hardware Controller</h3>
-    <p>
-      I worked on the railgun-style controller integration. The controller used embedded hardware to support player input, including aim tracking, gesture-based reloading, shooting inputs, lighting, and feedback effects.
-    </p>
 
-    <img src="railgunFinalIteration.png" alt="Final railgun controller iteration">
+    <div class="imageGrid">
+      <img src="railgunFinalIteration.png">
+      <img src="computeComponents.png">
+      <img src="cameraTracking.png">
+    </div>
   </div>
 
   <div class="section card">
     <h3>Software & Input Processing</h3>
     <ul>
-      <li><strong>Camera tracking:</strong> OpenCV in Python with thresholding to detect the player’s aiming position.</li>
-      <li><strong>Speech recognition:</strong> Google Speech-to-Text API with a headset and microphone.</li>
-      <li><strong>Gesture recognition:</strong> SparkFun IMU sensor used to classify reload gestures.</li>
-      <li><strong>Networking:</strong> WebSockets used for communication between player scripts and the host script.</li>
-      <li><strong>GUI:</strong> Unity used to render the game interface and gameplay environment.</li>
+      <li>Camera tracking using OpenCV</li>
+      <li>Speech recognition using Google API</li>
+      <li>Gesture recognition using IMU</li>
+      <li>WebSocket networking</li>
+      <li>Unity GUI</li>
     </ul>
   </div>
 
   <div class="section card">
-    <h3>Example Networking Flow</h3>
-    <pre><code>// Simplified WebSocket-style flow
+    <h3>Demo Videos</h3>
 
-Player Controller:
-  - Read camera aim position
-  - Read IMU gesture state
-  - Read speech command
-  - Package player input as JSON
-  - Send input packet to host
-
-Host Script:
-  - Receive player input packets
-  - Update shared game state
-  - Resolve shooting, reloading, and collisions
-  - Broadcast updated state to connected players
-
-Unity Client:
-  - Render current game state
-  - Display player actions, enemies, health, and effects</code></pre>
-  </div>
-
-  <div class="section card">
-    <h3>Single & Multiplayer Demo Videos</h3>
     <div class="imageGrid">
-      <img src="railgunSingleplayerDemo.mp4" alt="Railgun Rampage singleplayer and multiplayer gameplay demo">
-      <img src="railgunMultiplayerDemo.mp4" alt="Railgun Rampage final product demo to peers">
+      <video controls muted playsinline>
+        <source src="railgunSingleplayerDemo.mp4" type="video/mp4">
+      </video>
+
+      <video controls muted playsinline>
+        <source src="railgunMultiplayerDemo.mp4" type="video/mp4">
+      </video>
     </div>
+
   </div>
 
   <div class="section card">
     <h3>Repository</h3>
-    <p>
-      The original project source code is hosted on my UCLA GitHub account. The repository includes implementation work for the camera tracking, game logic, networking, and embedded controller portions of the project.
-    </p>
-
-    <a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank" rel="noopener">
-      Open GitHub Repository →
+    <a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank">
+      Open GitHub →
     </a>
-  </div>
-
-  <div class="section card">
-    <h3>Technical Challenges</h3>
-    <ul>
-      <li>Managing real-time input, rendering, networking, and feedback with low latency.</li>
-      <li>Making the system robust across different lighting and sound conditions.</li>
-      <li>Balancing performance and feature complexity.</li>
-      <li>Integrating camera tracking, speech recognition, gesture recognition, and game logic into one working system.</li>
-      <li>Designing a railgun chassis that was functional, ergonomic, and visually aligned with the game theme.</li>
-    </ul>
-  </div>
-
-  <div class="section card">
-    <h3>Results</h3>
-    <ul>
-      <li>Created functional railgun controllers with multiplayer support.</li>
-      <li>Implemented smooth shooting and reloading interactions.</li>
-      <li>Achieved precise camera-based aim tracking.</li>
-      <li>Integrated lighting, sound, and trigger effects for better immersion.</li>
-      <li>Demonstrated the final product to peers.</li>
-    </ul>
-  </div>
-
-  <div class="section card">
-    <h3>What I Learned</h3>
-    <p>
-      This project taught me how to integrate hardware, software, communication protocols, and user interaction into a complete embedded system. It also reinforced the importance of iterative testing, system architecture, team coordination, and making tradeoffs between complexity, performance, and reliability.
-    </p>
   </div>
 
   <a href="projects.html" class="backBtn">← Back to Projects</a>
