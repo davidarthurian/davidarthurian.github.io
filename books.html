@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Books | David Arthurian</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+      --link:#7dd3fc;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+
+    a{ color:var(--link); text-decoration:none; }
+
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+
+    .nav{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      font-weight:700;
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .brandLogo{
+      height:16px;
+      width:auto;
+      display:block;
+    }
+
+    nav{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .nav a{
+      color:var(--muted);
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid transparent;
+    }
+
+    .nav a:hover,
+    .nav a.active{
+      color:var(--text);
+      border-color:var(--border);
+      background:rgba(255,255,255,0.03);
+    }
+
+    main{
+      max-width:980px;
+      margin:0 auto;
+      padding:34px 18px 50px;
+    }
+
+    .pageTitle{
+      margin:0 0 8px 0;
+      font-size:clamp(1.8rem, 3vw, 2.2rem);
+      letter-spacing:-0.4px;
+    }
+
+    .subtitle{
+      margin:0 0 28px 0;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .yearSection{
+      margin-bottom:38px;
+    }
+
+    .yearHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .yearHeader h2{
+      margin:0;
+      font-size:1.35rem;
+    }
+
+    .count{
+      color:var(--muted);
+      font-size:0.9rem;
+    }
+
+    .carousel{
+      display:flex;
+      gap:16px;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      padding-bottom:12px;
+    }
+
+    .carousel::-webkit-scrollbar{
+      height:8px;
+    }
+
+    .carousel::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,0.16);
+      border-radius:999px;
+    }
+
+    .bookCard{
+      min-width:180px;
+      max-width:180px;
+      scroll-snap-align:start;
+      border:1px solid var(--border);
+      background:rgba(15,26,46,0.55);
+      border-radius:16px;
+      padding:14px;
+      transition:transform .12s ease, background .12s ease;
+    }
+
+    .bookCard:hover{
+      transform:translateY(-2px);
+      background:rgba(15,26,46,0.72);
+    }
+
+    .cover{
+      width:100%;
+      aspect-ratio:2 / 3;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.04);
+      object-fit:cover;
+      display:block;
+      margin-bottom:12px;
+    }
+
+    .bookTitle{
+      font-weight:700;
+      color:var(--text);
+      line-height:1.25;
+      margin-bottom:6px;
+    }
+
+    .author{
+      color:var(--muted);
+      font-size:0.9rem;
+      line-height:1.35;
+    }
+
+    .status{
+      margin-top:10px;
+      display:inline-block;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:5px 8px;
+      color:var(--muted);
+      font-size:0.78rem;
+      background:rgba(255,255,255,0.03);
+    }
+
+    footer{
+      padding:18px;
+      border-top:1px solid var(--border);
+      background:rgba(11,18,32,0.55);
+    }
+
+    .footerInner{
+      max-width:980px;
+      margin:0 auto;
+      color:var(--muted);
+      font-size:0.95rem;
+    }
+
+    @media(max-width:700px){
+      .bookCard{
+        min-width:150px;
+        max-width:150px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand">
+      <img src="logo.png" alt="DWA Logo" class="brandLogo">
+      <span>David Arthurian</span>
+    </div>
+
+    <nav aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="projects.html">Projects</a>
+      <a href="travel.html">Travel</a>
+      <a href="books.html" class="active">Books</a>
+      <a href="cats.html">Cats</a>
+      <a href="game.html">Fun</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1 class="pageTitle">Books</h1>
+  <p class="subtitle">
+    A running shelf of books I’ve been reading, organized by year with the most recent first.
+  </p>
+
+  <section class="yearSection">
+    <div class="yearHeader">
+      <h2>2026</h2>
+      <div class="count">3 books</div>
+    </div>
+
+    <div class="carousel">
+
+      <div class="bookCard">
+        <img class="cover" src="books/book-placeholder.png" alt="Book cover">
+        <div class="bookTitle">Book Title Here</div>
+        <div class="author">Author Name</div>
+        <div class="status">Reading</div>
+      </div>
+
+      <div class="bookCard">
+        <img class="cover" src="books/book-placeholder.png" alt="Book cover">
+        <div class="bookTitle">Book Title Here</div>
+        <div class="author">Author Name</div>
+        <div class="status">Finished</div>
+      </div>
+
+      <div class="bookCard">
+        <img class="cover" src="books/book-placeholder.png" alt="Book cover">
+        <div class="bookTitle">Book Title Here</div>
+        <div class="author">Author Name</div>
+        <div class="status">Finished</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="yearSection">
+    <div class="yearHeader">
+      <h2>2025</h2>
+      <div class="count">2 books</div>
+    </div>
+
+    <div class="carousel">
+
+      <div class="bookCard">
+        <img class="cover" src="books/book-placeholder.png" alt="Book cover">
+        <div class="bookTitle">Book Title Here</div>
+        <div class="author">Author Name</div>
+        <div class="status">Finished</div>
+      </div>
+
+      <div class="bookCard">
+        <img class="cover" src="books/book-placeholder.png" alt="Book cover">
+        <div class="bookTitle">Book Title Here</div>
+        <div class="author">Author Name</div>
+        <div class="status">Finished</div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footerInner">
+    © <span id="year"></span> David Arthurian
+  </div>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
