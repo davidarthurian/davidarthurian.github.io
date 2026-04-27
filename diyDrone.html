@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project | David Arthurian</title>
+  <title>FPV Drone | David Arthurian</title>
 
   <style>
     :root{
       --bg:#0b1220;
-      --panel:#0f1a2e;
       --text:#e6edf7;
       --muted:#9fb0c6;
       --border:rgba(255,255,255,0.10);
-      --accent:#7dd3fc;
     }
 
     body{
@@ -24,129 +22,190 @@
     }
 
     .container{
-      max-width: 900px;
-      margin: 0 auto;
+      max-width:900px;
+      margin:0 auto;
     }
 
-    h1{
-      margin-bottom: 8px;
-    }
-
-    .subtitle{
-      color: var(--muted);
-      margin-bottom: 24px;
-    }
-
-    .section{
-      margin-bottom: 28px;
+    .navBack, .backBtn{
+      display:inline-block;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+      margin-bottom:20px;
     }
 
     .card{
       border:1px solid var(--border);
       border-radius:14px;
-      padding:16px;
+      padding:18px;
+      margin-bottom:28px;
       background: rgba(255,255,255,0.03);
+    }
+
+    h3{ margin-top:0; }
+
+    p, li{
+      color: var(--muted);
+      line-height:1.6;
     }
 
     img, video{
       width:100%;
       border-radius:12px;
       margin-top:12px;
-    }
-
-    pre{
-      background:#000;
-      padding:12px;
-      border-radius:10px;
-      overflow-x:auto;
-      font-size:0.9rem;
-    }
-
-    .backBtn{
-      display:inline-block;
-      margin-top:20px;
-      padding:10px 14px;
       border:1px solid var(--border);
-      border-radius:10px;
-      text-decoration:none;
-      color: var(--text);
     }
 
-    .backBtn:hover{
-      background: rgba(255,255,255,0.05);
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:16px 0;
     }
+
+    .tag{
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:0.9rem;
+      color: var(--muted);
+    }
+
+    .videoGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    @media(max-width:700px){
+      .videoGrid{
+        grid-template-columns:1fr;
+      }
+    }
+
   </style>
 </head>
 
 <body>
+
 <div class="container">
 
-  <!-- TITLE -->
-  <h1>🔋 Project Title Here</h1>
-  <div class="subtitle">1-line description of what this project is</div>
+<a href="projects.html" class="navBack">← Back to Projects</a>
 
-  <!-- HERO IMAGE / VIDEO -->
-  <div class="section card">
-    <h3>Overview</h3>
-    <p>
-      Explain what the project is, what problem it solves, and why you built it.
-    </p>
+<h1>🚁 FPV Drone</h1>
 
-    <img src="images/project.jpg" alt="Project image">
-    <!-- or -->
-    <!--
-    <video controls>
-      <source src="demo.mp4" type="video/mp4">
-    </video>
-    -->
-  </div>
+<p>
+A custom-built First Person View (FPV) drone designed and assembled from individual components, providing hands-on experience with flight control systems, electronics integration, and real-time wireless video transmission.
+</p>
 
-  <!-- TECH STACK -->
-  <div class="section card">
-    <h3>Tools & Technologies</h3>
-    <ul>
-      <li>Arduino / C++</li>
-      <li>PID Control</li>
-      <li>3D Printing</li>
-    </ul>
-  </div>
+<div class="tagRow">
+  <div class="tag">FPV Systems</div>
+  <div class="tag">Flight Control</div>
+  <div class="tag">Electronics Integration</div>
+  <div class="tag">Soldering</div>
+  <div class="tag">Wireless Video</div>
+  <div class="tag">RC Systems</div>
+</div>
 
-  <!-- GALLERY -->
-  <div class="section card">
-    <h3>Build / Gallery</h3>
-    <img src="images/build1.jpg">
-    <img src="images/build2.jpg">
-  </div>
+<div class="card">
+<h3>Overview</h3>
+<p>
+This project involved designing and assembling a fully functional FPV drone from individual hardware components. Instead of using a prebuilt kit, I selected and integrated each subsystem including the flight controller, motors, ESCs, camera, video transmitter, and receiver.
+</p>
 
-  <!-- TECHNICAL -->
-  <div class="section card">
-    <h3>Technical Breakdown</h3>
-    <p>
-      Describe how it works (architecture, logic, system design).
-    </p>
-  </div>
+<p>
+The goal was to understand how each subsystem contributes to stable flight and real-time control, while also gaining experience troubleshooting hardware issues and tuning flight performance.
+</p>
 
-  <!-- CODE -->
-  <div class="section card">
-    <h3>Code Snippet</h3>
-    <pre><code>
-// Example logic
-int error = target - sensor;
-output = kp * error;
-    </code></pre>
-  </div>
+<img src="fpvDrone.png" alt="FPV Drone Build">
+</div>
 
-  <!-- RESULTS -->
-  <div class="section card">
-    <h3>Results & Learnings</h3>
-    <p>
-      What worked, what didn’t, what you’d improve.
-    </p>
-  </div>
+<div class="card">
+<h3>System Architecture</h3>
+<p>
+The drone consists of multiple integrated subsystems working together in real time. The flight controller acts as the central processor, receiving input from the receiver and IMU sensors, then adjusting motor outputs to maintain stability and control.
+</p>
 
-  <!-- BACK BUTTON -->
-  <a href="../projects.html" class="backBtn">← Back to Projects</a>
+<ul>
+<li>Flight Controller (IMU + PID stabilization)</li>
+<li>Electronic Speed Controllers (ESCs)</li>
+<li>Brushless Motors</li>
+<li>FPV Camera + Video Transmitter</li>
+<li>Radio Receiver + Transmitter</li>
+<li>Battery (LiPo power system)</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Hardware Integration</h3>
+<p>
+Building the drone required careful wiring, soldering, and power distribution across all components. Each ESC was connected to the flight controller and calibrated to ensure synchronized motor behavior.
+</p>
+
+<p>
+The FPV system allowed live video feed from the drone’s camera to a headset or monitor, enabling real-time piloting from the drone’s perspective.
+</p>
+
+<img src="fpvDroneComponents.png" alt="Drone Components">
+</div>
+
+<div class="card">
+<h3>Control System</h3>
+<p>
+The flight controller uses sensor feedback from an onboard IMU (gyroscope + accelerometer) to maintain stability. A PID controller continuously adjusts motor speeds to stabilize pitch, roll, and yaw during flight.
+</p>
+
+<ul>
+<li>Proportional: reacts to current tilt error</li>
+<li>Integral: corrects long-term drift</li>
+<li>Derivative: dampens oscillations</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Build Process</h3>
+<ul>
+<li>Selected and sourced individual drone components</li>
+<li>Soldered ESCs, power distribution, and connectors</li>
+<li>Mounted motors and frame components</li>
+<li>Configured flight controller firmware</li>
+<li>Calibrated sensors and radio inputs</li>
+<li>Tuned PID settings for stable flight</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Technical Challenges</h3>
+<ul>
+<li>Balancing power distribution across components</li>
+<li>Debugging wiring and signal issues</li>
+<li>Tuning PID gains for stable flight</li>
+<li>Managing interference in FPV signal</li>
+<li>Preventing oscillations and drift</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Results</h3>
+<ul>
+<li>Successfully built a fully functional FPV drone</li>
+<li>Achieved stable flight and responsive controls</li>
+<li>Enabled real-time video transmission for FPV piloting</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>What I Learned</h3>
+<p>
+This project gave me hands-on experience with embedded control systems, power electronics, and real-time feedback loops. It reinforced the importance of system-level thinking, where hardware, software, and control theory all interact to produce stable behavior.
+</p>
+</div>
+
+<a href="projects.html" class="backBtn">← Back to Projects</a>
 
 </div>
+
 </body>
 </html>
