@@ -1,1 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foxhole Radio | David Arthurian</title>
 
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+    }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      padding:30px 18px;
+    }
+
+    .container{
+      max-width:900px;
+      margin:0 auto;
+    }
+
+    .navBack, .backBtn{
+      display:inline-block;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+      margin-bottom:20px;
+      font-weight:600;
+    }
+
+    .navBack:hover, .backBtn:hover{
+      background:rgba(255,255,255,0.05);
+    }
+
+    h1{
+      color:var(--text);
+      margin-bottom:8px;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      line-height:1.5;
+      margin-bottom:20px;
+    }
+
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:16px 0 24px;
+    }
+
+    .tag{
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:0.9rem;
+      color:var(--muted);
+      background:rgba(255,255,255,0.03);
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:18px;
+      margin-bottom:28px;
+      background:rgba(255,255,255,0.03);
+    }
+
+    h3{
+      margin-top:0;
+      color:var(--text);
+    }
+
+    p, li{
+      color:var(--muted);
+      line-height:1.65;
+    }
+
+    img{
+      width:100%;
+      border-radius:12px;
+      margin-top:12px;
+      border:1px solid var(--border);
+      background:#05070d;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a href="projects.html" class="navBack">← Back to Projects</a>
+
+<h1>📻 Foxhole Radio</h1>
+
+<p class="subtitle">
+  A high school electronics project where I built a simple passive AM radio receiver using basic materials, a 3D-printed structure, and no external power source.
+</p>
+
+<div class="tagRow">
+  <div class="tag">High School Project</div>
+  <div class="tag">Analog Electronics</div>
+  <div class="tag">Radio Circuits</div>
+  <div class="tag">3D Printing</div>
+  <div class="tag">Passive Receiver</div>
+  <div class="tag">Signal Detection</div>
+</div>
+
+<div class="card">
+  <h3>Overview</h3>
+  <p>
+    This project was a homemade foxhole radio I built in high school. The goal was to create a simple radio receiver using basic materials and analog electronics principles. The build used a 3D-printed structure, enameled wire, tinfoil, a diode, springs, a paperclip, and a piezoelectric ear speaker.
+  </p>
+  <p>
+    The radio worked as a passive receiver, meaning it did not require a battery or powered amplifier. Instead, it relied on the energy from nearby AM radio signals and used a simple detector circuit to convert the received signal into audible sound.
+  </p>
+
+  <img src="foxholeRadio.png" alt="Foxhole radio project">
+</div>
+
+<div class="card">
+  <h3>How It Worked</h3>
+  <p>
+    A foxhole radio is a very simple crystal-radio-style receiver. The coil of enameled wire acts as an inductor and helps tune into radio-frequency signals. The diode acts as a detector, rectifying the AM signal so the audio portion can be heard through the piezoelectric ear speaker.
+  </p>
+  <p>
+    The tinfoil, springs, and paperclip were used as part of the physical contact and tuning structure. The 3D-printed frame helped hold the components in place and made the build more repeatable and organized.
+  </p>
+</div>
+
+<div class="card">
+  <h3>Materials Used</h3>
+  <ul>
+    <li>3D-printed frame / structure</li>
+    <li>Enameled copper wire for the coil</li>
+    <li>Tinfoil for conductive contact surfaces</li>
+    <li>Diode for signal detection</li>
+    <li>Springs and paperclip for mechanical/electrical contact</li>
+    <li>Piezoelectric ear speaker for audio output</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Technical Breakdown</h3>
+  <p>
+    The circuit demonstrated the basics of radio reception: antenna coupling, resonance/tuning, rectification, and audio output. Even though the design was simple, it introduced me to how electromagnetic signals can be received and converted into sound using only passive components.
+  </p>
+  <p>
+    The diode was one of the key components because it allowed the radio to demodulate the AM signal. The piezoelectric ear speaker was useful because it could produce audible sound from a very small signal without needing a powered amplifier.
+  </p>
+</div>
+
+<div class="card">
+  <h3>What I Learned</h3>
+  <ul>
+    <li>How simple radios can work without batteries or external power.</li>
+    <li>How a coil, diode, and speaker can form a basic signal-receiving circuit.</li>
+    <li>How mechanical design affects the usability of an electronics project.</li>
+    <li>How 3D printing can be used to package and support circuit components.</li>
+    <li>How small analog circuits can demonstrate larger electrical engineering principles.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Reflection</h3>
+  <p>
+    This project was an early introduction to analog electronics and signal reception. It helped me see that engineering does not always require complex components or advanced tools; even simple materials can demonstrate important concepts like resonance, rectification, and electromagnetic communication.
+  </p>
+</div>
+
+<a href="projects.html" class="backBtn">← Back to Projects</a>
+
+</div>
+
+</body>
+</html>
