@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project | David Arthurian</title>
+  <title>Homemade NAS | David Arthurian</title>
 
   <style>
     :root{
       --bg:#0b1220;
-      --panel:#0f1a2e;
       --text:#e6edf7;
       --muted:#9fb0c6;
       --border:rgba(255,255,255,0.10);
@@ -17,10 +16,30 @@
 
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui;
-      background: var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
       color: var(--text);
       padding: 30px 18px;
+    }
+
+    .topBar{
+      max-width:900px;
+      margin:0 auto 24px;
+    }
+
+    .navBack{
+      display:inline-block;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+    }
+
+    .navBack:hover{
+      background:rgba(255,255,255,0.05);
     }
 
     .container{
@@ -30,36 +49,74 @@
 
     h1{
       margin-bottom: 8px;
+      color: var(--text);
     }
 
     .subtitle{
       color: var(--muted);
       margin-bottom: 24px;
+      line-height: 1.5;
     }
 
-    .section{
-      margin-bottom: 28px;
-    }
+    .section{ margin-bottom: 28px; }
 
     .card{
       border:1px solid var(--border);
       border-radius:14px;
-      padding:16px;
+      padding:18px;
       background: rgba(255,255,255,0.03);
     }
 
-    img, video{
+    p, li{
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    h3{
+      margin-top:0;
+      color: var(--text);
+    }
+
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin: 16px 0 24px;
+    }
+
+    .tag{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:0.9rem;
+    }
+
+    img{
       width:100%;
       border-radius:12px;
       margin-top:12px;
+      border:1px solid var(--border);
+    }
+
+    .diagram{
+      width:100%;
+      margin-top:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(255,255,255,0.02);
     }
 
     pre{
-      background:#000;
-      padding:12px;
-      border-radius:10px;
-      overflow-x:auto;
+      background:#05070d;
+      color:#e6edf7;
+      padding:16px;
+      border-radius:12px;
+      border:1px solid var(--border);
       font-size:0.9rem;
+      line-height:1.5;
+      overflow-x:auto;
     }
 
     .backBtn{
@@ -79,74 +136,148 @@
 </head>
 
 <body>
+
+<div class="topBar">
+  <a href="projects.html" class="navBack">← Back to Projects</a>
+</div>
+
 <div class="container">
 
-  <!-- TITLE -->
-  <h1>🔋 Project Title Here</h1>
-  <div class="subtitle">1-line description of what this project is</div>
+  <h1>☁️ Homemade NAS</h1>
 
-  <!-- HERO IMAGE / VIDEO -->
-  <div class="section card">
-    <h3>Overview</h3>
-    <p>
-      Explain what the project is, what problem it solves, and why you built it.
-    </p>
-
-    <img src="images/project.jpg" alt="Project image">
-    <!-- or -->
-    <!--
-    <video controls>
-      <source src="demo.mp4" type="video/mp4">
-    </video>
-    -->
+  <div class="subtitle">
+    A Raspberry Pi 4-based home network storage server used to centralize family photos, digitized memories, and media across my home network.
   </div>
 
-  <!-- TECH STACK -->
+  <div class="tagRow">
+    <div class="tag">Raspberry Pi 4</div>
+    <div class="tag">Network Attached Storage</div>
+    <div class="tag">RAID 1</div>
+    <div class="tag">SATA HAT</div>
+    <div class="tag">Plex Server</div>
+    <div class="tag">Home Networking</div>
+  </div>
+
   <div class="section card">
-    <h3>Tools & Technologies</h3>
+    <h3>Overview</h3>
+
+    <p>
+      This project was built during early college as a home network storage system for my family. I used a Raspberry Pi 4, a SATA HAT interface, and a set of four old hard drives to create a network-attached storage server with approximately 4TB of usable storage.
+    </p>
+
+    <p>
+      The goal was to create one central place where our family could store and access old photos, videos, and media from any device connected to the home network. I converted old DVDs, camcorder footage, files from older phones, and data from old laptops into digital files and organized them on the NAS.
+    </p>
+
+    <p>
+      I also configured the system to act as a Plex server for movies and media playback, all packaged inside an acrylic housing.
+    </p>
+
+    <img src="homemadeNAS.png" alt="Homemade Raspberry Pi NAS with hard drives and acrylic housing">
+  </div>
+
+  <div class="section card">
+    <h3>System Diagram</h3>
+
+    <svg class="diagram" viewBox="0 0 800 210">
+      <rect x="25" y="70" width="140" height="60" rx="10" fill="rgba(125,211,252,0.10)" stroke="#7dd3fc"/>
+      <text x="95" y="96" text-anchor="middle" fill="#e6edf7" font-size="14">Old Media</text>
+      <text x="95" y="116" text-anchor="middle" fill="#9fb0c6" font-size="12">DVDs / Phones / Laptops</text>
+
+      <line x1="165" y1="100" x2="245" y2="100" stroke="#7dd3fc" stroke-width="2"/>
+
+      <rect x="245" y="55" width="145" height="90" rx="10" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.2)"/>
+      <text x="318" y="88" text-anchor="middle" fill="#e6edf7" font-size="14">Raspberry Pi 4</text>
+      <text x="318" y="110" text-anchor="middle" fill="#9fb0c6" font-size="12">Home server</text>
+
+      <line x1="390" y1="100" x2="465" y2="100" stroke="#7dd3fc" stroke-width="2"/>
+
+      <rect x="465" y="45" width="135" height="110" rx="10" fill="rgba(244,114,182,0.10)" stroke="#f472b6"/>
+      <text x="532" y="78" text-anchor="middle" fill="#e6edf7" font-size="14">SATA HAT</text>
+      <text x="532" y="100" text-anchor="middle" fill="#9fb0c6" font-size="12">4x HDD interface</text>
+      <text x="532" y="122" text-anchor="middle" fill="#9fb0c6" font-size="12">RAID 1 storage</text>
+
+      <line x1="600" y1="100" x2="675" y2="100" stroke="#7dd3fc" stroke-width="2"/>
+
+      <rect x="675" y="70" width="100" height="60" rx="10" fill="rgba(52,211,153,0.10)" stroke="#34d399"/>
+      <text x="725" y="96" text-anchor="middle" fill="#e6edf7" font-size="14">Devices</text>
+      <text x="725" y="116" text-anchor="middle" fill="#9fb0c6" font-size="12">Home network</text>
+
+      <text x="400" y="185" text-anchor="middle" fill="#9fb0c6" font-size="13">
+        Centralized family photo archive + Plex media server
+      </text>
+    </svg>
+  </div>
+
+  <div class="section card">
+    <h3>How I Built It</h3>
     <ul>
-      <li>Arduino / C++</li>
-      <li>PID Control</li>
-      <li>3D Printing</li>
+      <li>Used a Raspberry Pi 4 as the main home server.</li>
+      <li>Connected four older hard drives through a SATA HAT interface.</li>
+      <li>Configured the drives in a RAID 1-style setup for redundancy.</li>
+      <li>Created roughly 4TB of accessible storage on the home network.</li>
+      <li>Digitized old DVDs, camcorder footage, older phone files, and laptop data.</li>
+      <li>Organized family photos and videos so they could be accessed from devices on the home network.</li>
+      <li>Set up Plex to serve movies and other media from the NAS.</li>
+      <li>Packaged the build in an acrylic enclosure.</li>
     </ul>
   </div>
 
-  <!-- GALLERY -->
-  <div class="section card">
-    <h3>Build / Gallery</h3>
-    <img src="images/build1.jpg">
-    <img src="images/build2.jpg">
-  </div>
-
-  <!-- TECHNICAL -->
   <div class="section card">
     <h3>Technical Breakdown</h3>
     <p>
-      Describe how it works (architecture, logic, system design).
+      The Raspberry Pi 4 acted as the central controller and server. The SATA HAT allowed multiple hard drives to connect to the Pi, turning it into a compact network-attached storage system. Once configured, the NAS could be accessed by devices on the home network for file storage, browsing, and media playback.
     </p>
-  </div>
 
-  <!-- CODE -->
-  <div class="section card">
-    <h3>Code Snippet</h3>
-    <pre><code>
-// Example logic
-int error = target - sensor;
-output = kp * error;
-    </code></pre>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="section card">
-    <h3>Results & Learnings</h3>
     <p>
-      What worked, what didn’t, what you’d improve.
+      One major part of the project was data migration. I gathered media from old DVDs, video camera recordings, old phones, and old laptops, converted the files into digital formats, and organized them into a shared family archive.
+    </p>
+
+    <p>
+      The Plex server added another layer of functionality by allowing the same system to serve movies and media across the network.
     </p>
   </div>
 
-  <!-- BACK BUTTON -->
-  <a href="../projects.html" class="backBtn">← Back to Projects</a>
+  <div class="section card">
+    <h3>Example Storage Layout</h3>
+    <pre><code>/Family-NAS
+  /Photos
+    /Old-Phones
+    /Family-Events
+    /Scanned-Memories
+
+  /Videos
+    /Camcorder-Footage
+    /DVD-Rips
+    /Home-Videos
+
+  /Plex-Media
+    /Movies
+    /Shows</code></pre>
+  </div>
+
+  <div class="section card">
+    <h3>What I Learned</h3>
+    <ul>
+      <li>How to configure a Raspberry Pi as a home network server.</li>
+      <li>How network-attached storage works at a practical level.</li>
+      <li>How to connect multiple drives using a SATA interface.</li>
+      <li>How RAID-style storage improves redundancy and reliability.</li>
+      <li>How to organize and preserve large amounts of family data.</li>
+      <li>How to run a Plex media server from local storage.</li>
+    </ul>
+  </div>
+
+  <div class="section card">
+    <h3>Reflection</h3>
+    <p>
+      This project taught me how useful engineering can be when applied to everyday problems. Instead of family memories being spread across DVDs, old phones, and aging laptops, I created a central system that made those files easier to preserve and access. It also gave me hands-on experience with servers, storage, networking, and practical system integration.
+    </p>
+  </div>
+
+  <a href="projects.html" class="backBtn">← Back to Projects</a>
 
 </div>
+
 </body>
 </html>
