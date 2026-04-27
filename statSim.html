@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statistical Simulation & Naïve Bayes | David Arthurian</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+    }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      padding: 30px 18px;
+    }
+
+    .container{
+      max-width:900px;
+      margin:0 auto;
+    }
+
+    .navBack, .repoBtn, .backBtn{
+      display:inline-block;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+      margin-bottom:20px;
+      font-weight:600;
+    }
+
+    .navBack:hover, .repoBtn:hover, .backBtn:hover{
+      background:rgba(255,255,255,0.05);
+    }
+
+    h1{
+      color:var(--text);
+      margin-bottom:8px;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      line-height:1.5;
+      margin-bottom:20px;
+    }
+
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:16px 0 24px;
+    }
+
+    .tag{
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:0.9rem;
+      color:var(--muted);
+      background:rgba(255,255,255,0.03);
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:18px;
+      margin-bottom:28px;
+      background:rgba(255,255,255,0.03);
+    }
+
+    h3{
+      margin-top:0;
+      color:var(--text);
+    }
+
+    p, li{
+      color:var(--muted);
+      line-height:1.65;
+    }
+
+    img{
+      width:100%;
+      border-radius:12px;
+      margin-top:12px;
+      border:1px solid var(--border);
+      background:#05070d;
+    }
+
+    pre{
+      background:#05070d;
+      color:#e6edf7;
+      padding:16px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      font-size:0.9rem;
+      line-height:1.5;
+      overflow-x:auto;
+    }
+
+    .plotGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    @media(max-width:700px){
+      .plotGrid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a href="projects.html" class="navBack">← Back to Projects</a>
+
+<h1>📊 Statistical Simulation & Naïve Bayes Classifier</h1>
+
+<p class="subtitle">
+  A probability and statistics programming project using Python to simulate random experiments, estimate Gaussian parameters with maximum likelihood estimation, visualize probability distributions, and build a Naïve Bayes classifier.
+</p>
+
+<div class="tagRow">
+  <div class="tag">Python</div>
+  <div class="tag">Probability</div>
+  <div class="tag">Statistics</div>
+  <div class="tag">Monte Carlo Simulation</div>
+  <div class="tag">Maximum Likelihood Estimation</div>
+  <div class="tag">Naïve Bayes</div>
+  <div class="tag">Central Limit Theorem</div>
+  <div class="tag">NumPy</div>
+  <div class="tag">Pandas</div>
+  <div class="tag">Matplotlib</div>
+  <div class="tag">SciPy</div>
+</div>
+
+<a class="repoBtn" href="https://colab.research.google.com/drive/1aJ7kdO2Bo9nhwULHvOFWbIywn_ia1n9p?usp=sharing" target="_blank" rel="noopener">
+  Open Google Colab ↗
+</a>
+
+<div class="card">
+  <h3>Overview</h3>
+  <p>
+    This project was completed for my electrical engineering probability and statistics coursework. The assignment combined theory, simulation, and data analysis to explore how probability models behave in practice.
+  </p>
+  <p>
+    I used Python in Google Colab to simulate fair and unfair dice, compare simulated results against theoretical probabilities, estimate unknown Gaussian parameters using maximum likelihood estimation, build a Naïve Bayes classifier, and visualize the Central Limit Theorem through repeated sampling.
+  </p>
+</div>
+
+<div class="card">
+  <h3>Project Components</h3>
+  <ul>
+    <li>Simulated fair and unfair 10-sided dice using Monte Carlo methods.</li>
+    <li>Compared empirical probabilities against theoretical probability results.</li>
+    <li>Estimated Gaussian mean and standard deviation using maximum likelihood estimation.</li>
+    <li>Plotted histograms and overlaid fitted Gaussian probability density functions.</li>
+    <li>Estimated probability mass functions from demographic purchase data.</li>
+    <li>Built a Naïve Bayes classifier to predict whether a user would buy a product.</li>
+    <li>Used simulations to visualize how sample means converge under the Central Limit Theorem.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Monte Carlo Simulation</h3>
+  <p>
+    The first part of the project used repeated random trials to estimate the probability of rolling an odd number on a 10-sided die. As the number of trials increased, the simulated probability approached the theoretical result.
+  </p>
+
+  <pre><code>import random
+
+t_values = [50, 100, 1000, 2000, 3000, 10000, 100000]
+
+for t in t_values:
+    odd_count = 0
+
+    for i in range(t):
+        roll = random.randint(1, 10)
+
+        if roll % 2 == 1:
+            odd_count += 1
+
+    odd_probability = odd_count / t
+    print(f"{t} tosses: P(odd) ≈ {odd_probability}")</code></pre>
+</div>
+
+<div class="card">
+  <h3>Maximum Likelihood Estimation</h3>
+  <p>
+    Another section estimated the unknown mean and standard deviation of a normally distributed dataset. Using maximum likelihood estimation, the best-fit Gaussian parameters were computed from the observed data.
+  </p>
+
+  <pre><code>import numpy as np
+
+data = np.loadtxt("data.txt")
+
+mu_mle = np.mean(data)
+sigma_mle = np.sqrt(np.mean((data - mu_mle) ** 2))
+
+print("mu_MLE:", mu_mle)
+print("sigma_MLE:", sigma_mle)</code></pre>
+
+  <p>
+    Placeholder for MLE histogram and fitted Gaussian plot:
+  </p>
+
+  <img src="statSimMLE.png" alt="Histogram with fitted Gaussian PDF from maximum likelihood estimation">
+</div>
+
+<div class="card">
+  <h3>Naïve Bayes Classifier</h3>
+  <p>
+    The project also included a Naïve Bayes classifier using demographic purchasing data. The classifier estimated probability mass functions and conditional probability mass functions for features like spender type, sex, and age, then used those probabilities to predict whether a user would buy a product.
+  </p>
+
+  <pre><code>import pandas as pd
+
+df = pd.read_csv("user_data.csv")
+
+P_B_1 = sum(df["Bought"]) / len(df)
+P_B_0 = 1 - P_B_1
+
+P_T_1 = sum(df["Spender Type"] == 1) / len(df)
+P_S_0 = sum(df["Sex"] == 0) / len(df)
+P_A_lt_55 = sum(df["Age"] < 55) / len(df)
+
+print("P(B=1):", P_B_1)
+print("P(B=0):", P_B_0)</code></pre>
+
+  <p>
+    Placeholder for PMF and conditional PMF plots:
+  </p>
+
+  <div class="plotGrid">
+    <img src="statSimPMF.png" alt="Estimated PMF plots for user purchase data">
+    <img src="statSimConditionalPMF.png" alt="Conditional PMF plots for Naive Bayes classifier">
+  </div>
+</div>
+
+<div class="card">
+  <h3>Central Limit Theorem Simulation</h3>
+  <p>
+    The final part simulated repeated sample means from a uniform distribution and from an unfair die distribution. The plots showed how the distribution of sample means becomes increasingly Gaussian-shaped as the sample size grows.
+  </p>
+
+  <pre><code>import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import uniform
+
+a = 3
+b = 7
+n_values = [1, 2, 3, 10, 30, 100]
+t = 10_000
+
+for n in n_values:
+    X = uniform.rvs(loc=a, scale=b-a, size=(n, t))
+    Zn = np.mean(X, axis=0)
+
+    plt.hist(Zn, density=True, bins=50)
+    plt.title(f"PDF of Zn for n = {n}")
+    plt.xlabel("Zn")
+    plt.ylabel("PDF")
+    plt.show()</code></pre>
+
+  <p>
+    Placeholder for Central Limit Theorem plots:
+  </p>
+
+  <img src="statSimCLT.png" alt="Central Limit Theorem simulation plots for different sample sizes">
+</div>
+
+<div class="card">
+  <h3>What I Learned</h3>
+  <ul>
+    <li>How simulation can validate theoretical probability results.</li>
+    <li>How increasing sample size improves the accuracy of empirical estimates.</li>
+    <li>How maximum likelihood estimation fits model parameters to observed data.</li>
+    <li>How probability mass functions and conditional probabilities support classification.</li>
+    <li>How the Central Limit Theorem appears visually through repeated sampling.</li>
+    <li>How Python tools like NumPy, Pandas, Matplotlib, and SciPy support statistical analysis.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Reflection</h3>
+  <p>
+    While this was a coursework project, it helped connect probability theory with practical computation. It gave me experience turning mathematical formulas into simulations, visualizations, and classifiers, which is useful for data analysis, signal processing, machine learning, and engineering decision-making.
+  </p>
+</div>
+
+<a href="projects.html" class="backBtn">← Back to Projects</a>
+
+</div>
+
+</body>
+</html>
