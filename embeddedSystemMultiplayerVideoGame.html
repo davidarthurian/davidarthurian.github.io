@@ -11,85 +11,44 @@
       --text:#e6edf7;
       --muted:#9fb0c6;
       --border:rgba(255,255,255,0.10);
-      --accent:#7dd3fc;
     }
 
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(900px 600px at 80% 10%, rgba(125,211,252,0.12), transparent 60%),
-                  radial-gradient(900px 600px at 20% 90%, rgba(167,139,250,0.10), transparent 60%),
-                  var(--bg);
+      font-family: ui-sans-serif, system-ui;
+      background: var(--bg);
       color: var(--text);
       padding: 30px 18px;
     }
 
-    .topBar{ max-width:900px; margin:0 auto 24px; }
+    .container{
+      max-width:900px;
+      margin:0 auto;
+    }
 
-    .navBack, .backBtn, .repoBtn{
+    .navBack, .repoBtn, .backBtn{
       display:inline-block;
       padding:10px 14px;
       border:1px solid var(--border);
       border-radius:10px;
       text-decoration:none;
       color:var(--text);
-      font-weight:600;
+      margin-bottom:20px;
     }
-
-    .navBack:hover, .backBtn:hover, .repoBtn:hover{
-      background:rgba(255,255,255,0.05);
-    }
-
-    .container{ max-width:900px; margin:0 auto; }
-
-    h1{ margin-bottom:8px; color:var(--text); }
-
-    .subtitle{
-      color:var(--muted);
-      margin-bottom:24px;
-      line-height:1.5;
-    }
-
-    .section{ margin-bottom:28px; }
 
     .card{
       border:1px solid var(--border);
       border-radius:14px;
       padding:18px;
-      background:rgba(255,255,255,0.03);
+      margin-bottom:28px;
+      background: rgba(255,255,255,0.03);
     }
+
+    h3{ margin-top:0; }
 
     p, li{
-      color:var(--muted);
-      line-height:1.65;
-    }
-
-    h3{
-      margin-top:0;
-      color:var(--text);
-    }
-
-    .tagRow{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin:16px 0 18px;
-    }
-
-    .tag{
-      border:1px solid var(--border);
-      background:rgba(255,255,255,0.03);
-      color:var(--muted);
-      border-radius:999px;
-      padding:7px 10px;
-      font-size:0.9rem;
-    }
-
-    .buttonRow{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-bottom:24px;
+      color: var(--muted);
+      line-height:1.6;
     }
 
     img, video{
@@ -97,113 +56,148 @@
       border-radius:12px;
       margin-top:12px;
       border:1px solid var(--border);
-      background:#000;
     }
 
-    .imageGrid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
-      gap:14px;
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:16px 0;
     }
 
-    pre{
-      background:#05070d;
-      color:#e6edf7;
-      padding:16px;
-      border-radius:12px;
+    .tag{
       border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
       font-size:0.9rem;
-      line-height:1.5;
-      overflow-x:auto;
+      color: var(--muted);
     }
+
   </style>
 </head>
 
 <body>
 
-<div class="topBar">
-  <a href="projects.html" class="navBack">← Back to Projects</a>
-</div>
-
 <div class="container">
 
-  <h1>🎮 Railgun Rampage — Embedded System Multiplayer Game</h1>
+<a href="projects.html" class="navBack">← Back to Projects</a>
 
-  <div class="subtitle">
-    A UCLA senior embedded systems project combining computer vision, speech recognition, gesture recognition, WebSocket networking, hardware controllers, and a Unity multiplayer game.
-  </div>
+<h1>🎮 Railgun Rampage | Embedded System Multiplayer Game</h1>
 
-  <div class="tagRow">
-    <div class="tag">UCLA Senior Project</div>
-    <div class="tag">Embedded Systems</div>
-    <div class="tag">OpenCV</div>
-    <div class="tag">Python</div>
-    <div class="tag">Unity</div>
-    <div class="tag">WebSockets</div>
-    <div class="tag">IMU Sensor</div>
-    <div class="tag">Speech-to-Text</div>
-    <div class="tag">ESP32</div>
-  </div>
+<p>
+A UCLA senior embedded systems project combining computer vision, speech recognition, gesture recognition, WebSocket networking, hardware controllers, and a Unity multiplayer game.
+</p>
 
-  <div class="buttonRow">
-    <a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank">
-      View Code on GitHub ↗
-    </a>
-  </div>
+<div class="tagRow">
+  <div class="tag">UCLA Senior Project</div>
+  <div class="tag">Embedded Systems</div>
+  <div class="tag">OpenCV</div>
+  <div class="tag">Python</div>
+  <div class="tag">Unity</div>
+  <div class="tag">WebSockets</div>
+  <div class="tag">IMU</div>
+  <div class="tag">Speech Recognition</div>
+</div>
 
-  <div class="section card">
-    <h3>Overview</h3>
-    <p>
-      Railgun Rampage was my embedded systems senior project at UCLA. My team of three built a multiplayer arcade-style shooter game where up to four players used custom railgun controllers.
-    </p>
+<a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank">
+View Code on GitHub ↗
+</a>
 
-    <img src="railgunRampageHero.png">
-  </div>
+<div class="card">
+<h3>Overview</h3>
+<p>
+Railgun Rampage was my embedded systems senior project at UCLA. My team of three built a multiplayer arcade-style shooter game where up to four players used custom railgun controllers to aim, shoot, reload, and interact with a Unity game environment.
+</p>
+<p>
+The system combined camera tracking, speech recognition, gesture recognition, and real-time multiplayer communication through WebSockets.
+</p>
 
-  <div class="section card">
-    <h3>Hardware Controller</h3>
+<img src="railgunRampageHero.png">
+</div>
 
-    <div class="imageGrid">
-      <img src="railgunFinalIteration.png">
-      <img src="computeComponents.png">
-      <img src="cameraTracking.png">
-    </div>
-  </div>
+<div class="card">
+<h3>Project Requirements</h3>
+<ul>
+<li>Multiplayer support (up to 4 players)</li>
+<li>Camera tracking using OpenCV</li>
+<li>Speech recognition input</li>
+<li>Gesture recognition using IMU</li>
+<li>Low-latency networking via WebSockets</li>
+<li>Unity GUI interface</li>
+</ul>
+</div>
 
-  <div class="section card">
-    <h3>Software & Input Processing</h3>
-    <ul>
-      <li>Camera tracking using OpenCV</li>
-      <li>Speech recognition using Google API</li>
-      <li>Gesture recognition using IMU</li>
-      <li>WebSocket networking</li>
-      <li>Unity GUI</li>
-    </ul>
-  </div>
+<div class="card">
+<h3>System Architecture</h3>
+<p>
+The system used a host script to process all game logic and multiple player scripts communicating over WebSockets. Camera data was processed using OpenCV thresholding, while gesture and speech inputs were processed independently and fused into gameplay logic.
+</p>
 
-  <div class="section card">
-    <h3>Demo Videos</h3>
+<img src="railgunSystemDiagram.png">
+</div>
 
-    <div class="imageGrid">
-      <video controls muted playsinline>
-        <source src="railgunSingleplayerDemo.mp4" type="video/mp4">
-      </video>
+<div class="card">
+<h3>Hardware Controller and Tracking</h3>
+<p>
+I worked on the railgun controller integration, including hardware input processing, gesture recognition, and system interaction. The player's controllers were 3D printed railguns with addressable LEDs for camera tracking and immersion, IMU sensors for reloading gestures, an ESP32 for processing and data transmission, a PSU, and more.
+</p>
 
-      <video controls muted playsinline>
-        <source src="railgunMultiplayerDemo.mp4" type="video/mp4">
-      </video>
-    </div>
+<img src="railgunFinalIteration.png">
+<img src="computeComponents.png">
+<img src="cameraTracking.png">
+</div>
 
-  </div>
+<div class="card">
+<h3>Software & Input Processing</h3>
+<ul>
+<li>OpenCV camera tracking</li>
+<li>Google Speech-to-Text API</li>
+<li>IMU gesture recognition</li>
+<li>WebSocket networking</li>
+<li>Unity game engine</li>
+</ul>
+</div>
 
-  <div class="section card">
-    <h3>Repository</h3>
-    <a class="repoBtn" href="https://github.com/DavidArthurianUCLA/180DA-WarmUp/" target="_blank">
-      Open GitHub →
-    </a>
-  </div>
+<div class="card">
+<h3>Demo Videos</h3>
 
-  <a href="projects.html" class="backBtn">← Back to Projects</a>
+<video controls muted playsinline>
+  <source src="railgunSingleplayerDemo.mp4" type="video/mp4">
+</video>
+
+<video controls muted playsinline>
+  <source src="railgunMultiplayerDemo.mp4" type="video/mp4">
+</video>
+
+</div>
+
+<div class="card">
+<h3>Technical Challenges</h3>
+<ul>
+<li>Low-latency multiplayer synchronization</li>
+<li>Reliable gesture recognition</li>
+<li>Handling noisy camera input</li>
+<li>System integration across hardware + software</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Results</h3>
+<ul>
+<li>Fully functional multiplayer system</li>
+<li>Real-time gameplay with multiple input methods</li>
+<li>Successful demo to peers</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>What I Learned</h3>
+<p>
+This project taught me how to integrate hardware, software, networking, and user interaction into one system, and how small changes in system design impact performance and user experience.
+</p>
+</div>
+
+<a href="projects.html" class="backBtn">← Back to Projects</a>
 
 </div>
 
