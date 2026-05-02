@@ -39,7 +39,7 @@
     }
 
     .nav{
-      max-width: 980px;
+      max-width: 1080px;
       margin: 0 auto;
       padding: 14px 18px;
       display:flex;
@@ -84,7 +84,7 @@
     }
 
     main{
-      max-width:980px;
+      max-width:1080px;
       margin:0 auto;
       padding:34px 18px 50px;
     }
@@ -120,6 +120,7 @@
 
     .carouselWrap{
       position:relative;
+      width:100%;
     }
 
     .carousel{
@@ -128,7 +129,7 @@
       overflow-x:auto;
       scroll-snap-type:x mandatory;
       scroll-behavior:smooth;
-      padding: 4px 44px 14px;
+      padding: 4px 38px 14px;
     }
 
     .carousel::-webkit-scrollbar{
@@ -144,11 +145,11 @@
       position:absolute;
       top:42%;
       transform:translateY(-50%);
-      width:34px;
+      width:32px;
       height:48px;
       border-radius:999px;
       border:1px solid var(--border);
-      background:rgba(15,26,46,0.85);
+      background:rgba(15,26,46,0.9);
       color:var(--text);
       cursor:pointer;
       z-index:2;
@@ -254,7 +255,7 @@
     }
 
     .footerInner{
-      max-width:980px;
+      max-width:1080px;
       margin:0 auto;
       color:var(--muted);
       font-size:0.95rem;
@@ -267,8 +268,8 @@
       }
 
       .carousel{
-        padding-left:38px;
-        padding-right:38px;
+        padding-left:36px;
+        padding-right:36px;
       }
 
       .scrollBtn{
@@ -308,346 +309,103 @@
 
   <!-- 2026 -->
   <section class="yearSection">
-    <div class="yearHeader">
-      <h2>2026</h2>
-    </div>
-
+    <div class="yearHeader"><h2>2026</h2></div>
     <div class="carouselWrap">
-      <button class="scrollBtn left" onclick="scrollBooks('books2026', -1)" aria-label="Scroll left">‹</button>
+      <button class="scrollBtn left" onclick="scrollBooks('books2026', -1)">‹</button>
       <div class="carousel" id="books2026">
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Reading</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Planned</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Reading</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Planned</div><div class="thought">One-liner thought goes here.</div></div>
       </div>
-      <button class="scrollBtn right" onclick="scrollBooks('books2026', 1)" aria-label="Scroll right">›</button>
+      <button class="scrollBtn right" onclick="scrollBooks('books2026', 1)">›</button>
     </div>
   </section>
 
   <!-- 2025 -->
   <section class="yearSection">
-    <div class="yearHeader">
-      <h2>2025</h2>
-    </div>
-
+    <div class="yearHeader"><h2>2025</h2></div>
     <div class="carouselWrap">
-      <button class="scrollBtn left" onclick="scrollBooks('books2025', -1)" aria-label="Scroll left">‹</button>
+      <button class="scrollBtn left" onclick="scrollBooks('books2025', -1)">‹</button>
       <div class="carousel" id="books2025">
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
       </div>
-      <button class="scrollBtn right" onclick="scrollBooks('books2025', 1)" aria-label="Scroll right">›</button>
+      <button class="scrollBtn right" onclick="scrollBooks('books2025', 1)">›</button>
     </div>
   </section>
 
   <!-- 2024 -->
   <section class="yearSection">
-    <div class="yearHeader">
-      <h2>2024</h2>
-    </div>
-
+    <div class="yearHeader"><h2>2024</h2></div>
     <div class="carouselWrap">
-      <button class="scrollBtn left" onclick="scrollBooks('books2024', -1)" aria-label="Scroll left">‹</button>
+      <button class="scrollBtn left" onclick="scrollBooks('books2024', -1)">‹</button>
       <div class="carousel" id="books2024">
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
       </div>
-      <button class="scrollBtn right" onclick="scrollBooks('books2024', 1)" aria-label="Scroll right">›</button>
+      <button class="scrollBtn right" onclick="scrollBooks('books2024', 1)">›</button>
     </div>
   </section>
 
   <!-- 2023 -->
   <section class="yearSection">
-    <div class="yearHeader">
-      <h2>2023</h2>
-    </div>
-
+    <div class="yearHeader"><h2>2023</h2></div>
     <div class="carouselWrap">
-      <button class="scrollBtn left" onclick="scrollBooks('books2023', -1)" aria-label="Scroll left">‹</button>
+      <button class="scrollBtn left" onclick="scrollBooks('books2023', -1)">‹</button>
       <div class="carousel" id="books2023">
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
       </div>
-      <button class="scrollBtn right" onclick="scrollBooks('books2023', 1)" aria-label="Scroll right">›</button>
+      <button class="scrollBtn right" onclick="scrollBooks('books2023', 1)">›</button>
     </div>
   </section>
 
   <!-- 2022 -->
   <section class="yearSection">
-    <div class="yearHeader">
-      <h2>2022</h2>
-    </div>
-
+    <div class="yearHeader"><h2>2022</h2></div>
     <div class="carouselWrap">
-      <button class="scrollBtn left" onclick="scrollBooks('books2022', -1)" aria-label="Scroll left">‹</button>
+      <button class="scrollBtn left" onclick="scrollBooks('books2022', -1)">‹</button>
       <div class="carousel" id="books2022">
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★★</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★★☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
-        <div class="bookCard">
-          <img class="cover" src="books/book-placeholder.png" alt="Book cover">
-          <div class="bookTitle">Book Title Here</div>
-          <div class="author">Author Name</div>
-          <div class="rating">★★★☆☆</div>
-          <div class="status">Finished</div>
-          <div class="thought">One-liner thought goes here.</div>
-        </div>
-
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★★</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★★☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Finished</div><div class="thought">One-liner thought goes here.</div></div>
       </div>
-      <button class="scrollBtn right" onclick="scrollBooks('books2022', 1)" aria-label="Scroll right">›</button>
+      <button class="scrollBtn right" onclick="scrollBooks('books2022', 1)">›</button>
+    </div>
+  </section>
+
+  <!-- Abandoned Books -->
+  <section class="yearSection">
+    <div class="yearHeader"><h2>Abandoned Books</h2></div>
+    <div class="carouselWrap">
+      <button class="scrollBtn left" onclick="scrollBooks('booksAbandoned', -1)">‹</button>
+      <div class="carousel" id="booksAbandoned">
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★☆☆☆</div><div class="status">Abandoned</div><div class="thought">Why I stopped reading it.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Abandoned</div><div class="thought">Why I stopped reading it.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★☆☆☆☆</div><div class="status">Abandoned</div><div class="thought">Why I stopped reading it.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★☆☆☆</div><div class="status">Abandoned</div><div class="thought">Why I stopped reading it.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★★★☆☆</div><div class="status">Abandoned</div><div class="thought">Why I stopped reading it.</div></div>
+        <div class="bookCard"><img class="cover" src="books/book-placeholder.png"><div class="bookTitle">Book Title Here</div><div class="author">Author Name</div><div class="rating">★☆☆☆☆</div><div class="status">Abandoned</div><div class="thought">Why I stopped reading it.</div></div>
+      </div>
+      <button class="scrollBtn right" onclick="scrollBooks('booksAbandoned', 1)">›</button>
     </div>
   </section>
 
