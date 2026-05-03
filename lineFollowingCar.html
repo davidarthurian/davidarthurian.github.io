@@ -29,24 +29,11 @@
       margin:0 auto 24px;
     }
 
-    .navBack{
-      display:inline-block;
-      padding:10px 14px;
-      border:1px solid var(--border);
-      border-radius:10px;
-      text-decoration:none;
-      color:var(--text);
-    }
-
-    .navBack:hover{
-      background:rgba(255,255,255,0.05);
-    }
-
     .container{
       max-width: 900px;
       margin: 0 auto;
     }
-    
+
     .navBack, .backBtn, .repoBtn{
       display:inline-block;
       padding:10px 14px;
@@ -139,17 +126,7 @@
     }
 
     .backBtn{
-      display:inline-block;
       margin-top:20px;
-      padding:10px 14px;
-      border:1px solid var(--border);
-      border-radius:10px;
-      text-decoration:none;
-      color: var(--text);
-    }
-
-    .backBtn:hover{
-      background: rgba(255,255,255,0.05);
     }
   </style>
 </head>
@@ -177,7 +154,7 @@
     <div class="tag">Robotics</div>
   </div>
 
-  <a class="repoBtn" href="https://github.com/davidarthurian/Line-Following-Car" target="_blank">
+  <a class="repoBtn" href="https://github.com/davidarthurian/Line-Following-Car" target="_blank" rel="noopener">
     View Code on GitHub ↗
   </a>
 
@@ -251,16 +228,13 @@
   </div>
 
   <div class="section card">
-    <div class="section card">
-  <h3>PID Control Implementation</h3>
+    <h3>PID Control Implementation</h3>
 
-  <p>
-    The controller continuously computes the error between the desired line position (center of the sensor array)
-    and the measured position. A PID controller is used to generate a correction term that adjusts the motor speeds
-    to keep the robot aligned with the track.
-  </p>
+    <p>
+      The controller continuously computes the error between the desired line position, or center of the sensor array, and the measured position. A PID controller generates a correction term that adjusts the motor speeds to keep the robot aligned with the track.
+    </p>
 
-  <pre><code>// PID constants (tuned experimentally)
+    <pre><code>// PID constants, tuned experimentally
 float kp = 0.6;
 float ki = 0.02;
 float kd = 1.2;
@@ -269,24 +243,19 @@ float error = 0;
 float previousError = 0;
 float integral = 0;
 
-int baseSpeed = 120;  // forward speed
+int baseSpeed = 120;
 
 void loop() {
-  // Read sensor array and compute line position
-  int position = readLineSensors();  // returns weighted position
-  int target = 3500; // center value for 8 sensors
+  int position = readLineSensors();
+  int target = 3500;
 
-  // Calculate error
   error = target - position;
 
-  // PID components
   integral += error;
   float derivative = error - previousError;
 
-  // Compute correction
   float correction = (kp * error) + (ki * integral) + (kd * derivative);
 
-  // Apply correction to motors
   int leftSpeed  = baseSpeed - correction;
   int rightSpeed = baseSpeed + correction;
 
@@ -295,12 +264,9 @@ void loop() {
   previousError = error;
 }</code></pre>
 
-  <p>
-    The proportional term reacts to current error, the integral term compensates for accumulated bias,
-    and the derivative term dampens oscillations. Careful tuning of these gains allowed the robot to
-    move aggressively while remaining stable on sharp turns.
-  </p>
-</div>
+    <p>
+      The proportional term reacts to current error, the integral term compensates for accumulated bias, and the derivative term dampens oscillations. Careful tuning of these gains allowed the robot to move aggressively while remaining stable on sharp turns.
+    </p>
   </div>
 
   <div class="section card">
