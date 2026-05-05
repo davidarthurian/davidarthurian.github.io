@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RF Signal Detection System | David Arthurian</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#e6edf7;
+      --muted:#9fb0c6;
+      --border:rgba(255,255,255,0.10);
+    }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui;
+      background: var(--bg);
+      color: var(--text);
+      padding: 30px 18px;
+    }
+
+    .container{
+      max-width:900px;
+      margin:0 auto;
+    }
+
+    .navBack, .repoBtn, .backBtn{
+      display:inline-block;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+      margin-bottom:20px;
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:18px;
+      margin-bottom:28px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    h3{ margin-top:0; }
+
+    p, li{
+      color: var(--muted);
+      line-height:1.6;
+    }
+
+    img, video{
+      width:100%;
+      border-radius:12px;
+      margin-top:12px;
+      border:1px solid var(--border);
+    }
+
+    .heroImg{
+      width: 60%;
+      max-width: 500px;
+      display: block;
+      margin: 16px auto;
+    }
+
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:16px 0;
+    }
+
+    .tag{
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:0.9rem;
+      color: var(--muted);
+    }
+
+    pre{
+      background: rgba(0,0,0,0.30);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+      overflow-x:auto;
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.92rem;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a href="projects.html" class="navBack">← Back to Projects</a>
+
+<h1>📡 RF Signal Detection System | Software-Defined Radio Pipeline</h1>
+
+<p>
+A real-time RF signal detection project using an RTL-SDR, Python, FFT-based spectrum analysis, threshold detection, clustering, CSV logging, and persistent signal analysis. This project serves as the software reference model for a future FPGA-accelerated signal processing engine.
+</p>
+
+<div class="tagRow">
+  <div class="tag">Software-Defined Radio</div>
+  <div class="tag">RF Engineering</div>
+  <div class="tag">Python</div>
+  <div class="tag">DSP</div>
+  <div class="tag">FFT</div>
+  <div class="tag">RTL-SDR</div>
+  <div class="tag">Signal Detection</div>
+  <div class="tag">Data Logging</div>
+</div>
+
+<a class="repoBtn" href="https://github.com/davidarthurian/RF-Project" target="_blank">
+View Code on GitHub ↗
+</a>
+
+<div class="card">
+<h3>Overview</h3>
+<p>
+This project is a real-time RF sensing pipeline built around a Nooelec NESDR SMArt v5 software-defined radio. The system captures live IQ samples from the SDR, computes a frequency-domain power spectrum using the FFT, detects signal candidates above a dynamic noise threshold, clusters nearby FFT bins into signal regions, merges duplicate detections, and logs RF activity to a CSV file for persistence analysis.
+</p>
+<p>
+I first validated the DSP pipeline using simulated IQ signals, then swapped the input source to live SDR hardware without rewriting the processing chain. This gave the project a clean modular structure and made the hardware integration straightforward.
+</p>
+
+<img class="heroImg" src="rfProjectHero.png">
+</div>
+
+<div class="card">
+<h3>Project Goals</h3>
+<ul>
+<li>Build a real RF signal detection system using an RTL-SDR</li>
+<li>Capture and process live IQ samples from an antenna</li>
+<li>Compute FFT-based power spectra from raw RF samples</li>
+<li>Detect signal candidates using a dynamic noise-floor threshold</li>
+<li>Cluster and merge nearby frequency bins into cleaner signal detections</li>
+<li>Log detections to CSV for later analysis</li>
+<li>Create a software reference model for future FPGA acceleration</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>System Architecture</h3>
+<p>
+The system is structured as a modular DSP pipeline. The antenna receives RF energy from nearby transmitters, the RTL-SDR downconverts and digitizes the signal, and the Python pipeline analyzes the resulting IQ samples.
+</p>
+
+<pre><code>Antenna
+  ↓
+RTL-SDR Receiver
+  ↓
+IQ Samples
+  ↓
+FFT Power Spectrum
+  ↓
+Threshold Detection
+  ↓
+Peak Clustering
+  ↓
+Merged Signal Detections
+  ↓
+Terminal Output + Plot + CSV Log
+  ↓
+Persistence Analysis</code></pre>
+
+<img src="rfSystemArchitecture.png">
+</div>
+
+<div class="card">
+<h3>Hardware Setup</h3>
+<p>
+The hardware setup uses a Nooelec NESDR SMArt v5 RTL-SDR dongle, a USB extension cable, an SMA antenna base, and interchangeable antennas. The SDR is connected to a MacBook and controlled through Python and RTL-SDR command-line tools.
+</p>
+
+<ul>
+<li>Nooelec NESDR SMArt v5 RTL-SDR</li>
+<li>USB extension cable</li>
+<li>SMA antenna adapter and magnetic antenna base</li>
+<li>Telescopic antenna for FM broadcast reception</li>
+<li>Python virtual environment on macOS</li>
+</ul>
+
+<img src="rfHardwareSetup.png">
+</div>
+
+<div class="card">
+<h3>Software Pipeline</h3>
+<p>
+The project is split into multiple Python modules so each part of the system has a specific responsibility.
+</p>
+
+<ul>
+<li><strong>main.py:</strong> orchestrates the full pipeline from SDR capture to plotting and logging</li>
+<li><strong>source.py:</strong> selects either simulated IQ data or live SDR samples</li>
+<li><strong>sim.py:</strong> generates test signals for validating the DSP pipeline before hardware integration</li>
+<li><strong>dsp.py:</strong> computes FFT power spectra and maps FFT bins to frequency offsets</li>
+<li><strong>detection.py:</strong> estimates the noise floor and finds bins above a threshold</li>
+<li><strong>clustering.py:</strong> groups nearby FFT bins into rough signal regions</li>
+<li><strong>mergeDetection.py:</strong> merges nearby detections into cleaner signal objects</li>
+<li><strong>logger.py:</strong> logs detections to CSV for later analysis</li>
+<li><strong>analyzeDetections.py:</strong> summarizes persistent signals across scans</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Live Spectrum Detection</h3>
+<p>
+The SDR was tuned around the FM broadcast band. With a center frequency of 100 MHz and a 2.4 MS/s sample rate, the system analyzed roughly a 2.4 MHz slice of spectrum from about 98.8 MHz to 101.2 MHz.
+</p>
+<p>
+The plot below shows the power spectrum from a live SDR capture. The blue trace is relative RF power, the red dashed line is the detection threshold, and the orange vertical lines mark detected signal centers.
+</p>
+
+<img src="rfSpectrumDetection.png">
+</div>
+
+<div class="card">
+<h3>Example Terminal Output</h3>
+<p>
+After tuning the SDR and running the detection pipeline, the system produced live detections showing absolute frequency, offset from the SDR center frequency, estimated bandwidth, FFT bin width, relative peak power, and timestamp.
+</p>
+
+<pre><code>Scan 1: Detected 2 signals
+Signal at 99.920 MHz | Offset: -0.080 MHz | BW: 25.38 kHz | Width: 5 bins | Peak Power: 70.00 dB
+Signal at 100.290 MHz | Offset: 0.290 MHz | BW: 1.21 kHz | Width: 3 bins | Peak Power: 66.95 dB
+
+Scan 2: Detected 3 signals
+Signal at 99.904 MHz | Offset: -0.096 MHz | BW: 28.73 kHz | Width: 12 bins | Peak Power: 71.37 dB
+Signal at 99.926 MHz | Offset: -0.074 MHz | BW: 3.52 kHz | Width: 6 bins | Peak Power: 67.51 dB
+Signal at 100.314 MHz | Offset: 0.314 MHz | BW: 18.08 kHz | Width: 4 bins | Peak Power: 71.86 dB</code></pre>
+</div>
+
+<div class="card">
+<h3>Persistent Signal Analysis</h3>
+<p>
+After logging detections to CSV, I wrote an analysis script to group repeated detections over time. The system identified two persistent RF regions near 99.9 MHz and 100.3 MHz. These are likely FM broadcast signals within the local RF environment.
+</p>
+
+<pre><code>Persistent Signal Summary
+
+ center_frequency_mhz  detections  unique_scans  avg_bandwidth_khz  avg_peak_power_db  max_peak_power_db
+           100.303612          49            10          31.542159          71.720043          79.204590
+            99.899290          54            10          27.125888          70.277979          74.629333</code></pre>
+
+<img src="rfCsvAnalysis.png">
+</div>
+
+<div class="card">
+<h3>FM Receiver Experiment</h3>
+<p>
+After detecting persistent FM-band signals, I added an experimental FM receiver mode. This allowed the SDR to tune to public FM broadcast stations and demodulate audio. I tested this on stations such as WAMU 88.5 FM and confirmed that the system could receive intelligible speech, although audio quality depended heavily on antenna placement, gain, and signal strength.
+</p>
+<p>
+This feature helped connect the spectrum detection output to real-world RF signals. The same antenna and SDR used for detection were also able to receive broadcast audio.
+</p>
+
+<img src="fmReceiverTest.png">
+</div>
+
+<div class="card">
+<h3>Technical Challenges</h3>
+<ul>
+<li>Configuring RTL-SDR libraries and Python bindings on macOS</li>
+<li>Handling SDR USB read errors and device lockups</li>
+<li>Tuning gain, threshold, and filtering parameters for live RF data</li>
+<li>Filtering out the SDR center-frequency artifact/DC spike</li>
+<li>Reducing false detections from noise and narrow single-bin spikes</li>
+<li>Merging nearby detections into meaningful signal regions</li>
+<li>Balancing real-time processing constraints for live FM demodulation</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Results</h3>
+<ul>
+<li>Built a working real-time RF detection pipeline using live SDR data</li>
+<li>Detected persistent signal regions in the FM broadcast band</li>
+<li>Logged frequency, bandwidth, power, and timestamp data to CSV</li>
+<li>Created a persistence analysis tool to identify repeatable RF activity across scans</li>
+<li>Successfully received and demodulated public FM broadcast audio using the SDR</li>
+<li>Created a software reference model for future FPGA acceleration</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Connection to FPGA Acceleration</h3>
+<p>
+This project serves as the software baseline for a future FPGA-accelerated signal processing engine. The most computationally important portion of the current pipeline is the DSP stage: converting IQ samples into a power spectrum, detecting threshold crossings, and identifying frequency regions of interest.
+</p>
+<p>
+For the next phase, I plan to move parts of the FFT, power calculation, and threshold detection chain onto an FPGA. The Python implementation from this project provides a reference model for validating the FPGA output and comparing performance.
+</p>
+
+<pre><code>Project 1 Software Reference:
+IQ Samples → FFT → Power Spectrum → Threshold Detection → Signal Candidates
+
+Project 2 FPGA Target:
+IQ Samples → FPGA FFT/Power/Detection Engine → Host-side Logging + Visualization</code></pre>
+</div>
+
+<div class="card">
+<h3>What I Learned</h3>
+<p>
+This project taught me how to connect RF hardware, digital signal processing, and software architecture into one working system. I learned how SDRs represent RF signals as IQ samples, how FFTs reveal frequency-domain activity, how to design a threshold-based detector, and how to turn noisy raw detections into cleaner signal objects through clustering and merging.
+</p>
+<p>
+Most importantly, I built a foundation for hardware acceleration by first creating a working software reference pipeline. That gives me a clear path to compare CPU-based DSP against FPGA-accelerated DSP in the next project.
+</p>
+</div>
+
+<a href="projects.html" class="backBtn">← Back to Projects</a>
+
+</div>
+
+</body>
+</html>
